@@ -4,14 +4,22 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import frc.robot.commands.Autos;
+import frc.robot.subsystems.SwerveSubsystem;
+
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj.Joystick;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -19,17 +27,23 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final SwerveSubsystem swerveSubsystem;
+  private AHRS gyro; 
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final Joystick driverJoystick = new Joystick(OIConstants.kDriverControllerPort); //first driver 
+  //private final Joystick secondriverJoystick = new Joystick(OIConstants.kDriverControllerPort2); second driver
+  SendableChooser<Command> m_chooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    swerveSubsystem = new SwerveSubsystem();
+    gyro = new AHRS();
     // Configure the trigger bindings
     configureBindings();
+    m_chooser = new SendableChooser<>();
+
+
   }
 
   /**
@@ -42,13 +56,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    new JoystickButton(driverJoystick, OIConstants.kDriverResetGyroButtonIdx).
+    onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
   }
 
   /**
@@ -58,6 +67,13 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return m_chooser.getSelected();
+  }
+
+public AHRS getGyro() {
+    return gyro;
+}
+public SwerveSubsystem getSwerveSS() {
+  return swerveSubsystem;
   }
 }

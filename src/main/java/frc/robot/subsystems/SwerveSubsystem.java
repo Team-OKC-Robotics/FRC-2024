@@ -32,7 +32,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private AHRS gyro;
 
-    gyro = new AHRS(SPI.Port.kMXP);
+    
 ///////////////////////////////////////////////////////////////////////////////////////
 // Creating my odometry object from the kinematics object and the initial wheel positions.
 // Here, our starting pose is 5 meters along the long end of the field and in the
@@ -43,41 +43,45 @@ public class SwerveSubsystem extends SubsystemBase {
 ////////////////////////////////////////////////////////////////////////////////////
 
     public SwerveSubsystem(boolean Old) {
+    gyro = new AHRS(SPI.Port.kMXP);
         this.Old = Old;
         //if (Old) {  // use backup bot swerve parameters
             frontLeft = new SwerveModule(
-               
+                DriveConstants.kFrontLeftDriveMotorPort,
+                DriveConstants.kFrontLeftTurningMotorPort,
                 DriveConstants.kFrontLeftDriveEncoderReversed,
                 DriveConstants.kFrontLeftTurningEncoderReversed,
+                DriveConstants.kFrontLeftAbsoluteEncoderPort,
                 DriveConstants.kFrontLeftDriveAbsoluteEncoderReversed
-                ,"FL",
+                ,"FL"
                 );
-            frontRight = new SwerveModule(
-                
-                DriveConstants.kFrontRightDriveEncoderReversed,
-                DriveConstants.kFrontRightTurningEncoderReversed,
-               
-                DriveConstants.kFrontRightDriveAbsoluteEncoderReversed
-                ,"FR",
-                );
-            backLeft = new SwerveModule(
-                
-                DriveConstants.kBackLeftDriveEncoderReversed,
-                DriveConstants.kBackLeftTurningEncoderReversed,
-               
-                DriveConstants.kBackLeftDriveAbsoluteEncoderReversed
-                ,"BL"
-                ,
-                );
-            backRight = new SwerveModule(
-               
-                DriveConstants.kBackRightDriveEncoderReversed,
-                DriveConstants.kBackRightTurningEncoderReversed,
-               
-                DriveConstants.kBackRightDriveAbsoluteEncoderReversed
-                ,"BR"
-                ,
-                );
+                frontRight = new SwerveModule(
+                    DriveConstants.kFrontRightDriveMotorPort,
+                    DriveConstants.kFrontRightTurningMotorPort,
+                    DriveConstants.kFrontRightDriveEncoderReversed,
+                    DriveConstants.kFrontRightTurningEncoderReversed,
+                    DriveConstants.kFrontRightAbsoluteEncoderPort,
+                    DriveConstants.kFrontRightDriveAbsoluteEncoderReversed
+                    ,"FR"
+                    );
+                    backLeft = new SwerveModule(
+                        DriveConstants.kBackLeftDriveMotorPort,
+                        DriveConstants.kBackLeftTurningMotorPort,
+                        DriveConstants.kBackLeftDriveEncoderReversed,
+                        DriveConstants.kBackLeftTurningEncoderReversed,
+                        DriveConstants.kBackLeftAbsoluteEncoderPort,
+                        DriveConstants.kBackLeftDriveAbsoluteEncoderReversed
+                        ,"BL"
+                        );
+                        backRight = new SwerveModule(
+                            DriveConstants.kBackRightDriveMotorPort,
+                            DriveConstants.kBackRightTurningMotorPort,
+                            DriveConstants.kBackRightDriveEncoderReversed,
+                            DriveConstants.kBackRightTurningEncoderReversed,
+                            DriveConstants.kBackRightAbsoluteEncoderPort,
+                            DriveConstants.kBackRightDriveAbsoluteEncoderReversed
+                            ,"BR"
+                            );
             odometer = new SwerveDriveOdometry(DriveConstants.kDriveKinematics,
                 gyro.getRotation2d(),
                 getModuleStates(), 

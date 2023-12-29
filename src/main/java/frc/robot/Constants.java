@@ -29,7 +29,7 @@ public final class Constants {
 
   public static final boolean PIXY_AVAILABLE = true;
  
-  public static final boolean PIXY_AVAILABLE_Comp = true;
+  
   //public static final int SYSTEMCHOOSER = 0;
 
 
@@ -81,21 +81,21 @@ public final class Constants {
 //     | E33          E34     |        | E37          E38     |
 //     +----------------------+        +----------------------+
 //
-        public static final int kFrontLeftDriveMotorPort        = 11;    // Module 1
-        public static final int kFrontLeftTurningMotorPort      = 21;
-        public static final int kFrontLeftAbsoluteEncoderPort   = 31;
+        public static final int kFrontLeftDriveMotorPort        = 1;    // Module 1
+        public static final int kFrontLeftTurningMotorPort      = 2;
+        public static final int kFrontLeftAbsoluteEncoderPort   = 0;
 
-        public static final int kFrontRightDriveMotorPort       = 12;    // Module 2
-        public static final int kFrontRightTurningMotorPort     = 22;
-        public static final int kFrontRightAbsoluteEncoderPort  = 32;
+        public static final int kFrontRightDriveMotorPort       = 5;    // Module 2
+        public static final int kFrontRightTurningMotorPort     = 6;
+        public static final int kFrontRightAbsoluteEncoderPort  = 2;
 
-        public static final int kBackRightDriveMotorPort        = 13;    // Module 3
-        public static final int kBackRightTurningMotorPort      = 23;
-        public static final int kBackRightAbsoluteEncoderPort   = 33;
+        public static final int kBackRightDriveMotorPort        = 7;    // Module 3
+        public static final int kBackRightTurningMotorPort      = 8;
+        public static final int kBackRightAbsoluteEncoderPort   = 4;
 
-        public static final int kBackLeftDriveMotorPort         = 14;    // Module 4
-        public static final int kBackLeftTurningMotorPort       = 24;
-        public static final int kBackLeftAbsoluteEncoderPort    = 34;
+        public static final int kBackLeftDriveMotorPort         = 3;    // Module 4
+        public static final int kBackLeftTurningMotorPort       = 4;
+        public static final int kBackLeftAbsoluteEncoderPort    = 1;
 
         
 
@@ -183,37 +183,37 @@ public final class Constants {
     }
 
     public static final class OIConstants {
-        public static final int kDriverControllerPort  = 0; // driverJoytick
-  //    public static final int kDRiverCOntrollerPort2 = 1; // buttonBox
+        public static final int kDriverControllerPort  = 0; // 1st driver
+        public static final int kDriverControllerPort2 = 1; // 2nd driver
   //    public static final int kDRiverCOntrollerPort3 = 2; // buttonBox2
-        public static final int kButtonBoxPort_0       = 1; // buttonBox Port 0
-        public static final int kButtonBoxPort_1       = 2; // buttonBox Port 1
-        public static final int kDriverControllerPort4 = 3; // ti launchpad
+        
+  //      public static final int kDriverControllerPort4 = 3; // ti launchpad
+  public static final double kDeadband = 0.05;
 //we need to change these ^^
 
 
 // Botton Box 0
       
-        public static final int kHighGridPos_BB0      =  1; 
-        public static final int kMidGridPos_BB0       =  2; 
-        public static final int kFloorPos_BB0         =  3; 
-        public static final int kSubStationPos_BB0    =  4; 
-        public static final int kRetractPos_BB0       =  5; 
-        public static final int kOverrideEncoders_BB0 =  6; 
-        public static final int kResetEncoders_BB0    =  7; 
-        public static final int kSpareOne_BB0         =  8; 
-        public static final int kNotWiredOne_BB0      =  9; 
-        public static final int kNotWiredTwo_BB0      = 10; 
+//        public static final int kHighGridPos_BB0      =  1; 
+//        public static final int kMidGridPos_BB0       =  2; 
+//        public static final int kFloorPos_BB0         =  3; 
+//        public static final int kSubStationPos_BB0    =  4; 
+//        public static final int kRetractPos_BB0       =  5; 
+//        public static final int kOverrideEncoders_BB0 =  6; 
+//        public static final int kResetEncoders_BB0    =  7; 
+//        public static final int kSpareOne_BB0         =  8; 
+//        public static final int kNotWiredOne_BB0      =  9; 
+//        public static final int kNotWiredTwo_BB0      = 10; 
 
 // Botton Box 1
 
-        public static final int targetRetractNudge_BB1        = 7; // buttonBox2
-        public static final int targetExtendNudge_BB1         = 6; // buttonBox2
-        public static final int targetRaiseNudge_BB1          = 3; // buttonBox2
-        public static final int targetLowerNudge_BB1          = 2; // buttonBox2
-        public static final int kgripperclosebutton_BB1       = 4; // buttonBox2
-        public static final int PRESSURESwitch_BB1            = 12;// buttonbox2
-        public static final int kgripperopenbutton_BB1        = 5; // ButtonBox2
+//        public static final int targetRetractNudge_BB1        = 7; // buttonBox2
+//        public static final int targetExtendNudge_BB1         = 6; // buttonBox2
+//        public static final int targetRaiseNudge_BB1          = 3; // buttonBox2
+//        public static final int targetLowerNudge_BB1          = 2; // buttonBox2
+//        public static final int kgripperclosebutton_BB1       = 4; // buttonBox2
+//        public static final int PRESSURESwitch_BB1            = 12;// buttonbox2
+//        public static final int kgripperopenbutton_BB1        = 5; // ButtonBox2
         //public static final int kgetRobotPositionButton       = 0; // buttonBox2
         //public static final int kDrivertostationbutton        = 0; // buttonBox2
         //public static final int kgetAprilTagButton            = 0; // buttonBox

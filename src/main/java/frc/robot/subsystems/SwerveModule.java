@@ -35,16 +35,16 @@ public class SwerveModule {
     private String reportName="";
     private boolean comp=false; // true for competition bot
 
-    public SwerveModule(int driveMotorId, int turningMotorId, 
-            boolean driveMotorReversed, boolean turningMotorReversed,
-            int absoluteEncoderId, boolean absoluteEncoderReversed,
-            String name) {
-        this(driveMotorId, turningMotorId, 
-            driveMotorReversed, turningMotorReversed,
-            absoluteEncoderId, absoluteEncoderReversed);
-        this.reportName = name;
-        this.comp=false;
-    }
+   // public SwerveModule(int driveMotorId, int turningMotorId, 
+   //         boolean driveMotorReversed, boolean turningMotorReversed,
+   //         int absoluteEncoderId, boolean absoluteEncoderReversed,
+   //         String name) {
+   //     this(driveMotorId, turningMotorId, 
+   //         driveMotorReversed, turningMotorReversed,
+   //         absoluteEncoderId, absoluteEncoderReversed);
+   //     this.reportName = name;
+   //     this.comp=false;
+   // }
     public SwerveModule(int driveMotorId, int turningMotorId, 
         boolean driveMotorReversed, boolean turningMotorReversed,
         int absoluteEncoderId, boolean absoluteEncoderReversed,
@@ -57,12 +57,10 @@ public class SwerveModule {
     public SwerveModule(int driveMotorId, int turningMotorId, 
         boolean driveMotorReversed, boolean turningMotorReversed,
         int absoluteEncoderId, boolean absoluteEncoderReversed,
-        String name,
-        boolean comp) {
+        String name) {
         this(driveMotorId, turningMotorId, 
             driveMotorReversed, turningMotorReversed,
             absoluteEncoderId, absoluteEncoderReversed);
-        this.comp = comp;
         this.reportName=name;
     }
 
@@ -163,7 +161,7 @@ public class SwerveModule {
         }
         state = SwerveModuleState.optimize(state, getState().angle);
         driveMotor.set(state.speedMetersPerSecond / 
-            (comp?DriveConstants.kPhysicalMaxSpeedMetersPerSecond_Comp:
+            (comp?DriveConstants.kPhysicalMaxSpeedMetersPerSecond:
                   DriveConstants.kPhysicalMaxSpeedMetersPerSecond));
         turningPidController.setReference(state.angle.getRadians(),ControlType.kPosition);
 //        SmartDashboard.putString("Swerve[" + absoluteEncoder.getDeviceID() + "] state", state.toString());

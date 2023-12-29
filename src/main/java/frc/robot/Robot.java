@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
+import com.kauailabs.navx.frc.AHRS;
 
 
 //import com.ctre.phoenix.sensors.Pigeon2_Faults;
@@ -50,11 +51,11 @@ public class Robot extends TimedRobot {
 
     private RobotContainer m_robotContainer;
     private SlewRateLimiter xLimiter, yLimiter, turningLimiter;
-    private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
-    private final Joystick buttonBox0 = new Joystick(OIConstants.kButtonBoxPort_0);
-    private final Joystick buttonBox1 = new Joystick(OIConstants.kButtonBoxPort_1);
+    private final Joystick driverJoystick = new Joystick(OIConstants.kDriverControllerPort);
+    private final Joystick secondriverJoystick = new Joystick(OIConstants.kDriverControllerPort2);
     private SwerveSubsystem swerveSubsystem;
     private AHRS gyro;
+    
 
     private PowerDistribution PDH;
     //private AnalogInput pixyCam;
@@ -113,11 +114,10 @@ public class Robot extends TimedRobot {
         // block in order for anything in the Command-based framework to work.
       
         CommandScheduler.getInstance().run();
-       if(Constants.PIXY_AVAILABLE_Comp){
-        //m_robotContainer.displayGameCamSuccess(gamepieceCam.getYaw()>-999.)
+       
         
        }
-    }
+    
 
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
@@ -137,7 +137,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-        gyro.setYaw(180);
+        
      //   gripper = m_robotContainer.getGripperSS();  // moved to robot int
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
@@ -176,7 +176,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        if (driverJoytick.getRawButton(3))
+        if (driverJoystick.getRawButton(3))
             {
                 System.out.println("Button Pressed");
             }
@@ -192,9 +192,9 @@ public class Robot extends TimedRobot {
 
         // CRG use SwerveSubsystem drive methods similar to the SwerveJoysickCmd  {
         // 1. Get real-time joystick inputs
-        double xSpeed = driverJoytick.getRawAxis(OIConstants.kDriverXAxis); // Negative values go forward
-        double ySpeed = -driverJoytick.getRawAxis(OIConstants.kDriverYAxis);
-        double turningSpeed = -driverJoytick.getRawAxis(OIConstants.kDriverRotAxis);
+        double xSpeed = driverJoystick.getRawAxis(OIConstants.kDriverXAxis); // Negative values go forward
+        double ySpeed = -driverJoystick.getRawAxis(OIConstants.kDriverYAxis);
+        double turningSpeed = -driverJoystick.getRawAxis(OIConstants.kDriverRotAxis);
 
         // 2. Apply deadband
         xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;
@@ -204,9 +204,9 @@ public class Robot extends TimedRobot {
         //System.out.println("X: " + String.format("%.3f", xSpeed)
         //                + " Y: " + String.format("%.3f", ySpeed)
         //                + " R: " + String.format("%.3f", turningSpeed));
-        xSpeed*=1.-.8*driverJoytick.getRawAxis(OIConstants.fineControlAxis);
-        ySpeed*=1.-.8*driverJoytick.getRawAxis(OIConstants.fineControlAxis);
-        turningSpeed*=1.-.9*driverJoytick.getRawAxis(OIConstants.fineControlAxis);
+        xSpeed*=1.-.8*driverJoystick.getRawAxis(OIConstants.fineControlAxis);
+        ySpeed*=1.-.8*driverJoystick.getRawAxis(OIConstants.fineControlAxis);
+        turningSpeed*=1.-.9*driverJoystick.getRawAxis(OIConstants.fineControlAxis);
         //    Smooth driver inputs
         smoothedXSpeed = smoothedXSpeed + (xSpeed - smoothedXSpeed) * .08;
         smoothedYSpeed = smoothedYSpeed + (ySpeed - smoothedYSpeed) * .08;
@@ -216,8 +216,8 @@ public class Robot extends TimedRobot {
         //                    + " Y: " + String.format("%.3f", ySpeed)
         //                    + " R: " + String.format("%.3f", turningSpeed));
 
-        if (choice?Constants.PIXY_AVAILABLE_Comp:Constants.PIXY_AVAILABLE) {
-            if (driverJoytick.getRawButton(OIConstants.PixyFollowButton)){
+        if (choice?Constants.PIXY_AVAILABLE:Constants.PIXY_AVAILABLE) {
+            if (driverJoystick.getRawButton(OIConstants.PixyFollowButton)){
                 //int err = pixyCam.getAverageValue();
                 //SmartDashboard.putNumber("PixyX",  pixyCam.getAverageValue());
                 //double turnSpeedB = (err<1500)?.1:(err>1700?-0.1:0.);
@@ -229,7 +229,7 @@ public class Robot extends TimedRobot {
                 //SmartDashboard.putNumber("turnSpeed",smoothedTurningSpeed);
             }
         }
-        if (driverJoytick.getRawButton(OIConstants.BALANCE_AUGMENTER)) {
+        if (driverJoystick.getRawButton(OIConstants.BALANCE_AUGMENTER)) {
             double augment = Math.sin(Math.toRadians(gyro.getPitch()-1));
             //System.out.println(augment);
             smoothedXSpeed+=augment*.036;
@@ -252,7 +252,7 @@ public class Robot extends TimedRobot {
 
         // 4. Construct desired chassis speeds
         ChassisSpeeds chassisSpeeds;
-        if ( !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)) {
+        if ( !driverJoystick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)) {
             // Relative to field
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
