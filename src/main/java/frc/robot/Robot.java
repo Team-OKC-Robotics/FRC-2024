@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
     private AHRS gyro;
     
 
-    private PowerDistribution PDH;
+    // private PowerDistribution PDH;
     //private AnalogInput pixyCam;
    
     private PWM lights;
@@ -75,14 +75,14 @@ public class Robot extends TimedRobot {
         //      o perform all our button bindings,
         //      o put our autonomous chooser on the dashboard.
 
-        choice = Preferences.containsKey("Swerve");
+        // choice = Preferences.containsKey("Swerve");
         //systemChooser = new AnalogInput(Constants.SYSTEMCHOOSER);
         //choice = systemChooser.getValue() == Constants.COMPBOT;
-        if (choice) {
-            PDH = new PowerDistribution(1, ModuleType.kRev);
-        } else {
-            PDH = new PowerDistribution(1, ModuleType.kCTRE);
-        }
+        // if (choice) {
+        //     PDH = new PowerDistribution(1, ModuleType.kRev);
+        // } else {
+        //     PDH = new PowerDistribution(1, ModuleType.kCTRE);
+        // }
        
     
         
@@ -164,6 +164,8 @@ public class Robot extends TimedRobot {
         this.yLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
         this.turningLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond);
         this.swerveSubsystem.setCoastMode();
+
+        this.swerveSubsystem.resetEncoders();
         // }
        
     }
@@ -175,17 +177,17 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        if (driverJoystick.getRawButton(3))
-            {
-                System.out.println("Button Pressed");
-            }
+        // if (driverJoystick.getRawButton(3))
+        //     {
+        //         System.out.println("Button Pressed");
+        //     }
 
         //SmartDashboard.putNumber("BotA", pigeon.getAngle());
-        SmartDashboard.putNumber("BatV", PDH.getVoltage());
+        // SmartDashboard.putNumber("BatV", PDH.getVoltage());
 
-        SmartDashboard.putNumber("Pitch", gyro.getPitch());
-        SmartDashboard.putNumber("Yaw", gyro.getYaw());
-        SmartDashboard.putNumber("Angle", gyro.getAngle());
+        // SmartDashboard.putNumber("Pitch", gyro.getPitch());
+        // SmartDashboard.putNumber("Yaw", gyro.getYaw());
+        // SmartDashboard.putNumber("Angle", gyro.getAngle());
 
         //SmartDashboard.putNumber()
 
@@ -280,7 +282,7 @@ public class Robot extends TimedRobot {
         // swerveSubsystem.driveit(xSpeed, ySpeed, turningSpeed, fieldoriented);
         //}
     
-        //swerveSubsystem.reportStatesToSmartDashbd(moduleStates);
+         swerveSubsystem.reportStatesToSmartDashbd(moduleStates);
 
        if (Timer.getMatchTime() < 5.) {
         swerveSubsystem.setBrakeMode();

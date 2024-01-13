@@ -91,7 +91,7 @@ public final class Constants {
 
         public static final int kBackRightDriveMotorPort        = 7;    // Module 3
         public static final int kBackRightTurningMotorPort      = 8;
-        public static final int kBackRightAbsoluteEncoderPort   = 4;
+        public static final int kBackRightAbsoluteEncoderPort   = 3;
 
         public static final int kBackLeftDriveMotorPort         = 3;    // Module 4
         public static final int kBackLeftTurningMotorPort       = 4;
@@ -113,6 +113,11 @@ public final class Constants {
         public static final boolean kBackLeftDriveAbsoluteEncoderReversed   = true;
         public static final boolean kFrontRightDriveAbsoluteEncoderReversed = true;
         public static final boolean kBackRightDriveAbsoluteEncoderReversed  = true;
+
+        public static final double kFrontLeftAbsoluteEncoderOffset = -3.734; 
+        public static final double kBackLeftAbsoluteEncoderOffset = -4.529;
+        public static final double kFrontRightAbsoluteEncoderOffset = 3.299;
+        public static final double kBackRightAbsoluteEncoderOffset = 2.600;
 
         public static final double kPhysicalMaxSpeedMetersPerSecond = 1;
         public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;

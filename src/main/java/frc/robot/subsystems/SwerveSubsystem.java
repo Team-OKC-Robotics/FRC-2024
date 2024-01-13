@@ -52,8 +52,9 @@ public class SwerveSubsystem extends SubsystemBase {
                 DriveConstants.kFrontLeftDriveEncoderReversed,
                 DriveConstants.kFrontLeftTurningEncoderReversed,
                 DriveConstants.kFrontLeftAbsoluteEncoderPort,
-                DriveConstants.kFrontLeftDriveAbsoluteEncoderReversed
-                ,"FL"
+                DriveConstants.kFrontLeftDriveAbsoluteEncoderReversed,
+                DriveConstants.kFrontLeftAbsoluteEncoderOffset,
+                "FL"
                 );
                 frontRight = new SwerveModule(
                     DriveConstants.kFrontRightDriveMotorPort,
@@ -61,7 +62,8 @@ public class SwerveSubsystem extends SubsystemBase {
                     DriveConstants.kFrontRightDriveEncoderReversed,
                     DriveConstants.kFrontRightTurningEncoderReversed,
                     DriveConstants.kFrontRightAbsoluteEncoderPort,
-                    DriveConstants.kFrontRightDriveAbsoluteEncoderReversed
+                    DriveConstants.kFrontRightDriveAbsoluteEncoderReversed,
+                    DriveConstants.kFrontRightAbsoluteEncoderOffset
                     ,"FR"
                     );
                     backLeft = new SwerveModule(
@@ -70,7 +72,8 @@ public class SwerveSubsystem extends SubsystemBase {
                         DriveConstants.kBackLeftDriveEncoderReversed,
                         DriveConstants.kBackLeftTurningEncoderReversed,
                         DriveConstants.kBackLeftAbsoluteEncoderPort,
-                        DriveConstants.kBackLeftDriveAbsoluteEncoderReversed
+                        DriveConstants.kBackLeftDriveAbsoluteEncoderReversed,
+                        DriveConstants.kBackLeftAbsoluteEncoderOffset
                         ,"BL"
                         );
                         backRight = new SwerveModule(
@@ -79,7 +82,8 @@ public class SwerveSubsystem extends SubsystemBase {
                             DriveConstants.kBackRightDriveEncoderReversed,
                             DriveConstants.kBackRightTurningEncoderReversed,
                             DriveConstants.kBackRightAbsoluteEncoderPort,
-                            DriveConstants.kBackRightDriveAbsoluteEncoderReversed
+                            DriveConstants.kBackRightDriveAbsoluteEncoderReversed,
+                            DriveConstants.kBackRightAbsoluteEncoderOffset
                             ,"BR"
                             );
             odometer = new SwerveDriveOdometry(DriveConstants.kDriveKinematics,
@@ -310,5 +314,12 @@ public class SwerveSubsystem extends SubsystemBase {
         return runOnce(
             () -> stopModules()
         );
+    }
+
+    public void resetEncoders() {
+      frontLeft.resetEncoders();
+      frontRight.resetEncoders();
+      backLeft.resetEncoders();
+      backRight.resetEncoders();
     }
 }

@@ -13,9 +13,12 @@ import com.revrobotics.RelativeEncoder;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -27,7 +30,12 @@ public class SwerveModule {
 
     private final RelativeEncoder driveEncoder;
     private final RelativeEncoder turningEncoder;
+  
+    private final AnalogEncoder absoluteEncoder;
+    // private final PIDController turningPidController;
     private final SparkPIDController turningPidController;
+    private final SparkPIDController drivPidController;
+    private final double absoluteoffset;
 
    
     private final boolean absoluteEncoderReversed;
@@ -45,29 +53,15 @@ public class SwerveModule {
    //     this.reportName = name;
    //     this.comp=false;
    // }
-    public SwerveModule(int driveMotorId, int turningMotorId, 
-        boolean driveMotorReversed, boolean turningMotorReversed,
-        int absoluteEncoderId, boolean absoluteEncoderReversed,
-        boolean comp) {
-        this(driveMotorId, turningMotorId, 
-            driveMotorReversed, turningMotorReversed,
-            absoluteEncoderId, absoluteEncoderReversed);
-        this.comp = comp;
-    }
-    public SwerveModule(int driveMotorId, int turningMotorId, 
-        boolean driveMotorReversed, boolean turningMotorReversed,
-        int absoluteEncoderId, boolean absoluteEncoderReversed,
-        String name) {
-        this(driveMotorId, turningMotorId, 
-            driveMotorReversed, turningMotorReversed,
-            absoluteEncoderId, absoluteEncoderReversed);
-        this.reportName=name;
-    }
+
 
     public SwerveModule(int driveMotorId, int turningMotorId, 
             boolean driveMotorReversed, boolean turningMotorReversed,
-            int absoluteEncoderId, boolean absoluteEncoderReversed) {
+            int absoluteEncoderId, boolean absoluteEncoderReversed, double absoluteEncoderoffset,
+            String name) {
 
+        this.reportName = name;
+            
         this.absoluteEncoderReversed = absoluteEncoderReversed;
 
         driveMotor = new CANSparkMax(driveMotorId, MotorType.kBrushless);
@@ -81,6 +75,9 @@ public class SwerveModule {
 
         driveEncoder = driveMotor.getEncoder();
         turningEncoder = turningMotor.getEncoder();
+        absoluteEncoder = new AnalogEncoder(absoluteEncoderId);
+        absoluteoffset = absoluteEncoderoffset;
+        
 
         driveEncoder.setPositionConversionFactor(
             
@@ -95,12 +92,23 @@ public class SwerveModule {
             
             ModuleConstants.kTurningEncoderRPM2RadPerSec);
 
+        // turningPidController = new PIDController(0.0005, 0, 0.00005);
         turningPidController = turningMotor.getPIDController();
-        turningPidController.setP( 2.0);
+        turningPidController.setP( 0.5);
         turningPidController.setI( 0.);
         turningPidController.setFF( 0.);
-        turningPidController.setD( 0.);
+        turningPidController.setD( 0.0);
         turningPidController.setOutputRange(-1., 1.);
+
+        drivPidController = driveMotor.getPIDController();
+        drivPidController.setP(0.5);
+        drivPidController.setI(0.0);
+        drivPidController.setFF(0.);
+        drivPidController.setD(0.0);
+        drivPidController.setOutputRange(-1, absoluteEncoderoffset);
+
+
+        // absoluteEncoder.setPositionOffset(absoluteEncoderoffset);
 
         resetEncoders();
     }
@@ -112,10 +120,12 @@ public class SwerveModule {
     /** Returns drive position in meters
      */
     public double getDrivePosition() {
-        return driveEncoder.getPosition();
+        return driveEncoder.getPosition(); //TODO ABBEY IS BAD
     }
     public double getTurningPosition() {
+        // return absoluteEncoder.getAbsolutePosition()*360  + absoluteoffset; //converts rotations to degrees
         return turningEncoder.getPosition();
+    
     }
 
     /** returns drive velocity in meters/sec */
@@ -134,12 +144,14 @@ public class SwerveModule {
     }
     public void resetEncoders() {
         driveEncoder.setPosition(0);
-        turningEncoder.setPosition(0);
+        turningEncoder.setPosition(absoluteEncoder.getAbsolutePosition()* 2 *Math.PI + absoluteoffset); //FIXME
+       // turningEncoder.setPosition(0);
     }
 
     public void resetPos() {
-        driveEncoder.setPosition(0.);
+        
     }
+
     public SwerveModuleState getState() {
         return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
     }
@@ -163,13 +175,20 @@ public class SwerveModule {
         driveMotor.set(state.speedMetersPerSecond / 
             (comp?DriveConstants.kPhysicalMaxSpeedMetersPerSecond:
                   DriveConstants.kPhysicalMaxSpeedMetersPerSecond));
+                //   turningPidController.setSetpoint(state.angle.getDegrees());
+                //   turningMotor.set(turningPidController.calculate(getTurningPosition()));
         turningPidController.setReference(state.angle.getRadians(),ControlType.kPosition);
-//        SmartDashboard.putString("Swerve[" + absoluteEncoder.getDeviceID() + "] state", state.toString());
+    //  SmartDashboard.putString("Swerve[" + absoluteEncoder.getAbsolutePosition() + "] state", state.toString());
+     //    SmartDashboard.putString("Swerve[" + this.reportName + "] state", state.toString());
+    //  SmartDashboard.putNumber("Setpoint", turningPidController.getSetpoint());
+      
     }
 
     public void smartDashreportState(SwerveModuleState state) {
-        SmartDashboard.putNumber(reportName+ " Encoder" ,turningEncoder.getPosition());
+         SmartDashboard.putNumber(reportName+ " ABS Encoder" ,absoluteEncoder.getAbsolutePosition()*2*Math.PI);
+        // SmartDashboard.putNumber(reportName+ " Encoder" ,turningEncoder.getPosition());
     }
+
 
     public void stop() {
         driveMotor.set(0);
