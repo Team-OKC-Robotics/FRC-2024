@@ -4,22 +4,11 @@
 
 package frc.robot;
 
-
-import frc.robot.commands.Autos;
-import frc.robot.subsystems.SwerveSubsystem;
-
-import com.kauailabs.navx.frc.AHRS;
-
+import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj.Joystick;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -27,23 +16,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SwerveSubsystem swerveSubsystem;
-  private AHRS gyro; 
-
-  private final Joystick driverJoystick = new Joystick(OIConstants.kDriverControllerPort); //first driver 
-  //private final Joystick secondriverJoystick = new Joystick(OIConstants.kDriverControllerPort2); second driver
-  SendableChooser<Command> m_chooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
-    swerveSubsystem = new SwerveSubsystem();
-    gyro = new AHRS();
     // Configure the trigger bindings
     configureBindings();
-    m_chooser = new SendableChooser<>();
-
-
   }
 
   /**
@@ -56,24 +33,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(driverJoystick, OIConstants.kDriverResetGyroButtonIdx).
-    onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
-  }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return m_chooser.getSelected();
-  }
-
-public AHRS getGyro() {
-    return gyro;
-}
-public SwerveSubsystem getSwerveSS() {
-  return swerveSubsystem;
   }
 }
