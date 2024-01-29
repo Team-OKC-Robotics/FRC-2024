@@ -13,11 +13,14 @@ import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 
 public class VisionSubsystem extends SubsystemBase {
   /** Creates a new VisionSubsystem. */
-
+    
+    PhotonCamera camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
+    final CANSparkMax motor = new CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless);
+    PIDController turnPID = new PIDController(0.001, 0.00001, 0);
+    
   public VisionSubsystem() {
     var aprilTagDetector = new AprilTagDetector();
     var config = aprilTagDetector.getConfig();
@@ -29,15 +32,9 @@ public class VisionSubsystem extends SubsystemBase {
 
   public void updateVisionData() {
     
-    final RobotContainer m_robotContainer;
-    PhotonCamera camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
-    final CANSparkMax motor = new CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless);
-    PIDController turnPID = new PIDController(0.001, 0.00001, 0);
-    
     if (camera != null) {
     var result = camera.getLatestResult();
   
-
     if (result.hasTargets()) {}
             // Get the fiducial ID and yaw
             
@@ -62,10 +59,38 @@ public class VisionSubsystem extends SubsystemBase {
 
 }
 
-  @Override
+public boolean canSeeTargetID(int targetID) {
+  var result = camera.getLatestResult();
+  
+  if (result.hasTargets()) {
+    for (var target : result.getTargets()) {
+      int fiducialId = target.getFiducialId(); 
+      if (fiducialId == targetID) { 
+        return true;
+      }
+    }
+    return false;
+  }
+return false;
+}
+
+public double getYaw(int targetID) {
+  var result = camera.getLatestResult();
+
+  if (result.hasTargets()) {
+    for (var target : result.getTargets()) {
+      int fiducialId = target.getFiducialId(); 
+      if (fiducialId == targetID)
+      return target.getYaw(); { 
+      }
+    }
+  }
+  return 0.0;
+}
+
+  
+@Override
   public void periodic() {
     // This method will be called once per scheduler run
     }
-  }
-
-
+}
