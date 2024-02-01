@@ -1,4 +1,4 @@
-package frc.robot.commands.climber;
+package frc.robot.subsystems.climber;
 
 import com.revrobotics.CANSparkMax.*;
 import com.revrobotics.RelativeEncoder;
@@ -18,6 +18,7 @@ public class ClimberSubsystem extends SubsystemBase {
     
     private double climbSetpoint = 0;
     private boolean climbStopped = true;
+    
 
     public RelativeEncoder climbEncoder;
     
@@ -36,8 +37,8 @@ public void setEncoderPosition() {
     climbEncoder.setPosition(0);
 }
 
-public void setpower(double power) {
-    climbmotor.set(power);
+public void setspeed(double speed) {
+    climbmotor.set(speed);
 
 }
 
@@ -45,5 +46,11 @@ public double getPosition(){
     return climbEncoder.getPosition();
 }
 
+public void climbStopped() {
+        climbmotor.set(0);
 
+    }
 }
+
+
+
