@@ -36,8 +36,9 @@ public class ShooterSubsystem extends SubsystemBase {
     leftShooterMotor.restoreFactoryDefaults();
     rightShooterMotor.restoreFactoryDefaults();
     indexerMotor.restoreFactoryDefaults();
-    leftShooterMotor.follow(rightShooterMotor);
+    
     rightShooterMotor.setInverted(true);
+    leftShooterMotor.setInverted(false);;
     leftShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     rightShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     rightEncoder = rightShooterMotor.getEncoder();
@@ -65,12 +66,23 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void shootSpeed(double power){
     rightShooterMotor.set(power);
+    leftShooterMotor.set(power);
+    //indexerMotor.set(power);
+  }
+
+  public void indexerSpeed(double power) {
     indexerMotor.set(power);
   }
 
-  public void stop() {
-    rightShooterMotor.set(0);
+  public void stopIndexer(double speed) {
     indexerMotor.set(0);
+  }
+
+  public void stopShooter() {
+    rightShooterMotor.set(0);
+    leftShooterMotor.set(0);
+    
+
   }
   
   
@@ -90,6 +102,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
  public double getSpeed() {
   return rightShooterMotor.get();
+  
  }
 
  public double getPower() {
@@ -121,6 +134,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void ShootIt(double speed) {
     rightShooterMotor.set(speed);
+    leftShooterMotor.set(speed);
     indexerMotor.set(speed);
   }
 }
