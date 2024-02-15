@@ -49,4 +49,14 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.3d;
     public static final double TURN_CONSTANT = 0.75;
   }
+
+  public static final class ShooterConstants {
+    public static final int leftShooterMotorID = 13;
+    public static final int rightShooterMotorID = 14;
+    public static final int indexerMotorID = 10;
+  }
+
+  public static class OI {
+    public static final int kSecondriverButton2 = 2;
+  }
 }

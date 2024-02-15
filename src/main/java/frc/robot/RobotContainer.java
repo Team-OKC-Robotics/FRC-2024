@@ -19,8 +19,11 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.commands.shooter.ShooterCommand;
 import java.io.File;
+import edu.wpi.first.wpilibj.Joystick;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -34,11 +37,18 @@ public class RobotContainer
                                                                          "swerve/swerve"));
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  CommandJoystick driverController = new CommandJoystick(1);
+  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
 
+  private final Joystick driverController = new Joystick(0);
+  private final Joystick secondriver = new Joystick(1);
+
+  private final JoystickButton secondriverButton2 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton2);
+
+  private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
+  private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -107,6 +117,7 @@ public class RobotContainer
     new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
+secondriverButton2.whileTrue(runShooter);
   }
 
   /**
