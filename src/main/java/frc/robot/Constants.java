@@ -56,7 +56,14 @@ public final class Constants
     public static final int indexerMotorID = 10;
   }
 
+  public static final class IntakeConstants
+  {
+    public static final int intakemotorID = 9;
+    public static final int limitSwitchBeanBrakeChannel = 1;
+  }
+
   public static class OI {
     public static final int kSecondriverButton2 = 2;
+    public static final int kSecondriverButton4 = 4;
   }
 }

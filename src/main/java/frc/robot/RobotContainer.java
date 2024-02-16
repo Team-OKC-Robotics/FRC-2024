@@ -23,6 +23,8 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.commands.shooter.ShooterCommand;
 import java.io.File;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.commands.intake.SetIntakeCommand;
 import edu.wpi.first.wpilibj.Joystick;
 
 /**
@@ -38,6 +40,7 @@ public class RobotContainer
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
@@ -46,9 +49,13 @@ public class RobotContainer
   private final Joystick secondriver = new Joystick(1);
 
   private final JoystickButton secondriverButton2 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton2);
-
+  private final JoystickButton secondriverButton4 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton4);
+ 
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
+
+  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 1);
+  private final SetIntakeCommand stopIntake = new SetIntakeCommand(m_intake, 0);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
