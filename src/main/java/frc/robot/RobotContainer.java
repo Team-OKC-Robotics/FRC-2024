@@ -8,6 +8,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -23,6 +25,12 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.commands.shooter.ShooterCommand;
 import java.io.File;
+import frc.robot.subsystems.superstructure.*;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.wpilibj.Joystick;
 
 /**
@@ -38,13 +46,18 @@ public class RobotContainer
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  public final Superstructure superstructure = new Superstructure(
+ 
+  m_shooter,
+  
+  drivebase);
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
 
   private final Joystick driverController = new Joystick(0);
   private final Joystick secondriver = new Joystick(1);
-
+  private final SendableChooser<Command> autoChooser;
   private final JoystickButton secondriverButton2 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton2);
 
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
@@ -55,6 +68,8 @@ public class RobotContainer
   public RobotContainer()
   {
     // Configure the trigger bindings
+    autoChooser = AutoBuilder.buildAutoChooser("Simple Auto");
+    Shuffleboard.getTab("Pre-Match").add("Auto Chooser", autoChooser);
     configureBindings();
 
     AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
@@ -120,6 +135,12 @@ public class RobotContainer
 secondriverButton2.whileTrue(runShooter);
   }
 
+  private void configurePathPlanner() {
+    NamedCommands.registerCommand("Go Backwards", superstructure.toState(SuperState.SHOOT_AMP).withTimeout(3));
+    NamedCommands.registerCommand("Safe", superstructure.toState(SuperState.SAFE).withTimeout(1));
+    drivebase.setupPathPlanner();
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -128,7 +149,12 @@ secondriverButton2.whileTrue(runShooter);
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Path", true);
+    return drivebase.getAutonomousCommand("TESTER", true);
+
+    //return new PathPlannerAuto("Simple Auto");
+
+    //return autoChooser.getSelected();
+
   }
 
   public void setDriveMode()
