@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.swervedrive.auto.AutoAlignAuto;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
@@ -44,6 +45,8 @@ public class RobotContainer
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
+
+  AutoAlignAuto auto = new AutoAlignAuto(drivebase, vision);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -124,7 +127,8 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Path", true);
+    // return drivebase.getAutonomousCommand("New Path", true);
+    return auto;
   }
 
   public void setDriveMode()
