@@ -1,4 +1,10 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.subsystems;
+
+import java.util.List;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -16,11 +22,11 @@ public class VisionSubsystem extends SubsystemBase {
   /** Creates a new VisionSubsystem. */
     
     PhotonCamera camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
-    final CANSparkMax motor = new CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless);
     PIDController turnPID = new PIDController(0.001, 0.00001, 0);
-    boolean hasTarget; // Stores whether or not a target is detected
-    PhotonPipelineResult result; // Stores all the data that Photonvision returns4
 
+    boolean hasTarget; // Stores whether or not a target is detected
+    PhotonPipelineResult result; // Stores all the data that Photonvision returns
+    
   public VisionSubsystem() {
     var aprilTagDetector = new AprilTagDetector();
     var config = aprilTagDetector.getConfig();
@@ -48,13 +54,7 @@ public class VisionSubsystem extends SubsystemBase {
             // You can also use SmartDashboard to display the information on the Shuffleboard
             SmartDashboard.putNumber("Fiducial ID", fiducialId);
             SmartDashboard.putNumber("Yaw", yaw);
-
-            motor.set(turnPID.calculate(yaw));      
-     
-    } 
-    else {
-      motor.set(0);
-    
+            
  }
 
 }
@@ -88,6 +88,16 @@ public double getYaw(int targetID) {
   return 0.0;
 }
 
+public PhotonTrackedTarget getTargetWithID(int id) { // Returns the apriltag target with the specified ID (if it exists)
+        List<PhotonTrackedTarget> targets = result.getTargets(); // Create a list of all currently tracked targets
+        for (PhotonTrackedTarget i : targets) {
+            if (i.getFiducialId() == id) { // Check the ID of each target in the list
+                return i; // Found the target with the specified ID!
+            }
+        }
+        return null; // Failed to find the target with the specified ID
+    }
+
 public PhotonTrackedTarget getBestTarget() {
         if (hasTarget) {
         return result.getBestTarget(); // Returns the best (closest) target
@@ -96,8 +106,11 @@ public PhotonTrackedTarget getBestTarget() {
             return null; // Otherwise, returns null if no targets are currently found
         }
     }
-    
-public double getDistanceToTarget(PhotonTrackedTarget target) {
+    public boolean getHasTarget() {
+        return hasTarget; // Returns whether or not a target was found
+    }
+
+    public double getDistanceToTarget(PhotonTrackedTarget target) {
         if (!hasTarget) {
             return 0;
         }
@@ -107,12 +120,13 @@ public double getDistanceToTarget(PhotonTrackedTarget target) {
         double distance = april_tag_area;
 
         // Print the area and pitch of the target
+        //System.out.println("Area: " + april_tag_height + "Pitch: " + april_tag_pitch);
         SmartDashboard.putNumber("t_area", april_tag_area);
         SmartDashboard.putNumber("t_pitch", april_tag_pitch);
         return distance;
     }
 
-public boolean InRange(double distanceThreshold, double distanceThresholdRange,
+    public boolean InRange(double distanceThreshold, double distanceThresholdRange,
     double angleThreshold, double angleThresholdRange) {
         if (!hasTarget) {
             return false;
@@ -133,16 +147,16 @@ public boolean InRange(double distanceThreshold, double distanceThresholdRange,
     
         return inRange;
     }
-      
+
 @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    PhotonPipelineResult result = camera.getLatestResult(); // Query the latest result from PhotonVision
+    
+        PhotonPipelineResult result = camera.getLatestResult(); // Query the latest result from PhotonVision
         hasTarget = result.hasTargets(); // If the camera has detected an apriltag target, the hasTarget boolean will be true
         if (hasTarget) {
             this.result = result;
         }
         InRange(0, 5, 0, 5); // Put to SmartDashboard whether or not the target is in range
-
     }
 }
