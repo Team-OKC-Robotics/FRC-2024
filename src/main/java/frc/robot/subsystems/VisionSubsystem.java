@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 

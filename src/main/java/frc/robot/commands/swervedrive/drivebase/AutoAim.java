@@ -51,6 +51,10 @@ public class AutoAim extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(vision.getTargetWithID(4).getYaw()) < 1;
+    if (vision.getTargetWithID(4) == null) {
+      return false;
+    } else {
+      return Math.abs(vision.getTargetWithID(4).getYaw()) < 1;
   }
+}
 }

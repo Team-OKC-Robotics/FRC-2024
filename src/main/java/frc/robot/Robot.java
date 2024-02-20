@@ -4,13 +4,16 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.io.IOException;
+
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import java.io.File;
-import java.io.IOException;
 import frc.robot.swervelib.parser.SwerveParser;
 
 /**
@@ -21,12 +24,18 @@ import frc.robot.swervelib.parser.SwerveParser;
 public class Robot extends TimedRobot
 {
 
-  private static Robot   instance;
-  private        Command m_autonomousCommand;
+  private static Robot instance;
+  private Command m_autonomousCommand;
+  
+   private static final String kDefaultAuto = "Default";
+  private static final String kCustomAuto = "New Auto";
+  private String m_autoSelected;
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
+
 
   public Robot()
   {
@@ -48,6 +57,11 @@ public class Robot extends TimedRobot
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
+     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
+    m_chooser.addOption("My Auto", kCustomAuto);
+    SmartDashboard.putData("Auto choices", m_chooser);
+
+    
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
@@ -100,12 +114,25 @@ public class Robot extends TimedRobot
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    m_autoSelected = m_chooser.getSelected();
+    System.out.println("Auto selected: " + m_autoSelected);
+
+    switch (m_autoSelected) {
+      case kCustomAuto:
+        // Put custom auto code here
+        break;
+      case kDefaultAuto:
+      default:
+        // Put default auto code here
+        break;
+         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null)
-    {
+    if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
   }
+    }
 
   /**
    * This function is called periodically during autonomous.

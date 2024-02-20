@@ -49,4 +49,8 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.2;
     public static final double TURN_CONSTANT = 0.75;
   }
+
+  public static final class LED {
+    public static final int PWMPORT = 1, LENGTH = 20;
+}
 }
