@@ -10,6 +10,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
@@ -49,13 +51,50 @@ public class RobotContainer
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
 
+  AddressableLED m_led = new AddressableLED(9);
+  AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(12);
+
   Command auto;
+
+  int m_rainbowFirstPixelHue = 0;
+
+  private void rainbow() {
+
+    // For every pixel
+
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+
+      // Calculate the hue - hue is easier for rainbows because the color
+
+      // shape is a circle so only one value needs to precess
+
+      final var hue = (m_rainbowFirstPixelHue + (i * 180 / m_ledBuffer.getLength())) % 180;
+
+      // Set the value
+
+      m_ledBuffer.setHSV(i, hue, 255, 32);
+
+    }
+
+    // Increase by to make the rainbow "move"
+
+    m_rainbowFirstPixelHue += 3;
+
+    // Check bounds
+
+    m_rainbowFirstPixelHue %= 180;
+
+  }
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer()
   {
+
+    m_led.setLength(m_ledBuffer.getLength());
+    m_led.setData(m_ledBuffer);
+    m_led.start();
     
     NamedCommands.registerCommand("AutoAlign", new AutoAlignAuto(drivebase, vision));
     auto = new PathPlannerAuto("New Auto");
@@ -146,5 +185,10 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+  public void animateLEDs() {
+    rainbow();
+    m_led.setData(m_ledBuffer);
   }
 }
