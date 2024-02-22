@@ -45,7 +45,7 @@ public class SuperstructureToState extends SequentialCommandGroup {
 
         determineConditions();
 
-        Command shooterCmd = Commands.waitUntil(m_shooterWait).andThen(superstructure.m_shooter.shootIt(m_targetState.shoot.speed).until(m_shooterUntil));
+        Command shooterCmd = Commands.waitUntil(m_shooterWait).andThen(superstructure.m_shooter.shootIt(m_targetState.shooter.speed).until(m_shooterUntil));
         //Command feederCmd = Commands.waitUntil(m_feederWait).andThen(superstructure.m_feeder.runFeeder(m_targetState.feed.power).until(m_feederUntil));
         //Command elevatorCmd = Commands.waitUntil(m_elevatorWait).andThen(superstructure.m_elevator.setAngle(m_targetState.elevator.angle).until(m_elevatorUntil));
         Command intakeCmd = Commands.waitUntil(m_intakeWait).andThen(superstructure.m_intake.runIntake(m_targetState.intake.power).until(m_intakeUntil));

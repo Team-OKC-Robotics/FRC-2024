@@ -65,5 +65,6 @@ public final class Constants
   public static class OI {
     public static final int kSecondriverButton2 = 2;
     public static final int kSecondriverButton4 = 4;
+    public static final int kdriverControllerButton2 = 2;
   }
 }

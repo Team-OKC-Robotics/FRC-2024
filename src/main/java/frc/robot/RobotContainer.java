@@ -20,6 +20,8 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.superstructure.SuperState;
+import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.commands.shooter.ShooterCommand;
 import java.io.File;
@@ -42,6 +44,8 @@ public class RobotContainer
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
 
+  public final Superstructure superstructure = new Superstructure(m_intake, m_shooter, drivebase);
+
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
 
@@ -50,6 +54,7 @@ public class RobotContainer
 
   private final JoystickButton secondriverButton2 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton2);
   private final JoystickButton secondriverButton4 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton4);
+  private final JoystickButton driverControllerButton2 = new JoystickButton(driverController, Constants.OI.kdriverControllerButton2);
  
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
@@ -124,7 +129,10 @@ public class RobotContainer
     new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
-secondriverButton2.whileTrue(runShooter);
+//secondriverButton2.whileTrue(runShooter);
+
+   secondriverButton2.whileTrue(superstructure.toState(SuperState.SHOOT_AMP));
+   driverControllerButton2.whileTrue(runShooter);
   }
 
   /**
