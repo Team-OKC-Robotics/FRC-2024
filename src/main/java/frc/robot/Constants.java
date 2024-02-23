@@ -48,5 +48,16 @@ public final class Constants
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT = 0.75;
+
+  }
+
+public static class OI {
+  public static final int KSecondriverButton5 = 5;
+  public static final int KSecondriverButton6 = 6;
+}
+
+  public static class ClimberConstants {
+    public static final int rightclimbermotorID = 14;
+    public static final int leftclimbermotorID = 15;
   }
 }

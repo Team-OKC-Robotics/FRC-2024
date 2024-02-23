@@ -17,12 +17,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.climber.ClimbUp;
+import frc.robot.commands.climber.ClimberCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.commands.climber.*;
 import java.io.File;
 
 
@@ -43,9 +44,12 @@ public class RobotContainer
   private final Joystick driverController = new Joystick(0);
   private final Joystick secondriver = new Joystick(1);
 
-  private JoystickButton leftBumper = new JoystickButton(secondriver, 5);
-  private JoystickButton rightBumper = new JoystickButton(secondriver, 6);
-  private JoystickButton aButton = new JoystickButton(secondriver, 7);
+  private final JoystickButton secondriverButton5 = new JoystickButton(secondriver, Constants.OI.KSecondriverButton5);
+  private final JoystickButton secondriverButton6 = new JoystickButton(secondriver, Constants.OI.KSecondriverButton6);
+  private final ClimberCommand upClimber = new ClimberCommand(1, climber);
+  private final ClimberCommand downClimber = new ClimberCommand(-1, climber);
+  private final ClimberCommand stopClimber = new ClimberCommand(0, climber);
+ 
 
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
@@ -105,7 +109,7 @@ public class RobotContainer
   }
   //private final IntakeCommand intakeIn = new IntakeCommand(0.8, intake);
  // private final IntakeCommand intakeStop = new IntakeCommand(0, intake);
-  private final ClimbUp climberUp = new ClimbUp(0.9, climber);
+ 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary predicate, or via the
@@ -119,8 +123,10 @@ public class RobotContainer
 
     new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-//    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
-    aButton.onTrue(climberUp);
+    secondriverButton5.whileTrue(upClimber);
+    secondriverButton6.whileTrue(downClimber);
+
+
 
     //leftBumper.whileTrue(intakeIn);
   }
