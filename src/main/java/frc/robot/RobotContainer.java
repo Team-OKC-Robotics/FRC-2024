@@ -131,7 +131,7 @@ public class RobotContainer
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
 //secondriverButton2.whileTrue(runShooter);
 
-   secondriverButton2.whileTrue(superstructure.toState(SuperState.SHOOT_AMP));
+   secondriverButton2.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
    driverControllerButton2.whileTrue(runShooter);
   }
 
