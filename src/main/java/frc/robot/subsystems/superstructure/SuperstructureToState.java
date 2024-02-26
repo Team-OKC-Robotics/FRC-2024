@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.*;
+import frc.robot.subsystems.pivot.*;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 import java.util.function.BooleanSupplier;
@@ -22,6 +23,8 @@ public class SuperstructureToState extends SequentialCommandGroup {
     private BooleanSupplier m_swerveWait = () -> true;
     private BooleanSupplier m_climberUntil = () -> false;
     private BooleanSupplier m_feederUntil = () -> false;
+    private BooleanSupplier m_pivotUntil = () -> false;
+    private BooleanSupplier m_pivotWait = () -> true;
     private BooleanSupplier m_intakeUntil = () -> false;
     private BooleanSupplier m_shooterUntil = () -> false;
     private BooleanSupplier m_elevatorUntil = () -> false;
@@ -40,6 +43,8 @@ public class SuperstructureToState extends SequentialCommandGroup {
         //ElevatorSubsystem elevator = superstructure.m_elevator;
         SwerveSubsystem swerve = superstructure.m_swerve;
 
+        PivotSubsystem pivot = superstructure.m_pivot;
+
 
         Command initCmd = Commands.runOnce(() -> m_superstructure.updateState(m_targetState));
 
@@ -49,12 +54,14 @@ public class SuperstructureToState extends SequentialCommandGroup {
         //Command feederCmd = Commands.waitUntil(m_feederWait).andThen(superstructure.m_feeder.runFeeder(m_targetState.feed.power).until(m_feederUntil));
         //Command elevatorCmd = Commands.waitUntil(m_elevatorWait).andThen(superstructure.m_elevator.setAngle(m_targetState.elevator.angle).until(m_elevatorUntil));
         Command intakeCmd = Commands.waitUntil(m_intakeWait).andThen(superstructure.m_intake.runIntake(m_targetState.intake.power).until(m_intakeUntil));
+        Command pivotCmd = Commands.waitUntil(m_pivotWait).andThen(superstructure.m_pivot.setAngle(m_targetState.pivot.angle).until(m_pivotUntil));
         //Command climberCmd = Commands.waitUntil(m_climberWait).andThen(superstructure.m_climber.setHeight(m_targetState.climb.height)).until(m_climberUntil);
 
 
         ParallelCommandGroup commandGroup = new ParallelCommandGroup(
                                                                      intakeCmd, 
-                                                                     shooterCmd
+                                                                     shooterCmd,
+                                                                     pivotCmd
                                                                     
                                                                     );
 

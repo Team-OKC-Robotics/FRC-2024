@@ -46,13 +46,13 @@ public final class Constants
     // Joystick Deadband
     public static final double LEFT_X_DEADBAND = 0.3;
     public static final double LEFT_Y_DEADBAND = 0.3;
-    public static final double RIGHT_X_DEADBAND = 0.3d;
+    public static final double RIGHT_X_DEADBAND = 0.3;
     public static final double TURN_CONSTANT = 0.75;
   }
 
   public static final class ShooterConstants {
-    public static final int leftShooterMotorID = 13;
-    public static final int rightShooterMotorID = 14;
+    public static final int leftShooterMotorID = 14;
+    public static final int rightShooterMotorID = 13;
     public static final int indexerMotorID = 10;
   }
 
@@ -62,9 +62,20 @@ public final class Constants
     public static final int limitSwitchBeanBrakeChannel = 1;
   }
 
+  public static final class PivotConstants {
+    public static final int pivotmotorID = 11;
+  }
+
   public static class OI {
+    //second driver buttons
     public static final int kSecondriverButton2 = 2;
     public static final int kSecondriverButton4 = 4;
+    public static final int kSecondriverButton1 = 1;
+    public static final int kSecondriverButton3 = 3;
+    public static final int kSecondriverButton5 = 5;
+    // first driver buttons
     public static final int kdriverControllerButton2 = 2;
+    
+
   }
 }
