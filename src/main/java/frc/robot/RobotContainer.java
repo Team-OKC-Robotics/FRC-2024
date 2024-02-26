@@ -52,10 +52,14 @@ public class RobotContainer
  
   private final Joystick driverController = new Joystick(0);
   private final Joystick secondriver = new Joystick(1);
-  //buttons
+ 
+  //driver buttons
+
+  private final JoystickButton driverControllerButton2 = new JoystickButton(driverController, Constants.OI.kdriverControllerButton2);
+  
+  //second driver buttons
   private final JoystickButton secondriverButton2 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton2);
   private final JoystickButton secondriverButton4 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton4);
-  private final JoystickButton driverControllerButton2 = new JoystickButton(driverController, Constants.OI.kdriverControllerButton2);
   private final JoystickButton secondriverButton1 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton1);
   private final JoystickButton secondriverButton3 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
   private final JoystickButton secondriverButton5 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
@@ -136,10 +140,12 @@ public class RobotContainer
     new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
-    secondriverButton1.whileTrue(runShooter);
-    secondriverButton5.whileTrue(otherwaypivot);
-    secondriverButton2.whileTrue(runIntake);
-    secondriverButton3.whileTrue(runShooter);
+    
+    secondriverButton1.whileTrue(superstructure.toState(SuperState.SCORE_AMP_SETUP));
+    //secondriverButton1.whileTrue(runShooter);
+    //secondriverButton5.whileTrue(otherwaypivot);
+    //secondriverButton2.whileTrue(runIntake);
+    //secondriverButton3.whileTrue(runShooter);
 
 
    
