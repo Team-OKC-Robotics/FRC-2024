@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import frc.robot.swervelib.SwerveController;
+import swervelib.SwerveController;
 
 /**
  * An example command that uses an example subsystem.
