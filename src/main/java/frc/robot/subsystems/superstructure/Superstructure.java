@@ -39,7 +39,7 @@ public class Superstructure {
         //m_feeder.setDefaultCommand(m_feeder.runFeeder(FeederSubsystem.FeederState.OFF.power));
        m_intake.setDefaultCommand(m_intake.runIntake(IntakeSubsystem.IntakeState.OFF.power));
        m_shooter.setDefaultCommand(m_shooter.shootIt(ShooterSubsystem.ShooterState.OFF.speed));
-       m_pivot.setDefaultCommand(m_pivot.setAngle(PivotSubsystem.PivotState.MINANGLE.angle));
+    //    m_pivot.setDefaultCommand(m_pivot.setAngle(PivotSubsystem.PivotState.MINANGLE.angle));
        // m_elevator.setDefaultCommand(m_elevator.setAngle(ElevatorSubsystem.ElevatorState.MINANGLE.angle));
     }
 

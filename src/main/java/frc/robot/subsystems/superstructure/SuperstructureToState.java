@@ -54,18 +54,18 @@ public class SuperstructureToState extends SequentialCommandGroup {
         //Command feederCmd = Commands.waitUntil(m_feederWait).andThen(superstructure.m_feeder.runFeeder(m_targetState.feed.power).until(m_feederUntil));
         //Command elevatorCmd = Commands.waitUntil(m_elevatorWait).andThen(superstructure.m_elevator.setAngle(m_targetState.elevator.angle).until(m_elevatorUntil));
         Command intakeCmd = Commands.waitUntil(m_intakeWait).andThen(superstructure.m_intake.runIntake(m_targetState.intake.power).until(m_intakeUntil));
-        Command pivotCmd = Commands.waitUntil(m_pivotWait).andThen(superstructure.m_pivot.setAngle(m_targetState.pivot.angle).until(m_pivotUntil));
+        // Command pivotCmd = Commands.waitUntil(m_pivotWait).andThen(superstructure.m_pivot.setAngle(m_targetState.pivot.angle).until(m_pivotUntil));
         //Command climberCmd = Commands.waitUntil(m_climberWait).andThen(superstructure.m_climber.setHeight(m_targetState.climb.height)).until(m_climberUntil);
 
 
-        ParallelCommandGroup commandGroup = new ParallelCommandGroup(
-                                                                     intakeCmd, 
-                                                                     shooterCmd,
-                                                                     pivotCmd
+        // ParallelCommandGroup commandGroup = new ParallelCommandGroup(
+        //                                                              intakeCmd, 
+        //                                                              shooterCmd,
+        //                                                              pivotCmd
                                                                     
-                                                                    );
+        //                                                             );
 
-        addCommands(initCmd, commandGroup.withTimeout(30));
+        // addCommands(initCmd, commandGroup.withTimeout(30));
     }
 
     private void determineConditions() {
@@ -75,7 +75,7 @@ public class SuperstructureToState extends SequentialCommandGroup {
         
         if(m_targetState == SuperState.INTAKE_NOTE) {
             m_intakeWait = () -> true;
-            m_intakeUntil = intake::getBeamBrakeState;
+         //   m_intakeUntil = intake::getBeamBrakeState;
         }
     } 
 }

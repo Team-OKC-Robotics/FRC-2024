@@ -45,7 +45,7 @@ public class RobotContainer
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
-  public final Superstructure superstructure = new Superstructure(m_intake, m_shooter, m_pivot, drivebase);
+  // public final Superstructure superstructure = new Superstructure(m_intake, m_shooter, m_pivot, drivebase);
 
   //controllers
   XboxController driverXbox = new XboxController(0);
@@ -141,11 +141,11 @@ public class RobotContainer
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     
-    secondriverButton1.whileTrue(superstructure.toState(SuperState.SCORE_AMP_SETUP));
-    //secondriverButton1.whileTrue(runShooter);
-    //secondriverButton5.whileTrue(otherwaypivot);
-    //secondriverButton2.whileTrue(runIntake);
-    //secondriverButton3.whileTrue(runShooter);
+    //secondriverButton1.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
+    secondriverButton1.whileTrue(runShooter);
+    secondriverButton5.whileTrue(otherwaypivot);
+    secondriverButton2.whileTrue(runIntake);
+    secondriverButton3.whileTrue(setpivot);
 
 
    

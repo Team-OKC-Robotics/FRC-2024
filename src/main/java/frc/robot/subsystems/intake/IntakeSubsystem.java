@@ -7,21 +7,47 @@ import com.revrobotics.CANSparkLowLevel;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase{
 
     private final CANSparkMax intakemotor;
-    private final DigitalInput limitSwitchBeamBrake;
+    private final DigitalInput IntakeLimitSwitch;
+    private DataLog log;
+    private DoubleLogEntry posLog;
+    private DoubleLogEntry outputLog;
+    private DoubleLogEntry setpointLog;
+
+    private int direction = 0;
+
+    // shuffleboard
+    private ShuffleboardTab tab = Shuffleboard.getTab("intake");
+
+   
+
+    //sensors 
+    private GenericEntry intakeSwitch = tab.add("intake switch", false).getEntry();
 
 public IntakeSubsystem() {
     intakemotor = new CANSparkMax(Constants.IntakeConstants.intakemotorID, CANSparkLowLevel.MotorType.kBrushless);
     intakemotor.restoreFactoryDefaults();
     intakemotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     intakemotor.setInverted(true);
-    limitSwitchBeamBrake = new DigitalInput(Constants.IntakeConstants.limitSwitchBeanBrakeChannel);
+    IntakeLimitSwitch = new DigitalInput(8);
+
+    log = DataLogManager.getLog();
+        posLog = new DoubleLogEntry(log, "/intake/pos");
+        outputLog = new DoubleLogEntry(log, "/intake/output");
+        setpointLog = new DoubleLogEntry(log, "/intake/setpoint");
 }
 
 public void setSpeed(double power) {
@@ -50,9 +76,6 @@ public double getSpeed() {
     return intakemotor.get();
 }
 
-public boolean getBeamBrakeState(){
-    return limitSwitchBeamBrake.get();
-}
 
 
 public Command runIntake(double Speed){
@@ -62,10 +85,17 @@ public Command runIntake(double Speed){
 }
 @Override
 public void periodic() {
+
+    posLog.append(intakemotor.get());
+    outputLog.append(intakemotor.get());
+
+    intakeSwitch.setBoolean(IntakeLimitSwitch.get());
     
     }
 
 public void SetIntake(double speed) {
     intakemotor.set(speed);
 } 
+
+
 }
