@@ -22,6 +22,7 @@ public class IntakeSubsystem extends SubsystemBase{
 
     private final CANSparkMax intakemotor;
     private final DigitalInput IntakeLimitSwitch;
+    private final CANSparkMax indexerMotor;
     private DataLog log;
     private DoubleLogEntry posLog;
     private DoubleLogEntry outputLog;
@@ -43,6 +44,8 @@ public IntakeSubsystem() {
     intakemotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     intakemotor.setInverted(true);
     IntakeLimitSwitch = new DigitalInput(8);
+    indexerMotor = new CANSparkMax(Constants.ShooterConstants.indexerMotorID, CANSparkLowLevel.MotorType.kBrushless);
+    indexerMotor.restoreFactoryDefaults();
 
     log = DataLogManager.getLog();
         posLog = new DoubleLogEntry(log, "/intake/pos");
@@ -57,6 +60,14 @@ public void setSpeed(double power) {
 public void stopIntake() {
     intakemotor.set(0);
 }
+
+public void indexerSpeed(double power) {
+    indexerMotor.set(power);
+  }
+  
+public void stopIndexer(double speed) {
+    indexerMotor.set(0);
+  }
 
 public enum IntakeState {
 
@@ -95,6 +106,7 @@ public void periodic() {
 
 public void SetIntake(double speed) {
     intakemotor.set(speed);
+    indexerMotor.set(speed);
 } 
 
 

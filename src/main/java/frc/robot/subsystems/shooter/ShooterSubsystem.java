@@ -7,12 +7,13 @@ package frc.robot.subsystems.shooter;
 
 
 import com.revrobotics.*;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
+
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -20,31 +21,43 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final CANSparkMax leftShooterMotor;
   private final CANSparkMax rightShooterMotor;
-  private final CANSparkMax indexerMotor;
-  private final SparkPIDController PIDController;
+  
+  private final SparkPIDController RightPIDController;
+  private final SparkPIDController LeftPIDController;
   private final RelativeEncoder rightEncoder;
   private final RelativeEncoder leftEncoder;
-  
+  private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
+  private GenericEntry shooterRight = tab.add("shooter right", 0.0).getEntry();
+  private GenericEntry shooterLeft = tab.add("shooter leftt", 0.0).getEntry();
+
   public double target_Speed;
 
   public ShooterSubsystem() {
 
     leftShooterMotor = new CANSparkMax(Constants.ShooterConstants.leftShooterMotorID , CANSparkLowLevel.MotorType.kBrushless);
     rightShooterMotor = new CANSparkMax(Constants.ShooterConstants.rightShooterMotorID, CANSparkLowLevel.MotorType.kBrushless);
-    indexerMotor = new CANSparkMax(Constants.ShooterConstants.indexerMotorID, CANSparkLowLevel.MotorType.kBrushless);
+    
 
+    
+   
     leftShooterMotor.restoreFactoryDefaults();
     rightShooterMotor.restoreFactoryDefaults();
-    indexerMotor.restoreFactoryDefaults();
     
-    rightShooterMotor.setInverted(true);
-    leftShooterMotor.setInverted(false);;
+    
+    rightShooterMotor.setInverted(false);
+    leftShooterMotor.setInverted(true);
     leftShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     rightShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     rightEncoder = rightShooterMotor.getEncoder();
     leftEncoder = leftShooterMotor.getEncoder();
-    PIDController = rightShooterMotor.getPIDController();
-    PIDController.setFeedbackDevice(rightEncoder);
+    RightPIDController = rightShooterMotor.getPIDController();
+    LeftPIDController = leftShooterMotor.getPIDController();
+
+    RightPIDController.setFeedbackDevice(rightEncoder);
+    set(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE,
+              PIDF.FEEDFORWARD, PIDF.INTEGRAL_ZONE);
+
+    LeftPIDController.setFeedbackDevice(leftEncoder);
     set(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE,
               PIDF.FEEDFORWARD, PIDF.INTEGRAL_ZONE);
 
@@ -53,11 +66,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public static class PIDF {
     /*Feedforward constant for PID loop */
-    public static final double FEEDFORWARD = 0.01;
+    public static final double FEEDFORWARD = 0.00015;
     /*Porportion constant for PID loop */
-    public static final double PORPORTION = 0.05;
+    public static final double PORPORTION = 5e-5;
     /*Integral constant for PID loop */
-    public static final double INTEGRAL = 0.0;
+    public static final double INTEGRAL = 1e-7;
     /*Derivative constant for PID loop */
     public static final double DERIVATIVE = 0.0;
     /*Integral zone constant for PID loop */
@@ -65,18 +78,15 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void shootSpeed(double power){
-    rightShooterMotor.set(power);
-    leftShooterMotor.set(power);
+    //rightShooterMotor.set(power);
+    //leftShooterMotor.set(power);
     //indexerMotor.set(power);
+    RightPIDController.setReference(power, CANSparkMax.ControlType.kVelocity);
+    LeftPIDController.setReference(power, CANSparkMax.ControlType.kVelocity);
   }
 
-  public void indexerSpeed(double power) {
-    indexerMotor.set(power);
-  }
 
-  public void stopIndexer(double speed) {
-    indexerMotor.set(0);
-  }
+ 
 
   public void stopShooter() {
     rightShooterMotor.set(0);
@@ -88,16 +98,22 @@ public class ShooterSubsystem extends SubsystemBase {
   
 
  public void set(double p, double i, double d, double f, double iz) {
-  PIDController.setP(p);
-  PIDController.setI(i);
-  PIDController.setD(d);
-  PIDController.setFF(f);
-  PIDController.setIZone(iz);
+  LeftPIDController.setP(p);
+  LeftPIDController.setI(i);
+  LeftPIDController.setD(d);
+  LeftPIDController.setFF(f);
+  LeftPIDController.setIZone(iz);
+
+  RightPIDController.setP(p);
+  RightPIDController.setI(i);
+  RightPIDController.setD(d);
+  RightPIDController.setFF(f);
+  RightPIDController.setIZone(iz);
  }
 
  public void runPID(double targetSpeed){
   target_Speed = targetSpeed;
-  PIDController.setReference(targetSpeed, CANSparkMax.ControlType.kVelocity);
+  //PIDController.setReference(targetSpeed, CANSparkMax.ControlType.kVelocity);
  }
 
  public double getSpeed() {
@@ -130,11 +146,15 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    shooterRight.setDouble(rightEncoder.getVelocity());
+    shooterLeft.setDouble(leftEncoder.getVelocity());
   }
 
   public void ShootIt(double speed) {
-    rightShooterMotor.set(speed);
-    leftShooterMotor.set(speed);
-    indexerMotor.set(speed);
+    RightPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+    LeftPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+   // rightShooterMotor.set(speed);
+   // leftShooterMotor.set(speed);
+    
   }
 }

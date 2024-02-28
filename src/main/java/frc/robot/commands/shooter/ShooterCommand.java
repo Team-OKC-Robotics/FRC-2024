@@ -22,16 +22,16 @@ public ShooterCommand(ShooterSubsystem shooter, double power) {
 
 @Override
 public void execute() {
-    shooter.shootSpeed(1);
-    shooter.indexerSpeed(1);
+    shooter.shootSpeed(5000);
+   // shooter.indexerSpeed(1);
     
     
 }
 
 @Override
 public void end(boolean interuppted) {
-    shooter.shootSpeed(0);
-    shooter.indexerSpeed(0);
+    shooter.stopShooter();
+  //  shooter.indexerSpeed(0);
 }
 
 @Override

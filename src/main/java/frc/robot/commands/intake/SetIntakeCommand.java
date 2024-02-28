@@ -19,11 +19,13 @@ public class SetIntakeCommand extends Command {
     @Override
     public void execute() {
         intake.setSpeed(1);
+        intake.indexerSpeed(1);
     }
 
 @Override
 public void end(boolean interuppted) {
     intake.setSpeed(0);
+    intake.indexerSpeed(0);
 }
 
     @Override
