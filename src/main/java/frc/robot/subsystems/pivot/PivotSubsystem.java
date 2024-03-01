@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -23,12 +24,12 @@ public class PivotSubsystem extends SubsystemBase{
 
     private double targetAngle;
 
-    private final SparkPIDController PIDController;
+    private final PIDController PivotPIDController;
     private final RelativeEncoder pivotEncoder;
     private final DutyCycleEncoder pivotencoder;
 
     private ShuffleboardTab tab = Shuffleboard.getTab("pivot");
-    private GenericEntry writeMode = tab.add("write mode", false).getEntry();
+  //  private GenericEntry writeMode = tab.add("write mode", false).getEntry();
 
    // private final RelativeEncoder leftEncoder;
     private GenericEntry pivotabsoluteencoder = tab.add("absolute encoder", 0).getEntry();
@@ -45,35 +46,14 @@ public PivotSubsystem() {
     pivotmotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     pivotEncoder = pivotmotor.getEncoder();
    // leftEncoder = leftpivot.getEncoder();
-    PIDController = pivotmotor.getPIDController();
-    PIDController.setFeedbackDevice(pivotEncoder);
-    set(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE, PIDF.FEEDFORWARD, PIDF.INTEGRAL_ZONE);
+    PivotPIDController = new PIDController(0.03, 0.0001, 0);
+    
+    
 
     pivotmotor.set(0);
 }
 
-public static class PIDF {
-   /**
-         * Feedforward constant for PID loop
-         */
-        public static final double FEEDFORWARD = 0.01;
-        /**
-         * Proportion constant for PID loop
-         */
-        public static final double PORPORTION = 0.05;
-        /**
-         * Integral constant for PID loop
-         */
-        public static final double INTEGRAL = 0.0;
-        /**
-         * Derivative constant for PID loop
-         */
-        public static final double DERIVATIVE = 0.0;
-        /**
-         * Integral zone constant for PID loop
-         */
-        public static final double INTEGRAL_ZONE = 0.0; 
-}
+
 
 public void changeAngle(double power) {
     pivotmotor.set(power);
@@ -87,18 +67,7 @@ public double getAngle() {
     return pivotEncoder.getPosition()*360;
 }
 
-public void set(double p, double i, double d, double f, double iz)
-    {
-        PIDController.setP(p);
-        PIDController.setI(i);
-        PIDController.setD(d);
-        PIDController.setFF(f);
-        PIDController.setIZone(iz);
-    }
 
-public void runPID(double targetPosition) {
-        PIDController.setReference(targetPosition, CANSparkMax.ControlType.kPosition);
-    }
 
 // public Command setAngle(double degrees) {
 //     targetAngle = degrees;
@@ -145,6 +114,10 @@ public void PivotIt(double power) {
 
     pivotmotor.set(power);
     }
+
+public void PivotIttoAngle(double angle) {
+    PivotIt(PivotPIDController.calculate(getPivotAngle(), angle)); 
+}
 
 
 public double getPivotAngle() {

@@ -24,7 +24,9 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.superstructure.SuperState;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.commands.shooter.ShooterCommand;
+import frc.robot.commands.vision.AutoAim;
 import frc.robot.commands.pivot.*;
 import java.io.File;
 import frc.robot.subsystems.intake.IntakeSubsystem;
@@ -43,9 +45,10 @@ public class RobotContainer
                                                                          "swerve/swerve"));
 
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private final VisionSubsystem m_vision = new VisionSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
-  // public final Superstructure superstructure = new Superstructure(m_intake, m_shooter, m_pivot, drivebase);
+  public final Superstructure superstructure = new Superstructure(m_intake, m_shooter, m_pivot, drivebase);
 
   //controllers
   XboxController driverXbox = new XboxController(0);
@@ -63,6 +66,7 @@ public class RobotContainer
   private final JoystickButton secondriverButton1 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton1);
   private final JoystickButton secondriverButton3 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
   private final JoystickButton secondriverButton5 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
+  private final JoystickButton secondriverButton6 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
   //commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
@@ -72,6 +76,9 @@ public class RobotContainer
 
   private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
   private final PivotOtherway otherwaypivot = new PivotOtherway(m_pivot, 0.9);
+  private final PivotToAngle pivottoangle = new PivotToAngle(m_pivot, 30); 
+
+  private final AutoAim autoaim = new AutoAim(drivebase, m_vision);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -122,11 +129,14 @@ public class RobotContainer
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     
-    //secondriverButton1.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
+   // secondriverButton5.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
     secondriverButton1.whileTrue(runShooter);
-    secondriverButton5.whileTrue(otherwaypivot);
     secondriverButton2.whileTrue(runIntake);
     secondriverButton3.whileTrue(setpivot);
+    secondriverButton4.onTrue(pivottoangle);
+    secondriverButton5.whileTrue(otherwaypivot);
+    secondriverButton6.whileTrue(autoaim);
+
 
 
    
