@@ -37,6 +37,8 @@ public class AutoAim extends Command {
     PhotonTrackedTarget target = vision.getTargetWithID(4);
     // vision.getTargetWithID(4);
 
+    swerve.getTargetSpeeds(0, 0, swerve.getHeading().getSin(), swerve.getHeading().getCos());
+
     if (target == null) {
       swerve.drive(new Translation2d(0,0), 0, true);
     } else {

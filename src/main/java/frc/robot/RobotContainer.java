@@ -112,6 +112,7 @@ public class RobotContainer
    
 
     drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
+    //m_pivot.setDefaultCommand(new PivotToAngle(m_pivot, 60)); TODO GET BETTER
   }
 
   /**
@@ -135,7 +136,7 @@ public class RobotContainer
     secondriverButton3.whileTrue(setpivot);
     secondriverButton4.onTrue(pivottoangle);
     secondriverButton5.whileTrue(otherwaypivot);
-    secondriverButton6.whileTrue(autoaim);
+    driverControllerButton2.whileTrue(autoaim);
 
 
 
