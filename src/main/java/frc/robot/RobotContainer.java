@@ -25,7 +25,7 @@ import frc.robot.subsystems.superstructure.SuperState;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.commands.shooter.ShooterCommand;
+import frc.robot.commands.shooter.*;
 import frc.robot.commands.vision.AutoAim;
 import frc.robot.commands.pivot.*;
 import java.io.File;
@@ -70,8 +70,9 @@ public class RobotContainer
   //commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
+  private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake, 1);
 
-  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 1);
+  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.6);
   private final SetIntakeCommand stopIntake = new SetIntakeCommand(m_intake, 0);
 
   private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
@@ -131,7 +132,7 @@ public class RobotContainer
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     
    // secondriverButton5.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
-    secondriverButton1.whileTrue(runShooter);
+    secondriverButton1.whileTrue(waitshoot);
     secondriverButton2.whileTrue(runIntake);
     secondriverButton3.whileTrue(setpivot);
     secondriverButton4.onTrue(pivottoangle);

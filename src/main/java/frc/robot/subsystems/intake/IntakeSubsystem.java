@@ -109,5 +109,9 @@ public void SetIntake(double speed) {
     indexerMotor.set(speed);
 } 
 
+public boolean hasNote() {
+    return !IntakeLimitSwitch.get();
+}
+
 
 }

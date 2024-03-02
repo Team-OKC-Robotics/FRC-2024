@@ -18,8 +18,14 @@ public class SetIntakeCommand extends Command {
 
     @Override
     public void execute() {
-        intake.setSpeed(1);
-        intake.indexerSpeed(1);
+        if (this.speed > 0 && !intake.hasNote()) {
+            intake.setSpeed(speed);
+            intake.indexerSpeed(speed);
+
+        } else {
+            intake.setSpeed(0);
+            intake.indexerSpeed(0);
+        }
     }
 
 @Override
