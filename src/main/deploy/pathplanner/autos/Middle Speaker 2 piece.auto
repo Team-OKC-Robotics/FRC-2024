@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "GetNotePath"
+                  "pathName": "Get Note Path"
                 }
               },
               {

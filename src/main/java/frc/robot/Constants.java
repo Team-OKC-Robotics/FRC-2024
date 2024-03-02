@@ -80,6 +80,7 @@ public final class Constants
     // first driver buttons
     public static final int kdriverControllerButton2 = 2;
     public static final int kdriverControllerButton5 = 5;
+    public static final int kdriverControllerButton6 = 6;
     
 
   }

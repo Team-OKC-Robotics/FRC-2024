@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -28,6 +29,7 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.commands.shooter.*;
 import frc.robot.commands.vision.AutoAim;
 import frc.robot.commands.pivot.*;
+import frc.robot.commands.intake.*;
 import java.io.File;
 import java.util.Set;
 
@@ -63,34 +65,41 @@ public class RobotContainer
  
   //driver buttons
 
-  private final JoystickButton driverControllerButton2 = new JoystickButton(driverController, Constants.OI.kdriverControllerButton2);
+  private final JoystickButton driverControllerButtonB = new JoystickButton(driverController, Constants.OI.kdriverControllerButton2);
+  private final JoystickButton driverControllerleftbumper = new JoystickButton(driverController, Constants.OI.kdriverControllerButton5);
+
   
   //second driver buttons
-  private final JoystickButton secondriverButton2 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton2);
-  private final JoystickButton secondriverButton4 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton4);
-  private final JoystickButton secondriverButton1 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton1);
-  private final JoystickButton secondriverButton3 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
-  private final JoystickButton secondriverButton5 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
-  private final JoystickButton secondriverButton6 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
+  private final JoystickButton secondriverButtonB = new JoystickButton(secondriver, Constants.OI.kSecondriverButton2);
+  private final JoystickButton secondriverButtonY = new JoystickButton(secondriver, Constants.OI.kSecondriverButton4);
+  private final JoystickButton secondriverButtonA = new JoystickButton(secondriver, Constants.OI.kSecondriverButton1);
+  private final JoystickButton secondriverButtonX = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
+  private final JoystickButton secondriverleftbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
+  private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
   //commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
   private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake, 1);
 
   private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.6);
-  private final SetIntakeCommand stopIntake = new SetIntakeCommand(m_intake, 0);
+  private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.8);
+ // private final SetIntakeCommand runIntakeOtherway - new SetIntakeCommand(m_intake, -0.6);
 
   private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
   private final PivotOtherway otherwaypivot = new PivotOtherway(m_pivot, 0.9);
-  private final PivotToAngle pivottoangle = new PivotToAngle(m_pivot, 30); 
+  private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 30); 
+  private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
+
 
   private final AutoAim autoaim = new AutoAim(drivebase, m_vision);
+
+  private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer()
   {
-
+    
     NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 50));
     NamedCommands.registerCommand("Shoot", new ShootWait(m_shooter, m_intake, 1));
     NamedCommands.registerCommand("Intake", new SetIntakeCommand( m_intake, 0.6));
@@ -131,7 +140,9 @@ public class RobotContainer
    * named factories in {@link edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
    * {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4}
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
+   * 
    */
+  
   private void configureBindings()
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
@@ -141,12 +152,18 @@ public class RobotContainer
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     
    // secondriverButton5.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
-    secondriverButton1.whileTrue(waitshoot);
-    secondriverButton2.whileTrue(runIntake);
-    secondriverButton3.whileTrue(setpivot);
-    secondriverButton4.onTrue(pivottoangle);
-    secondriverButton5.whileTrue(otherwaypivot);
-    driverControllerButton2.whileTrue(autoaim);
+    driverControllerButtonB.whileTrue(autoaim); //B Button
+    driverControllerleftbumper.whileTrue(runIntake); //left bumper
+    
+    
+    
+    secondriverButtonX.whileTrue(setpivot);//x button
+    secondriverButtonB.whileTrue(pivottoangle30); //B button
+    secondriverButtonY.onTrue(pivottoangle60); //Y button
+    secondriverleftbumper.whileTrue(waitshoot); //left bumper
+    secondriverrightbumper.whileTrue(backwardIntake); //right bumper
+    secondriverButtonA.whileTrue(otherwaypivot);
+    
 
 
 
