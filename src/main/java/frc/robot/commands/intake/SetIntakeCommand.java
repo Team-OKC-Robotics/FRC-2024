@@ -30,12 +30,12 @@ public class SetIntakeCommand extends Command {
 
 @Override
 public void end(boolean interuppted) {
-    intake.setSpeed(0);
-    intake.indexerSpeed(0);
+ //   intake.setSpeed(0);
+ //   intake.indexerSpeed(0);
 }
 
     @Override
     public boolean isFinished() {
-        return false;
+        return intake.hasNote();
     }
 }

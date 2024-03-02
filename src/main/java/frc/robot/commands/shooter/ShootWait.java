@@ -13,6 +13,7 @@ public class ShootWait extends Command {
     
     private double speed;
     private double power;
+    private boolean hasNoteLeft = false;
 
 public ShootWait(ShooterSubsystem shooter, IntakeSubsystem intake, double power) {
     this.shooter = shooter;
@@ -23,14 +24,22 @@ public ShootWait(ShooterSubsystem shooter, IntakeSubsystem intake, double power)
     
 }
 @Override
- public void initialize() {}
+ public void initialize() {
+    hasNoteLeft = false;
+ }
 
 @Override
 public void execute() {
+    if (!intake.hasNote()) { 
+        hasNoteLeft = true;
+        shooter.ShootIt(0);
+        return;
+    }
     shooter.shootSpeed(5000);
     if (shooter.getMinVelocity() > 4700) {
         intake.SetIntake(1);
     }
+
    // shooter.indexerSpeed(1);
     
     
@@ -45,7 +54,7 @@ public void end(boolean interuppted) {
 
 @Override
 public boolean isFinished() {
-    return false;
+    return shooter.getMinVelocity() < 2000 && hasNoteLeft;
     }   
 }
 

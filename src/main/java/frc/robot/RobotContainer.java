@@ -29,6 +29,11 @@ import frc.robot.commands.shooter.*;
 import frc.robot.commands.vision.AutoAim;
 import frc.robot.commands.pivot.*;
 import java.io.File;
+import java.util.Set;
+
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.commands.intake.SetIntakeCommand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -85,6 +90,10 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+
+    NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 50));
+    NamedCommands.registerCommand("Shoot", new ShootWait(m_shooter, m_intake, 1));
+    NamedCommands.registerCommand("Intake", new SetIntakeCommand( m_intake, 0.6));
     // Configure the trigger bindings
     configureBindings();
 
@@ -152,7 +161,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Path", true);
+    return new PathPlannerAuto("Middle Speaker 2 piece");
   }
 
   public void setDriveMode()
