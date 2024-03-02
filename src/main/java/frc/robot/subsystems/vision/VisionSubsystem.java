@@ -139,10 +139,10 @@ public PhotonTrackedTarget getBestTarget() {
   public void periodic() {
     // This method will be called once per scheduler run
     
-        PhotonPipelineResult result = camera.getLatestResult(); // Query the latest result from PhotonVision
-        hasTarget = result.hasTargets(); // If the camera has detected an apriltag target, the hasTarget boolean will be true
-        if (hasTarget) {
-            this.result = result;
-        }
+ //       PhotonPipelineResult result = camera.getLatestResult(); // Query the latest result from PhotonVision
+ //       hasTarget = result.hasTargets(); // If the camera has detected an apriltag target, the hasTarget boolean will be true
+ //       if (hasTarget) {
+ //           this.result = result;
+ //       }
   }
 }

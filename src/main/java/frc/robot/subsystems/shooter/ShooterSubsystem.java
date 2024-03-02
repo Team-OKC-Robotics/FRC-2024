@@ -157,4 +157,8 @@ public class ShooterSubsystem extends SubsystemBase {
    // leftShooterMotor.set(speed);
     
   }
+
+  public double getMinVelocity() {
+    return Math.min(leftEncoder.getVelocity(), rightEncoder.getVelocity());
+  }
 }
