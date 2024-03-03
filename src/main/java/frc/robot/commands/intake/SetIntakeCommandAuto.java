@@ -2,11 +2,11 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 
-public class SetIntakeCommand extends Command {
+public class SetIntakeCommandAuto extends Command {
     private final IntakeSubsystem intake;
     private double speed;
 
-    public SetIntakeCommand(IntakeSubsystem intake, double speed) {
+    public SetIntakeCommandAuto(IntakeSubsystem intake, double speed) {
         this.intake = intake;
         this.speed = speed;
 
@@ -30,8 +30,8 @@ public class SetIntakeCommand extends Command {
 
 @Override
 public void end(boolean interuppted) {
-    intake.setSpeed(0);
-    intake.indexerSpeed(0);
+ //   intake.setSpeed(0);
+ //   intake.indexerSpeed(0);
 }
 
     @Override

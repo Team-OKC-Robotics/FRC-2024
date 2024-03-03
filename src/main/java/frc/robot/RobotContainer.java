@@ -102,7 +102,7 @@ public class RobotContainer
     
     NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 50));
     NamedCommands.registerCommand("Shoot", new ShootWait(m_shooter, m_intake, 1));
-    NamedCommands.registerCommand("Intake", new SetIntakeCommand( m_intake, 0.6));
+    NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.6));
     // Configure the trigger bindings
     configureBindings();
 

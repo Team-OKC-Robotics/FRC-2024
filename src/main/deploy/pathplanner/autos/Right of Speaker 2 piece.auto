@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 1.67,
-      "y": 5.468960666879964
-    },
-    "rotation": 0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -30,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Get Note Path"
+                  "pathName": "Right of Speaker Path"
                 }
               },
               {
@@ -45,13 +39,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Back Path"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
+            "pathName": "Back Right of Speaker Path"
           }
         }
       ]
