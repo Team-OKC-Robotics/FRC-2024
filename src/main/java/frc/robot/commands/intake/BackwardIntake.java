@@ -22,10 +22,16 @@ public void initialize() {}
 @Override
 public void execute () {
     intake.setbackSpeed(-0.8);
+    intake.setIndexerback(-0.8);
 }
 
 @Override 
-public void end (boolean interuppted) {}
+public void end (boolean interuppted) {
+     
+    intake.setSpeed(0);
+    intake.indexerSpeed(0);
+}
+
 
 @Override
 public boolean isFinished() {

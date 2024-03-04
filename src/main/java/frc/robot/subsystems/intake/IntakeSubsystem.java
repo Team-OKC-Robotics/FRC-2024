@@ -63,6 +63,11 @@ public void stopIntake() {
 
 public void setbackSpeed(double power) {
     intakemotor.set(-power);
+    
+}
+
+public void setIndexerback(double power) {
+    indexerMotor.set(-power);
 }
 
 public void indexerSpeed(double power) {

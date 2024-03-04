@@ -48,7 +48,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public class RobotContainer
 {
   // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+  public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve/swerve"));
 
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
@@ -67,7 +67,7 @@ public class RobotContainer
 
   private final JoystickButton driverControllerButtonB = new JoystickButton(driverController, Constants.OI.kdriverControllerButton2);
   private final JoystickButton driverControllerleftbumper = new JoystickButton(driverController, Constants.OI.kdriverControllerButton5);
-
+  private final JoystickButton driverControllerrightbumper = new JoystickButton(driverController, Constants.OI.kdriverControllerButton6);
   
   //second driver buttons
   private final JoystickButton secondriverButtonB = new JoystickButton(secondriver, Constants.OI.kSecondriverButton2);
@@ -81,13 +81,15 @@ public class RobotContainer
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
   private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake, 1);
 
-  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.6);
+  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.7);
+
   private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.8);
  // private final SetIntakeCommand runIntakeOtherway - new SetIntakeCommand(m_intake, -0.6);
 
   private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
   private final PivotOtherway otherwaypivot = new PivotOtherway(m_pivot, 0.9);
-  private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 30); 
+  private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 58); 
+  private final PivotToAngle pivottoangle35 = new PivotToAngle(m_pivot, 35);
   private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
 
 
@@ -100,8 +102,8 @@ public class RobotContainer
   public RobotContainer()
   {
     
-    NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 50));
-    NamedCommands.registerCommand("Shoot", new ShootWait(m_shooter, m_intake, 1));
+    NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
+    NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.6));
     // Configure the trigger bindings
     configureBindings();
@@ -155,14 +157,17 @@ public class RobotContainer
     driverControllerButtonB.whileTrue(autoaim); //B Button
     driverControllerleftbumper.whileTrue(runIntake); //left bumper
     
-    
-    
-    secondriverButtonX.whileTrue(setpivot);//x button
-    secondriverButtonB.whileTrue(pivottoangle30); //B button
+
+   //secondriverButtonB.whileTrue(setpivot);//x button
+   //secondriverButtonY.whileTrue(otherwaypivot);
+    secondriverButtonA.whileTrue(pivottoangle30);
+    secondriverButtonB.whileTrue(pivottoangle35); //B button
     secondriverButtonY.onTrue(pivottoangle60); //Y button
+    
     secondriverleftbumper.whileTrue(waitshoot); //left bumper
-    secondriverrightbumper.whileTrue(backwardIntake); //right bumper
-    secondriverButtonA.whileTrue(otherwaypivot);
+    secondriverrightbumper.whileTrue(runIntake); //right bumper
+    //secondriverButtonA.whileTrue(runShooter); //A button
+
     
 
 
@@ -178,7 +183,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return new PathPlannerAuto("Middle Speaker 2 piece");
+    return new PathPlannerAuto("4 Piece");
   }
 
   public void setDriveMode()
