@@ -32,7 +32,7 @@ public ShootWaitAuto(ShooterSubsystem shooter, IntakeSubsystem intake, double po
 public void execute() {
     if (!intake.hasNote()) { 
         hasNoteLeft = true;
-        shooter.ShootIt(0);
+        // shooter.ShootIt(0);
         return;
     }
     shooter.shootSpeed(5000);
@@ -54,7 +54,7 @@ public void end(boolean interuppted) {
 
 @Override
 public boolean isFinished() {
-    return shooter.getMinVelocity() < 2000 && hasNoteLeft;
+    return hasNoteLeft;
     }   
 }
 

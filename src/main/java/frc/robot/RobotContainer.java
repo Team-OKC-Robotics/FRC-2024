@@ -81,7 +81,7 @@ public class RobotContainer
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
   private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake, 1);
 
-  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.7);
+  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.9);
 
   private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.8);
  // private final SetIntakeCommand runIntakeOtherway - new SetIntakeCommand(m_intake, -0.6);
@@ -95,7 +95,7 @@ public class RobotContainer
 
   private final AutoAim autoaim = new AutoAim(drivebase, m_vision);
 
-  private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+  private SendableChooser<String> autoChooser = new SendableChooser<String>();
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -106,6 +106,8 @@ public class RobotContainer
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.6));
     // Configure the trigger bindings
+    autoChooser.addOption("4 Piece", "4 Piece");
+    autoChooser.addOption("Middle Speaker 2 piece", "Middle Speaker 2 piece");
     configureBindings();
 
     AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
@@ -183,7 +185,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // An example command will be run in autonomous
-    return new PathPlannerAuto("4 Piece");
+    return new PathPlannerAuto(autoChooser.getSelected());
   }
 
   public void setDriveMode()
