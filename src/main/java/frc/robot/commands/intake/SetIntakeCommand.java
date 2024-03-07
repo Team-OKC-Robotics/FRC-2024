@@ -18,12 +18,12 @@ public class SetIntakeCommand extends Command {
 
     @Override
     public void execute() {
-        if (this.speed > 0 && !intake.hasNote()) {
-            intake.setSpeed(speed);
+        if (this.speed > 0 && !intake.hasNote()) { //if the intake does not have the note
+            intake.setSpeed(speed);     //then run the indexer and intake 
             intake.indexerSpeed(speed);
 
-        } else {
-            intake.setSpeed(0);
+        } else {    //otherwise
+            intake.setSpeed(0);       //the intake and indexer should be off
             intake.indexerSpeed(0);
         }
     }
@@ -36,6 +36,6 @@ public void end(boolean interuppted) {
 
     @Override
     public boolean isFinished() {
-        return intake.hasNote();
+        return intake.hasNote();  //the command is finished when the intake has the note
     }
 }

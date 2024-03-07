@@ -21,8 +21,8 @@ public void initialize() {}
 
 @Override
 public void execute () {
-    intake.setbackSpeed(-0.8);
-    intake.setIndexerback(-0.8);
+    intake.setbackSpeed(0.8);
+    intake.setIndexerback(0.8);
 }
 
 @Override 
@@ -35,7 +35,7 @@ public void end (boolean interuppted) {
 
 @Override
 public boolean isFinished() {
-    return true;
+    return false;
 }
 }
 

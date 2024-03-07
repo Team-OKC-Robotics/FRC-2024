@@ -46,10 +46,13 @@ public class ShooterSubsystem extends SubsystemBase {
     
     rightShooterMotor.setInverted(false);
     leftShooterMotor.setInverted(true);
+
     leftShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     rightShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
     rightEncoder = rightShooterMotor.getEncoder();
     leftEncoder = leftShooterMotor.getEncoder();
+    
     RightPIDController = rightShooterMotor.getPIDController();
     LeftPIDController = leftShooterMotor.getPIDController();
 

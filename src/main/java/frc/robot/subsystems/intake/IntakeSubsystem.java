@@ -52,28 +52,28 @@ public IntakeSubsystem() {
         outputLog = new DoubleLogEntry(log, "/intake/output");
         setpointLog = new DoubleLogEntry(log, "/intake/setpoint");
 }
-
+//sets intake speed 
 public void setSpeed(double power) {
     intakemotor.set(power);
 }
-
+//stops intake
 public void stopIntake() {
     intakemotor.set(0);
 }
-
+//for backwards intake
 public void setbackSpeed(double power) {
     intakemotor.set(-power);
     
 }
-
+//for backwards intake
 public void setIndexerback(double power) {
     indexerMotor.set(-power);
 }
-
+//sets indexer motor speed
 public void indexerSpeed(double power) {
     indexerMotor.set(power);
   }
-  
+//stops indexer
 public void stopIndexer(double speed) {
     indexerMotor.set(0);
   }
@@ -112,12 +112,12 @@ public void periodic() {
     intakeSwitch.setBoolean(IntakeLimitSwitch.get());
     
     }
-
+//sets intake in commmand
 public void SetIntake(double speed) {
     intakemotor.set(speed);
     indexerMotor.set(speed);
 } 
-
+//testing if the limit switch sees the note or not
 public boolean hasNote() {
     return !IntakeLimitSwitch.get();
 }

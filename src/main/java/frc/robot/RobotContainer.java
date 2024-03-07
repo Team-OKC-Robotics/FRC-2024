@@ -8,6 +8,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -37,7 +39,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.commands.intake.SetIntakeCommand;
 import edu.wpi.first.wpilibj.Joystick;
 
 /**
@@ -76,16 +77,14 @@ public class RobotContainer
   private final JoystickButton secondriverButtonX = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
   private final JoystickButton secondriverleftbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
   private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
-  //commands
+  // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
   private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake, 1);
-
+  // intake commands
   private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.9);
-
   private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.8);
- // private final SetIntakeCommand runIntakeOtherway - new SetIntakeCommand(m_intake, -0.6);
-
+  //pivot commands
   private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
   private final PivotOtherway otherwaypivot = new PivotOtherway(m_pivot, 0.9);
   private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 58); 
@@ -95,19 +94,25 @@ public class RobotContainer
 
   private final AutoAim autoaim = new AutoAim(drivebase, m_vision);
 
+  //makes the auto chooser
   private SendableChooser<String> autoChooser = new SendableChooser<String>();
+  private ShuffleboardTab tab = Shuffleboard.getTab("auto chooser");
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer()
   {
-    
+    //commands for the autos
     NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.6));
-    // Configure the trigger bindings
-    autoChooser.addOption("4 Piece", "4 Piece");
+
+    // add auto chooser options
+    autoChooser.setDefaultOption("4 Piece", "4 Piece");
     autoChooser.addOption("Middle Speaker 2 piece", "Middle Speaker 2 piece");
+    autoChooser.addOption("Left of Speaker 2 piece", "Left of Speaker 2 piece");
+    autoChooser.addOption("Right of Speaker 2 piece", "Right of Speaker 2 piece");
+    tab.add(autoChooser);
     configureBindings();
 
     AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
@@ -158,6 +163,7 @@ public class RobotContainer
    // secondriverButton5.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
     driverControllerButtonB.whileTrue(autoaim); //B Button
     driverControllerleftbumper.whileTrue(runIntake); //left bumper
+    driverControllerrightbumper.whileTrue(backwardIntake);
     
 
    //secondriverButtonB.whileTrue(setpivot);//x button
@@ -196,5 +202,9 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+  public void resetrobot() {
+    m_shooter.stopShooter();
   }
 }

@@ -2,19 +2,32 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.1149354110405783,
-      "y": 4.859997166499325
+      "x": 1.6302122190512154,
+      "y": 4.08708195448086
     },
-    "rotation": -43.15238973400532
+    "rotation": 1.193489423656762
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Pivot to 60"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Left of Speaker 2 piece shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Pivot to 60"
+                }
+              }
+            ]
           }
         },
         {
@@ -30,7 +43,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left of Speaker 2 piece"
+                  "pathName": "Left of Speaker 2 piece get note"
                 }
               },
               {

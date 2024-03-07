@@ -1,14 +1,33 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 1.477971343959805,
+      "y": 6.979658581285779
+    },
+    "rotation": 1.3971810271230365
+  },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Pivot to 60"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Right of Speaker 2 piece shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Pivot to 60"
+                }
+              }
+            ]
           }
         },
         {
@@ -24,7 +43,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Right of Speaker Path"
+                  "pathName": "Right of Speaker 2 piece get note"
                 }
               },
               {
@@ -39,7 +58,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Back Right of Speaker Path"
+            "pathName": "Right of Speaker 2 piece back"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

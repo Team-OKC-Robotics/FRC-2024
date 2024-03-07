@@ -129,6 +129,8 @@ public class Robot extends TimedRobot
     }
     m_robotContainer.setDriveMode();
     m_robotContainer.setMotorBrake(true);
+    //so the shooter doesn't continue running after auto ends in teleop
+    m_robotContainer.resetrobot();
   }
 
   /**
