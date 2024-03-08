@@ -102,7 +102,7 @@ public void periodic() {
 }
 
 public void PivotIt(double power) {
-    
+    //adds soft limits to avoid the pivot killing itself
     if (power > 0 && getPivotAngle() > 60) {
         pivotmotor.set(0);
         return; 
@@ -125,6 +125,6 @@ public double getPivotAngle() {
     if (rawvalue > 0.5) { //bc the absolute encoder is messed up :(
         rawvalue = rawvalue -1;
     } 
-    return -rawvalue *338 + 33.1;
+    return -rawvalue *338 + 33.1; //some weird ahh math, I know
 }
 }

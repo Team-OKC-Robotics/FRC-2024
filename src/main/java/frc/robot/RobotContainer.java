@@ -112,6 +112,13 @@ public class RobotContainer
     autoChooser.addOption("Middle Speaker 2 piece", "Middle Speaker 2 piece");
     autoChooser.addOption("Left of Speaker 2 piece", "Left of Speaker 2 piece");
     autoChooser.addOption("Right of Speaker 2 piece", "Right of Speaker 2 piece");
+    autoChooser.addOption("Left of Speaker get far note", "Left of Speaker get far note");
+    autoChooser.addOption("Right of Speaker Wait then Shoot Auto", "Right of Speaker Wait then Shoot Auto");
+    autoChooser.addOption("Left of Speaker Wait then Shoot Auto", "Left of Speaker Wait then Shoot Auto");
+    autoChooser.addOption("Right of Speaker get far note", "Right of Speaker get far note");
+    autoChooser.addOption("Middle Speaker 3 Piece Left", "Middle Speaker 3 Piece Left");
+
+
     tab.add(autoChooser);
     configureBindings();
 
@@ -119,10 +126,10 @@ public class RobotContainer
                                                           // Applies deadbands and inverts controls because joysticks
                                                           // are back-right positive while robot
                                                           // controls are front-left positive
-                                                          () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                       OperatorConstants.LEFT_Y_DEADBAND) * -0.8,
-                                                          () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                       OperatorConstants.LEFT_X_DEADBAND) * -0.8,
+                                                          () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(),
+                                                                                       OperatorConstants.LEFT_Y_DEADBAND) * -0.8),
+                                                          () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(),
+                                                                                       OperatorConstants.LEFT_X_DEADBAND) * -0.8),
                                                           () -> -driverXbox.getRightX(),
                                                           () -> -driverXbox.getRightY());
 
@@ -157,7 +164,7 @@ public class RobotContainer
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
     new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
-    new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
+   // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     
    // secondriverButton5.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));

@@ -3,9 +3,9 @@
   "startingPose": {
     "position": {
       "x": 1.477971343959805,
-      "y": 4.028527771748839
+      "y": 6.979658581285779
     },
-    "rotation": 1.193489423656762
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -18,7 +18,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left of Speaker 2 piece shoot"
+                  "pathName": "Right of Speaker 2 piece shoot"
                 }
               },
               {
@@ -43,7 +43,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left of Speaker 2 piece get note"
+                  "pathName": "Get Far Right Note Path"
                 }
               },
               {
@@ -58,7 +58,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left of Speaker 2 piece back"
+            "pathName": "Far Right Note Back Path"
           }
         },
         {

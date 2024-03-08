@@ -4,13 +4,18 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
+import frc.robot.subsystems.intake.*;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import swervelib.parser.SwerveParser;
 
 /**
@@ -106,7 +111,10 @@ public class Robot extends TimedRobot
     {
       m_autonomousCommand.schedule();
     }
-  }
+    DriverStation.getAlliance();
+    
+    }
+  
 
   /**
    * This function is called periodically during autonomous.
@@ -131,6 +139,8 @@ public class Robot extends TimedRobot
     m_robotContainer.setMotorBrake(true);
     //so the shooter doesn't continue running after auto ends in teleop
     m_robotContainer.resetrobot();
+
+   
   }
 
   /**

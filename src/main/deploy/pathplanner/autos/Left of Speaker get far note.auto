@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.477971343959805,
-      "y": 4.028527771748839
+      "x": 1.407706324685116,
+      "y": 4.098792791023527
     },
-    "rotation": 1.193489423656762
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -43,7 +43,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left of Speaker 2 piece get note"
+                  "pathName": "Get Far Left Note Path"
                 }
               },
               {
@@ -58,7 +58,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left of Speaker 2 piece back"
+            "pathName": "Far Left Note Back Path"
           }
         },
         {

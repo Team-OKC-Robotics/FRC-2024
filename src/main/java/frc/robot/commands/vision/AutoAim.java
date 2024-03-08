@@ -9,6 +9,7 @@ import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -17,6 +18,7 @@ public class AutoAim extends Command {
   /** Creates a new AutoAim. */
   private final SwerveSubsystem swerve;
   private final VisionSubsystem vision;
+  private int targetAprilTag = 4;
 
   public AutoAim(SwerveSubsystem swerve, VisionSubsystem vision) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -25,6 +27,10 @@ public class AutoAim extends Command {
 
     this.swerve = swerve;
     this.vision = vision;
+
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance.get() == DriverStation.Alliance.Blue) {
+      this.targetAprilTag = 7;
+    }
   }
 
   // Called when the command is initially scheduled.
@@ -34,7 +40,7 @@ public class AutoAim extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    PhotonTrackedTarget target = vision.getTargetWithID(4);
+    PhotonTrackedTarget target = vision.getTargetWithID(targetAprilTag);
     // vision.getTargetWithID(4);
 
     swerve.getTargetSpeeds(0, 0, swerve.getHeading().getSin(), swerve.getHeading().getCos());
@@ -42,7 +48,7 @@ public class AutoAim extends Command {
     if (target == null) {
       swerve.drive(new Translation2d(0,0), 0, true);
     } else {
-      double yaw = vision.getYaw(4);
+      double yaw = vision.getYaw(targetAprilTag);
       swerve.drive(new Translation2d(0,0), -0.1 * yaw, true);
     }
   }
@@ -54,10 +60,10 @@ public class AutoAim extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (vision.getTargetWithID(4) == null) {
+    if (vision.getTargetWithID(targetAprilTag) == null) {
       return false;
     } else {
-      return Math.abs(vision.getTargetWithID(4).getYaw()) < 1;
+      return Math.abs(vision.getTargetWithID(targetAprilTag).getYaw()) < 1;
   }
 }
 }
