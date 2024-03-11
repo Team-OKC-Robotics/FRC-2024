@@ -28,7 +28,7 @@ public class AutoAim extends Command {
     this.swerve = swerve;
     this.vision = vision;
 
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance.get() == DriverStation.Alliance.Blue) {
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
       this.targetAprilTag = 7;
     }
   }

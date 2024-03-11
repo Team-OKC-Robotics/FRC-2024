@@ -22,7 +22,7 @@ public ShooterCommand(ShooterSubsystem shooter, double power) {
 
 @Override
 public void execute() {
-    shooter.shootSpeed(4000);
+    shooter.shootSpeed(5000);
    // shooter.indexerSpeed(1);
     
     

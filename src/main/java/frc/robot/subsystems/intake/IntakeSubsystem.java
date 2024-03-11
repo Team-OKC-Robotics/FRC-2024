@@ -40,12 +40,14 @@ public class IntakeSubsystem extends SubsystemBase{
 
 public IntakeSubsystem() {
     intakemotor = new CANSparkMax(Constants.IntakeConstants.intakemotorID, CANSparkLowLevel.MotorType.kBrushless);
+    indexerMotor = new CANSparkMax(Constants.ShooterConstants.indexerMotorID, CANSparkLowLevel.MotorType.kBrushless);
     intakemotor.restoreFactoryDefaults();
+    indexerMotor.restoreFactoryDefaults();
     intakemotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     intakemotor.setInverted(true);
     IntakeLimitSwitch = new DigitalInput(8);
-    indexerMotor = new CANSparkMax(Constants.ShooterConstants.indexerMotorID, CANSparkLowLevel.MotorType.kBrushless);
-    indexerMotor.restoreFactoryDefaults();
+    
+    
 
     log = DataLogManager.getLog();
         posLog = new DoubleLogEntry(log, "/intake/pos");
@@ -65,7 +67,7 @@ public void setbackSpeed(double power) {
     intakemotor.set(-power);
     
 }
-//for backwards intake
+//for backwards index
 public void setIndexerback(double power) {
     indexerMotor.set(-power);
 }
@@ -74,7 +76,7 @@ public void indexerSpeed(double power) {
     indexerMotor.set(power);
   }
 //stops indexer
-public void stopIndexer(double speed) {
+public void stopIndexer() {
     indexerMotor.set(0);
   }
 

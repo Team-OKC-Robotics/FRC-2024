@@ -117,6 +117,10 @@ public class RobotContainer
     autoChooser.addOption("Left of Speaker Wait then Shoot Auto", "Left of Speaker Wait then Shoot Auto");
     autoChooser.addOption("Right of Speaker get far note", "Right of Speaker get far note");
     autoChooser.addOption("Middle Speaker 3 Piece Left", "Middle Speaker 3 Piece Left");
+    autoChooser.addOption("Right Speaker Shoot Pre-Loaded", "Right Speaker Shoot Pre-Loaded");
+    autoChooser.addOption("Left Speaker Shoot Pre-Loaded", "Left Speaker Shoot Pre-Loaded");
+    autoChooser.addOption("Middle Speaker 3 Piece Right", "Middle Speaker 3 Piece Right");
+
 
 
     tab.add(autoChooser);
@@ -168,16 +172,18 @@ public class RobotContainer
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     
    // secondriverButton5.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
-    driverControllerButtonB.whileTrue(autoaim); //B Button
+  //  driverControllerButtonB.whileTrue(autoaim); //B Button
     driverControllerleftbumper.whileTrue(runIntake); //left bumper
     driverControllerrightbumper.whileTrue(backwardIntake);
     
 
    //secondriverButtonB.whileTrue(setpivot);//x button
    //secondriverButtonY.whileTrue(otherwaypivot);
+    secondriverButtonX.whileTrue(runShooter);
     secondriverButtonA.whileTrue(pivottoangle30);
     secondriverButtonB.whileTrue(pivottoangle35); //B button
     secondriverButtonY.onTrue(pivottoangle60); //Y button
+
     
     secondriverleftbumper.whileTrue(waitshoot); //left bumper
     secondriverrightbumper.whileTrue(runIntake); //right bumper
@@ -213,5 +219,7 @@ public class RobotContainer
 
   public void resetrobot() {
     m_shooter.stopShooter();
+    m_intake.stopIntake();
+    m_intake.stopIndexer();
   }
 }

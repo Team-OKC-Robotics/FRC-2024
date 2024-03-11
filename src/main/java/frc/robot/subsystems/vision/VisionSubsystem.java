@@ -100,6 +100,10 @@ public double getYaw(int targetID) {
 
 public PhotonTrackedTarget getTargetWithID(int id) { // Returns the apriltag target with the specified ID (if it exists)
     var result = camera.getLatestResult();
+
+    if(result == null) {
+      return null;
+    }
     List<PhotonTrackedTarget> targets = result.getTargets(); // Create a list of all currently tracked targets
         for (PhotonTrackedTarget i : targets) {
             if (i.getFiducialId() == id) { // Check the ID of each target in the list
