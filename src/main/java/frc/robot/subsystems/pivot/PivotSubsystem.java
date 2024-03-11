@@ -29,23 +29,20 @@ public class PivotSubsystem extends SubsystemBase{
     private final DutyCycleEncoder pivotencoder;
 
     private ShuffleboardTab tab = Shuffleboard.getTab("pivot");
-  //  private GenericEntry writeMode = tab.add("write mode", false).getEntry();
-
-   // private final RelativeEncoder leftEncoder;
+  
     private GenericEntry pivotabsoluteencoder = tab.add("absolute encoder", 0).getEntry();
 public PivotSubsystem() {
-   // leftpivot = new CANSparkMax(Constants.PivotConstants.leftpivotID, CANSparkLowLevel.MotorType.kBrushless);
+   
     pivotmotor = new CANSparkMax(Constants.PivotConstants.pivotmotorID, CANSparkLowLevel.MotorType.kBrushless);
     pivotmotor.restoreFactoryDefaults();
-   // rightpivot.restoreFactoryDefaults();
-   // leftpivot.follow(rightpivot);
+   
     pivotmotor.setInverted(false);
     
      pivotencoder = new DutyCycleEncoder(9);
-  //  leftpivot.setIdleMode(CANSparkMax.IdleMode.kBrake);
+  
     pivotmotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     pivotEncoder = pivotmotor.getEncoder();
-   // leftEncoder = leftpivot.getEncoder();
+   
     PivotPIDController = new PIDController(0.03, 0.0001, 0);
     
     

@@ -24,8 +24,7 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
-import frc.robot.subsystems.superstructure.SuperState;
-import frc.robot.subsystems.superstructure.Superstructure;
+
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.commands.shooter.*;
@@ -56,7 +55,7 @@ public class RobotContainer
   private final VisionSubsystem m_vision = new VisionSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
-  public final Superstructure superstructure = new Superstructure(m_intake, m_shooter, m_pivot, drivebase);
+  
 
   //controllers
   XboxController driverXbox = new XboxController(0);

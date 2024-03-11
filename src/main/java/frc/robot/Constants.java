@@ -61,7 +61,12 @@ public final class Constants
     public static final int intakemotorID = 9;
     public static final int limitSwitchBeanBrakeChannel = 1;
   }
-
+  
+  public static final class ClimberConstants 
+  {
+    public static final int rightclimbermotorID = 15;
+    public static final int leftclimbermotorID = 16;
+  }
   public static final class PivotConstants {
     public static final int pivotmotorID = 11;
   }

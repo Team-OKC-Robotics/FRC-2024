@@ -80,25 +80,10 @@ public void stopIndexer() {
     indexerMotor.set(0);
   }
 
-public enum IntakeState {
-
-    FORWARD(1),
-    OFF(0);
-    
-
-   public double power;
-
-   private IntakeState(double power){
-       this.power = power;
-   }
-
-}
 
 public double getSpeed() {
     return intakemotor.get();
 }
-
-
 
 public Command runIntake(double Speed){
     return run(() -> {
