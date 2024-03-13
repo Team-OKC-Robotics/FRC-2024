@@ -79,6 +79,7 @@ public final class Constants
     public static final int kSecondriverButton4 = 4;
     public static final int kSecondriverButton5 = 5;
     public static final int kSecondriverButton6 = 6;
+    public static final int kSecondriverButton7 = 7;
 
 
 

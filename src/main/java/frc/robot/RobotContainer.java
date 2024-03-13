@@ -30,6 +30,7 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.commands.shooter.*;
 import frc.robot.commands.vision.AutoAim;
 import frc.robot.commands.pivot.*;
+import frc.robot.commands.climber.ClimberCommand;
 import frc.robot.commands.intake.*;
 import java.io.File;
 import java.util.Set;
@@ -37,6 +38,7 @@ import java.util.Set;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -55,6 +57,7 @@ public class RobotContainer
   private final VisionSubsystem m_vision = new VisionSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
+  private final ClimberSubsystem m_climber = new ClimberSubsystem();
   
 
   //controllers
@@ -76,11 +79,12 @@ public class RobotContainer
   private final JoystickButton secondriverButtonX = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
   private final JoystickButton secondriverleftbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
   private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
-  // shooter commands
+  private final JoystickButton secondriverButtonPlus = new JoystickButton(secondriver, Constants.OI.kSecondriverButton7);
+  //shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
   private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake, 1);
-  // intake commands
+  //intake commands
   private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.9);
   private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.8);
   //pivot commands
@@ -89,6 +93,8 @@ public class RobotContainer
   private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 58); 
   private final PivotToAngle pivottoangle35 = new PivotToAngle(m_pivot, 35);
   private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
+  //climber commands
+  private final ClimberCommand setClimberSpeed = new ClimberCommand(m_climber, 1);
 
 
   private final AutoAim autoaim = new AutoAim(drivebase, m_vision);
@@ -182,6 +188,7 @@ public class RobotContainer
     secondriverButtonA.whileTrue(pivottoangle30);
     secondriverButtonB.whileTrue(pivottoangle35); //B button
     secondriverButtonY.onTrue(pivottoangle60); //Y button
+    secondriverButtonPlus.onTrue(setClimberSpeed); //Start Button
 
     
     secondriverleftbumper.whileTrue(waitshoot); //left bumper
@@ -220,5 +227,6 @@ public class RobotContainer
     m_shooter.stopShooter();
     m_intake.stopIntake();
     m_intake.stopIndexer();
+    m_climber.stopclimb();
   }
 }
