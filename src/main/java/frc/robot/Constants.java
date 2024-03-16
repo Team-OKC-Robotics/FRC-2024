@@ -53,4 +53,11 @@ public final class Constants
   public static final class LED {
     public static final int PWMPORT = 1, LENGTH = 20;
 }
+
+    public static final class ShooterConstants {
+
+    public static final int shooterMotorID = 10;
+    public static final int intakeMotorID = 11;
+  }
+
 }
