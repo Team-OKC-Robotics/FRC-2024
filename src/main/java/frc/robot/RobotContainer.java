@@ -80,6 +80,7 @@ public class RobotContainer
   private final JoystickButton secondriverleftbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
   private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
   private final JoystickButton secondriverButtonPlus = new JoystickButton(secondriver, Constants.OI.kSecondriverButton7);
+  private final JoystickButton secondriverButtonMinus = new JoystickButton(secondriver, Constants.OI.kSecondriverButton8);
   //shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
@@ -94,7 +95,8 @@ public class RobotContainer
   private final PivotToAngle pivottoangle35 = new PivotToAngle(m_pivot, 35);
   private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
   //climber commands
-  private final ClimberCommand setClimberSpeed = new ClimberCommand(m_climber, 1);
+  private final ClimberCommand setClimberPositiveSpeed = new ClimberCommand(m_climber, 0.9);
+  private final ClimberCommand setClimberNegativeSpeed = new ClimberCommand(m_climber, -0.9);
 
 
   private final AutoAim autoaim = new AutoAim(drivebase, m_vision);
@@ -188,7 +190,8 @@ public class RobotContainer
     secondriverButtonA.whileTrue(pivottoangle30);
     secondriverButtonB.whileTrue(pivottoangle35); //B button
     secondriverButtonY.onTrue(pivottoangle60); //Y button
-    secondriverButtonPlus.onTrue(setClimberSpeed); //Start Button
+    secondriverButtonPlus.onTrue(setClimberPositiveSpeed); //Plus Button
+    secondriverButtonMinus.onTrue(setClimberNegativeSpeed); //Minus Button
 
     
     secondriverleftbumper.whileTrue(waitshoot); //left bumper
