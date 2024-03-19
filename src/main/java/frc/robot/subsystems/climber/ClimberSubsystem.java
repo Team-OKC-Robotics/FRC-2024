@@ -137,8 +137,13 @@ public Command climbIt(double Speed) {
   }
 
   public boolean hasClimbed() {
-    return ClimberLimitSwitch.get();
+    if (rightclimbmotor.getEncoder().getPosition() > 10) {
+      return ClimberLimitSwitch.get();
+    } else {
+      return false;
+    }
   }
 }
 
 
+//Hello :)
