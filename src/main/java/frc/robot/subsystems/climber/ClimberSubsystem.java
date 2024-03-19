@@ -59,8 +59,6 @@ public ClimberSubsystem() {
     rightclimbmotor.setInverted(true);
     leftclimbmotor.setInverted(false);
 
-    rightclimbmotor.getEncoder(); //Placeholder
-
     log = DataLogManager.getLog();
     posLog = new DoubleLogEntry(log, "/climber/pos");
     outputLog = new DoubleLogEntry(log, "/climber/output");
@@ -138,16 +136,23 @@ public Command climbIt(double Speed) {
    
   }
 
+  //Checks if the climber is at its highest (If it hit the limit switch, and it has been carried past a certain point)
+
   public boolean hasClimbed() {
-    if (rightclimbmotor.getEncoder() > 10) { //Placeholder condition; Doesn't work
+    if (rightclimbmotor.getEncoder().getPosition() > 10) { //10 is an arbitrary number, may be replaced
       return ClimberLimitSwitch.get();
+    } else {
+      return false;
     }
   }
-}
+
+  //Checks if the climber is at its lowest (Hit the limit switch and is below a certain point)
 
   public boolean positionAtLowest() {
-    if (rightclimbmotor.getEncoder() > 10) { //Placeholder condition; Doesn't work
+    if (rightclimbmotor.getEncoder().getPosition() < 10) { //10 is an arbitrary number, may be replaced
       return ClimberLimitSwitch.get();
+    } else {
+      return false;
     }
   }
 }

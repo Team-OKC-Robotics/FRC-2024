@@ -23,7 +23,7 @@ public void initialize() {}
 
 @Override 
 public void execute() {
-    if (this.speed > 0 && !climber.hasClimbed()) {
+    if (this.speed > 0 && !climber.positionAtLowest()) {
         climber.climbspeed(speed);
 }
 else {

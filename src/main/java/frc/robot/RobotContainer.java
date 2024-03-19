@@ -30,6 +30,7 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.commands.shooter.*;
 import frc.robot.commands.vision.AutoAim;
 import frc.robot.commands.pivot.*;
+import frc.robot.commands.climber.ClimberCallibrationAuto;
 import frc.robot.commands.climber.ClimberCommand;
 import frc.robot.commands.intake.*;
 import java.io.File;
@@ -113,6 +114,7 @@ public class RobotContainer
     NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.6));
+    NamedCommands.registerCommand("Climber", new ClimberCallibrationAuto( m_climber, -0.1)); //-0.1 may be replaced
 
     // add auto chooser options
     autoChooser.setDefaultOption("4 Piece", "4 Piece");
