@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -21,6 +21,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -125,13 +127,13 @@ public PhotonTrackedTarget getBestTarget() {
         return hasTarget; // Returns whether or not a target was found
     }
 
-    public double distanceToTarget(double tagHeight, double cameraHeight, double cameraAngle, double distanceThreshold, double distanceThresholdRange,
-    double angleThreshold, double angleThresholdRange) {
+    public double distanceToTarget(double tagHeight, double cameraHeight, double cameraAngle, double distanceThreshold,
+    double angleThreshold) {
     // convert angle to radians
-    final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(50);
+    final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(50); // placeholder
     final double TARGET_HEIGHT_METERS = Units.inchesToMeters(57.13);
     // Angle between horizontal and the camera.
-    final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0);
+    final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0); // placeholder
 
     double angleRadians = Math.toRadians(cameraAngle);
     double distance = (tagHeight - cameraHeight) / Math.tan(angleRadians);
@@ -145,10 +147,13 @@ public PhotonTrackedTarget getBestTarget() {
                                 CAMERA_PITCH_RADIANS, 
                                 Units.degreesToRadians(result.getBestTarget().getPitch())); 
     
-    SmartDashboard.putNumber("range", range);
-    return distance;  }
-    return 0;
+    ShuffleboardTab tab = Shuffleboard.getTab("Vision"); 
+    tab.add("Range", range);
     }
+    return distance;
+  }
+
+    
 
 @Override
   public void periodic() {
