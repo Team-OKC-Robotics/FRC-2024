@@ -72,6 +72,8 @@ public class RobotContainer
   private final JoystickButton driverControllerButtonB = new JoystickButton(driverController, Constants.OI.kdriverControllerButton2);
   private final JoystickButton driverControllerleftbumper = new JoystickButton(driverController, Constants.OI.kdriverControllerButton5);
   private final JoystickButton driverControllerrightbumper = new JoystickButton(driverController, Constants.OI.kdriverControllerButton6);
+  private final JoystickButton driverControllerPlus = new JoystickButton(driverController, Constants.OI.kdriverControllerButton7);
+  private final JoystickButton driverControllerMinus = new JoystickButton(driverController, Constants.OI.kdriverControllerButton8);
   
   //second driver buttons
   private final JoystickButton secondriverButtonB = new JoystickButton(secondriver, Constants.OI.kSecondriverButton2);
@@ -80,8 +82,7 @@ public class RobotContainer
   private final JoystickButton secondriverButtonX = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
   private final JoystickButton secondriverleftbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
   private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
-  private final JoystickButton secondriverButtonPlus = new JoystickButton(secondriver, Constants.OI.kSecondriverButton7);
-  private final JoystickButton secondriverButtonMinus = new JoystickButton(secondriver, Constants.OI.kSecondriverButton8);
+
   //shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
@@ -184,6 +185,9 @@ public class RobotContainer
   //  driverControllerButtonB.whileTrue(autoaim); //B Button
     driverControllerleftbumper.whileTrue(runIntake); //left bumper
     driverControllerrightbumper.whileTrue(backwardIntake);
+
+    driverControllerPlus.onTrue(setClimberPositiveSpeed); //Plus Button
+    driverControllerMinus.onTrue(setClimberNegativeSpeed);//Minus Button
     
 
    //secondriverButtonB.whileTrue(setpivot);//x button
@@ -192,10 +196,7 @@ public class RobotContainer
     secondriverButtonA.whileTrue(pivottoangle30);
     secondriverButtonB.whileTrue(pivottoangle35); //B button
     secondriverButtonY.onTrue(pivottoangle60); //Y button
-    secondriverButtonPlus.onTrue(setClimberPositiveSpeed); //Plus Button
-    secondriverButtonMinus.onTrue(setClimberNegativeSpeed); //Minus Button
 
-    
     secondriverleftbumper.whileTrue(waitshoot); //left bumper
     secondriverrightbumper.whileTrue(runIntake); //right bumper
     //secondriverButtonA.whileTrue(runShooter); //A button
