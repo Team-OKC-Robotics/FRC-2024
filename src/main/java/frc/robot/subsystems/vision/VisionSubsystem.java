@@ -2,10 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.vision;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
@@ -47,7 +45,6 @@ public class VisionSubsystem extends SubsystemBase {
     AprilTagDetector detector = new AprilTagDetector();
     detector.addFamily("tag36h11");
     
-    List<PhotonTrackedTarget> targets = getTargetsByIds(new int[] {4, 5, 6, 7});
 
   }
 
@@ -74,56 +71,55 @@ public class VisionSubsystem extends SubsystemBase {
 
 }
 
-public boolean canSeeTargetID(int[] targets) {
-    var result = camera.getLatestResult();
+public boolean canSeeTargetID(int targetID) {
+  var result = camera.getLatestResult();
   
-    if (result.hasTargets()) {
-        for (PhotonTrackedTarget target : result.getTargets()) {
-            int fiducialId = target.getFiducialId(); 
-            for (int id : targets) {
-                if (fiducialId == id) { 
-                    return true;
-                }
-            }
-        }
+  if (result.hasTargets()) {
+    for (var target : result.getTargets()) {
+      int fiducialId = target.getFiducialId(); 
+      if (fiducialId == targetID) { 
+        return true;
+      }
     }
     return false;
+  }
+return false;
 }
 
-public double getYaw(int fiducialIdToFind) {
+public double getYaw(int targetID) {
+  var result = camera.getLatestResult();
+
+  if (result.hasTargets()) {
+    for (var target : result.getTargets()) {
+      int fiducialId = target.getFiducialId(); 
+      if (fiducialId == targetID)
+      return target.getYaw(); { 
+      }
+    }
+  }
+  return 0.0;
+}
+
+public PhotonTrackedTarget getTargetWithID(int id) { // Returns the apriltag target with the specified ID (if it exists)
     var result = camera.getLatestResult();
 
-    if (result.hasTargets()) {
-        for (PhotonTrackedTarget target : result.getTargets()) {
-            if (target.getFiducialId() == fiducialIdToFind) {
-                return target.getYaw();
+    if(result == null) {
+      return null;
+    }
+    List<PhotonTrackedTarget> targets = result.getTargets(); // Create a list of all currently tracked targets
+        for (PhotonTrackedTarget i : targets) {
+            if (i.getFiducialId() == id) { // Check the ID of each target in the list
+                return i; // Found the target with the specified ID!
             }
         }
-    }
-    return 0.0;
-}
-
-public List<PhotonTrackedTarget> getTargetsByIds(int[] ids) {
-        if (result == null) {
-            return new ArrayList<>(); // Return an empty list if no result is available
-        }
-
-        List<PhotonTrackedTarget> targets = result.getTargets();
-        List<PhotonTrackedTarget> filteredTargets = new ArrayList<>();
-
-        for (PhotonTrackedTarget target : targets) {
-            if (Arrays.stream(ids).anyMatch(id -> id == target.getFiducialId())) {
-                filteredTargets.add(target);
-            }
-        }
-
-        return filteredTargets;
+        return null; // Failed to find the target with the specified ID
     }
 
-    public PhotonTrackedTarget getBestTarget() {
+public PhotonTrackedTarget getBestTarget() {
         if (hasTarget) {
-            return result.getBestTarget(); // Returns the best (closest) target
-        } else {
+        return result.getBestTarget(); // Returns the best (closest) target
+        }
+        else {
             return null; // Otherwise, returns null if no targets are currently found
         }
     }
@@ -163,10 +159,10 @@ public List<PhotonTrackedTarget> getTargetsByIds(int[] ids) {
   public void periodic() {
     // This method will be called once per scheduler run
     
-    PhotonPipelineResult result = camera.getLatestResult(); // Query the latest result from PhotonVision
-    hasTarget = result.hasTargets(); // If the camera has detected an apriltag target, the hasTarget boolean will be true
-    if (hasTarget) {
-      this.result = result;
-    }
+ //       PhotonPipelineResult result = camera.getLatestResult(); // Query the latest result from PhotonVision
+ //       hasTarget = result.hasTargets(); // If the camera has detected an apriltag target, the hasTarget boolean will be true
+ //       if (hasTarget) {
+ //           this.result = result;
+ //       }
   }
 }
