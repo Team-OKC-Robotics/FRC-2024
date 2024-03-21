@@ -88,6 +88,8 @@ public final class Constants
   
     public static final int kdriverControllerButton5 = 5;
     public static final int kdriverControllerButton6 = 6;
+    public static final int kdriverControllerButton7 = 7;
+    public static final int kdriverControllerButton8 = 8;
     
 
   }
