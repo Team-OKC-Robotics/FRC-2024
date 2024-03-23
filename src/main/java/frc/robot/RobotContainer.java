@@ -40,6 +40,7 @@ import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.utils.POVButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -77,6 +78,8 @@ public class RobotContainer
   private final JoystickButton secondriverButtonX = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
   private final JoystickButton secondriverleftbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
   private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
+  private final POVButton secondriverPOVButton = new POVButton(secondriver, 0);
+
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
@@ -175,17 +178,19 @@ public class RobotContainer
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     
    // secondriverButton5.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
-    driverControllerButtonB.whileTrue(autoaim); //B Button
+  // driverControllerButtonB.whileTrue(autoaim); //B Button
     driverControllerleftbumper.whileTrue(runIntake); //left bumper
     driverControllerrightbumper.whileTrue(backwardIntake);
     
 
    //secondriverButtonB.whileTrue(setpivot);//x button
    //secondriverButtonY.whileTrue(otherwaypivot);
-    secondriverButtonX.whileTrue(runShooter);
+    // secondriverButtonX.whileTrue(runShooter);
     secondriverButtonA.whileTrue(pivottoangle30);
-    secondriverButtonB.whileTrue(pivottoangle35); //B button
+  // secondriverButtonB.whileTrue(pivottoangle35); //B button
     secondriverButtonY.onTrue(pivottoangle60); //Y button
+    secondriverButtonB.whileTrue(autoaim);
+    secondriverPOVButton.whileTrue(runShooter);
 
     
     secondriverleftbumper.whileTrue(waitshoot); //left bumper
