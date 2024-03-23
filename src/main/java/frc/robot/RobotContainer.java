@@ -91,7 +91,7 @@ public class RobotContainer
   private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
 
 
-  private final AutoAim autoaim = new AutoAim(drivebase, m_vision);
+  private final AutoAim autoaim = new AutoAim(drivebase, m_vision, m_pivot);
 
   //makes the auto chooser
   private SendableChooser<String> autoChooser = new SendableChooser<String>();
@@ -171,7 +171,7 @@ public class RobotContainer
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     
    // secondriverButton5.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
-  //  driverControllerButtonB.whileTrue(autoaim); //B Button
+    driverControllerButtonB.whileTrue(autoaim); //B Button
     driverControllerleftbumper.whileTrue(runIntake); //left bumper
     driverControllerrightbumper.whileTrue(backwardIntake);
     

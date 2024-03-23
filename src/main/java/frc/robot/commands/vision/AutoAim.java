@@ -6,9 +6,13 @@ package frc.robot.commands.vision;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.utils.LerpedLUT;
@@ -17,18 +21,26 @@ public class AutoAim extends Command {
   /** Creates a new AutoAim. */
   private final SwerveSubsystem swerve;
   private final VisionSubsystem vision;
+  private final PivotSubsystem pivot;
   private int targetAprilTag = 4;
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
   LerpedLUT angleLUT= new LerpedLUT();
 
-  public AutoAim(SwerveSubsystem swerve, VisionSubsystem vision) {
+  private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
+
+  private GenericEntry distanceEntry = tab.add("Distance To Tag", 0.0).getEntry();
+  private GenericEntry idealAngleEntry = tab.add("PivotAngle", 0.0).getEntry();
+  
+
+  public AutoAim(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot) {
     // Use addRequirements() here to declare subsystem dependencies.
 
-    addRequirements(swerve, vision);
+    addRequirements(swerve, vision, pivot);
 
     this.swerve = swerve;
     this.vision = vision;
+    this.pivot = pivot;
 
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
       this.targetAprilTag = 7;
@@ -43,9 +55,9 @@ public class AutoAim extends Command {
   }
 
   double tagHeight = 57.13;
-  double cameraHeight = 50;
+  double cameraHeight = 25;
   double distanceThreshold = 0; // placeholder
-  double cameraAngle = 0; // placeholder
+  double cameraAngle = 30; // placeholder
   double angleThreshold = 0; // placeholder
     
 
@@ -68,11 +80,14 @@ public class AutoAim extends Command {
       swerve.drive(new Translation2d(0,0), -0.1 * yaw, true);
     }
     
-    double distance = visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle, distanceThreshold, angleThreshold);
+    double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle, distanceThreshold, angleThreshold));
+    distance = distance - 3.9; // Camera + robot offset
     double idealAngle = angleLUT.getAngleFromDistance(distance);
 
-    SmartDashboard.putNumber("Distance To Tag" , distance);
-    SmartDashboard.putNumber("Pivot Angle", idealAngle);
+    distanceEntry.setDouble(distance);
+    idealAngleEntry.setDouble(idealAngle);
+
+    pivot.PivotIttoAngle(idealAngle);
 
   }
   // Called once the command ends or is interrupted.
@@ -82,10 +97,11 @@ public class AutoAim extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (vision.getTargetWithID(targetAprilTag) == null) {
-      return false;
-    } else {
-      return Math.abs(vision.getTargetWithID(targetAprilTag).getYaw()) < 1;
-  }
+    return false;
+  //   if (vision.getTargetWithID(targetAprilTag) == null) {
+  //     return false;
+  //   } else {
+  //     return Math.abs(vision.getTargetWithID(targetAprilTag).getYaw()) < 1;
+  // }
 }
 }

@@ -129,11 +129,18 @@ public PhotonTrackedTarget getBestTarget() {
 
     public double distanceToTarget(double tagHeight, double cameraHeight, double cameraAngle, double distanceThreshold,
     double angleThreshold) {
+
+    var result = camera.getLatestResult();
+
+    if (result == null) {
+      return 100;
+    }
+
     // convert angle to radians
-    final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(50); // placeholder
+    final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(25); 
     final double TARGET_HEIGHT_METERS = Units.inchesToMeters(57.13);
     // Angle between horizontal and the camera.
-    final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0); // placeholder
+    final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(30); 
 
     double angleRadians = Math.toRadians(cameraAngle);
     double distance = (tagHeight - cameraHeight) / Math.tan(angleRadians);
@@ -146,9 +153,11 @@ public PhotonTrackedTarget getBestTarget() {
                                 TARGET_HEIGHT_METERS,
                                 CAMERA_PITCH_RADIANS, 
                                 Units.degreesToRadians(result.getBestTarget().getPitch())); 
+
+                                return range;
     
-    ShuffleboardTab tab = Shuffleboard.getTab("Vision"); 
-    tab.add("Range", range);
+    // ShuffleboardTab tab = Shuffleboard.getTab("Vision"); 
+    // tab.add("Range", range);
     }
     return distance;
   }

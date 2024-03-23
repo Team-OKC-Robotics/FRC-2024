@@ -47,6 +47,6 @@ public class LerpedLUT {
         // Return the LERP'd value between the nearest two LUT entries
         LUTEntry lower = LUT.get(i - 1);
         LUTEntry higher = LUT.get(i);
-        return (lower.angle * (lower.distance - distance) + higher.angle * (distance - lower.distance)) / (higher.distance - lower.distance);
+        return (lower.angle * (higher.distance - distance) + higher.angle * (distance - lower.distance)) / (higher.distance - lower.distance);
     }
 }
