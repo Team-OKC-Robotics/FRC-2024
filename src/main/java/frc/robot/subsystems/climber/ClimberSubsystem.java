@@ -85,9 +85,13 @@ public static class PIDF {
 
 
 
-public void climbspeed(double power) {
-    rightclimbmotor.set(power);
+public void leftClimbspeed(double power) {
     leftclimbmotor.set(power);
+
+}
+
+public void rightClimbspeed(double power) {
+    rightclimbmotor.set(power);
 
 }
 public void stopclimb() {
@@ -136,20 +140,42 @@ public Command climbIt(double Speed) {
    
   }
 
-  //Checks if the climber is at its highest (If it hit the limit switch, and it has been carried past a certain point)
+  //Checks if the left climber is at its highest (If it hit the limit switch, and it has been carried past a certain point)
 
-  public boolean hasClimbed() {
-    if (rightclimbmotor.getEncoder().getPosition() > 10) { //10 is an arbitrary number, may be replaced
+  public boolean leftHasClimbed() {
+    if (leftclimbmotor.getEncoder().getPosition()  > 10) { //10 is an arbitrary number, may be replaced
       return ClimberLimitSwitch.get();
     } else {
       return false;
     }
   }
 
-  //Checks if the climber is at its lowest (Hit the limit switch and is below a certain point)
+  //Checks if the right climber is at its highest (If it hit the limit switch, and it has been carried past a certain point)
 
-  public boolean positionAtLowest() {
-    if (rightclimbmotor.getEncoder().getPosition() < 10) { //10 is an arbitrary number, may be replaced
+  public boolean rightHasClimbed() {
+    if (rightclimbmotor.getEncoder().getPosition() > 10) {
+      return ClimberLimitSwitch.get();
+    } else {
+      return false;
+    }
+  }
+
+
+
+  //Checks if the left climber is at its lowest (Hit the limit switch and is below a certain point)
+
+  public boolean leftPositionAtLowest() {
+    if (leftclimbmotor.getEncoder().getPosition()  < 10) {
+      return ClimberLimitSwitch.get();
+    } else {
+      return false;
+    }
+  }
+
+  //Checks if the right climber is at its lowest (Hit the limit switch and is below a certain point)
+
+  public boolean rightPositionAtLowest() {
+    if (rightclimbmotor.getEncoder().getPosition() < 10) {
       return ClimberLimitSwitch.get();
     } else {
       return false;

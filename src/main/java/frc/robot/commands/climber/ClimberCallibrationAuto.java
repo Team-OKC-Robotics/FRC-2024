@@ -23,21 +23,31 @@ public void initialize() {}
 
 @Override 
 public void execute() {
-    if (this.speed > 0 && !climber.positionAtLowest()) {
-        climber.climbspeed(speed);
-}
-else {
-    climber.climbspeed(0);
+    if (this.speed > 0 && !climber.leftPositionAtLowest()) {
+        climber.leftClimbspeed(speed);
+    } else {
+    climber.leftClimbspeed(0);
     }
-}
+
+    if (this.speed > 0 && !climber.rightPositionAtLowest()) {
+        climber.rightClimbspeed(speed);
+    } else {
+    climber.rightClimbspeed(0);
+    }
+  }
 
 @Override
 public void end(boolean interuppted) {
-    climber.climbspeed(0);
+    climber.leftClimbspeed(0);
+    climber.rightClimbspeed(0);
 }
 
 @Override
 public boolean isFinished() {
-    return climber.hasClimbed();
+    if(climber.rightHasClimbed() && climber.leftHasClimbed()) {
+      return true;
+    } else {
+        return false;
     }
+  }
 }
