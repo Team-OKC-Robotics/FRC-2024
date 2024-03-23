@@ -23,7 +23,8 @@ import frc.robot.Constants;
 public class ClimberSubsystem extends SubsystemBase {
     private final CANSparkMax rightclimbmotor;
     private final CANSparkMax leftclimbmotor;
-    private final DigitalInput ClimberLimitSwitch;
+    private final DigitalInput LeftClimberLimitSwitch;
+    private final DigitalInput RightClimberLimitSwitch;
     private final SparkPIDController PIDController;
     
 
@@ -52,12 +53,14 @@ public ClimberSubsystem() {
     rightclimbmotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     leftclimbmotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     
-    ClimberLimitSwitch = new DigitalInput(11);
+    LeftClimberLimitSwitch = new DigitalInput(2);
+    RightClimberLimitSwitch = new DigitalInput(3);
+
     PIDController = leftclimbmotor.getPIDController();
     
     
-    rightclimbmotor.setInverted(true);
-    leftclimbmotor.setInverted(false);
+    rightclimbmotor.setInverted(false);
+    leftclimbmotor.setInverted(true);
 
     log = DataLogManager.getLog();
     posLog = new DoubleLogEntry(log, "/climber/pos");
@@ -131,7 +134,7 @@ public Command climbIt(double Speed) {
     posLog.append(rightclimbmotor.get());
     outputLog.append(rightclimbmotor.get());
 
-    climberSwitch.setBoolean(ClimberLimitSwitch.get());
+    //climberSwitch.setBoolean(ClimberLimitSwitch.get());
   }
 
   public void ClimbIt(double speed) {
@@ -140,45 +143,17 @@ public Command climbIt(double Speed) {
    
   }
 
-  //Checks if the left climber is at its highest (If it hit the limit switch, and it has been carried past a certain point)
 
-  public boolean leftHasClimbed() {
-    if (leftclimbmotor.getEncoder().getPosition()  > 10) { //10 is an arbitrary number, may be replaced
-      return ClimberLimitSwitch.get();
-    } else {
-      return false;
-    }
+
+  //Checks if the left climber is at its highest
+
+  public boolean leftHitLimitSwitch() {
+      return !LeftClimberLimitSwitch.get();
   }
 
-  //Checks if the right climber is at its highest (If it hit the limit switch, and it has been carried past a certain point)
+  //Checks if the right climber is at its highest
 
-  public boolean rightHasClimbed() {
-    if (rightclimbmotor.getEncoder().getPosition() > 10) {
-      return ClimberLimitSwitch.get();
-    } else {
-      return false;
-    }
-  }
-
-
-
-  //Checks if the left climber is at its lowest (Hit the limit switch and is below a certain point)
-
-  public boolean leftPositionAtLowest() {
-    if (leftclimbmotor.getEncoder().getPosition()  < 10) {
-      return ClimberLimitSwitch.get();
-    } else {
-      return false;
-    }
-  }
-
-  //Checks if the right climber is at its lowest (Hit the limit switch and is below a certain point)
-
-  public boolean rightPositionAtLowest() {
-    if (rightclimbmotor.getEncoder().getPosition() < 10) {
-      return ClimberLimitSwitch.get();
-    } else {
-      return false;
-    }
+  public boolean rightHitLimitSwitch() {
+      return !RightClimberLimitSwitch.get();
   }
 }
