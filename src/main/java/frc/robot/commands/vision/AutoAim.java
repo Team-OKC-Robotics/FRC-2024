@@ -7,6 +7,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
@@ -69,6 +70,9 @@ public class AutoAim extends Command {
     
     double distance = visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle, distanceThreshold, angleThreshold);
     double idealAngle = angleLUT.getAngleFromDistance(distance);
+
+    SmartDashboard.putNumber("Distance To Tag" , distance);
+    SmartDashboard.putNumber("Pivot Angle", idealAngle);
 
   }
   // Called once the command ends or is interrupted.

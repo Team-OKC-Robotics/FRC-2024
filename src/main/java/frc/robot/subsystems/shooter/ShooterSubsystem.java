@@ -3,18 +3,17 @@ package frc.robot.subsystems.shooter;
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
+import com.revrobotics.CANSparkLowLevel;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 
-
-
-import com.revrobotics.*;
-
-import frc.robot.Constants;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystem. */
@@ -27,6 +26,12 @@ public class ShooterSubsystem extends SubsystemBase {
   private final RelativeEncoder rightEncoder;
   private final RelativeEncoder leftEncoder;
   private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
+
+  private GenericEntry shooterP = tab.add("Shooter P", PIDF.PORPORTION).getEntry();
+  private GenericEntry shooterI = tab.add("Shooter I", PIDF.INTEGRAL).getEntry();
+  private GenericEntry shooterF = tab.add("Shooter F", PIDF.FEEDFORWARD).getEntry();
+  private GenericEntry pidSetButton = tab.add("Set PID", false).getEntry();
+  
   private GenericEntry shooterRight = tab.add("shooter right", 0.0).getEntry();
   private GenericEntry shooterLeft = tab.add("shooter leftt", 0.0).getEntry();
 
@@ -69,11 +74,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public static class PIDF {
     /*Feedforward constant for PID loop */
-    public static final double FEEDFORWARD = 0.00015;
+    public static final double FEEDFORWARD = 0.000182;
     /*Porportion constant for PID loop */
-    public static final double PORPORTION = 5e-5;
+    public static final double PORPORTION = 0.001;
     /*Integral constant for PID loop */
-    public static final double INTEGRAL = 1e-7;
+    public static final double INTEGRAL = 0;
     /*Derivative constant for PID loop */
     public static final double DERIVATIVE = 0.0;
     /*Integral zone constant for PID loop */
@@ -151,6 +156,11 @@ public class ShooterSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     shooterRight.setDouble(rightEncoder.getVelocity());
     shooterLeft.setDouble(leftEncoder.getVelocity());
+
+    if (pidSetButton.getBoolean(false)) {
+      pidSetButton.setBoolean(false);
+      set(shooterP.getDouble(PIDF.PORPORTION), shooterI.getDouble(PIDF.INTEGRAL), PIDF.DERIVATIVE, shooterF.getDouble(PIDF.FEEDFORWARD), PIDF.INTEGRAL_ZONE);
+    }
   }
 
   public void ShootIt(double speed) {
