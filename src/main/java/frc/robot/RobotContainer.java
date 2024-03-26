@@ -58,7 +58,9 @@ public class RobotContainer
   
 
   //controllers
-  XboxController driverXbox = new XboxController(0);
+  XboxController driverXbox = new XboxController(0); 
+
+  XboxController secondriverXbox = new XboxController(1);
  
   private final Joystick driverController = new Joystick(0);
   private final Joystick secondriver = new Joystick(1);
@@ -76,6 +78,8 @@ public class RobotContainer
   private final JoystickButton secondriverButtonX = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
   private final JoystickButton secondriverleftbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
   private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
+  private final JoystickButton secondriverButton7 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton7);
+  
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
@@ -119,6 +123,7 @@ public class RobotContainer
     autoChooser.addOption("Right Speaker Shoot Pre-Loaded", "Right Speaker Shoot Pre-Loaded");
     autoChooser.addOption("Left Speaker Shoot Pre-Loaded", "Left Speaker Shoot Pre-Loaded");
     autoChooser.addOption("Middle Speaker 3 Piece Right", "Middle Speaker 3 Piece Right");
+    autoChooser.addOption("3 piece preload and two in mid field", "3 piece preload and two in mid field");
 
 
 
@@ -175,15 +180,17 @@ public class RobotContainer
     driverControllerleftbumper.whileTrue(runIntake); //left bumper
     driverControllerrightbumper.whileTrue(backwardIntake);
     
-
-   //secondriverButtonB.whileTrue(setpivot);//x button
+    //secondriverButtonB.whileTrue(setpivot);//x button
    //secondriverButtonY.whileTrue(otherwaypivot);
-    secondriverButtonX.whileTrue(runShooter);
-    secondriverButtonA.whileTrue(pivottoangle30);
-    secondriverButtonB.whileTrue(pivottoangle35); //B button
+     secondriverButtonX.whileTrue(runShooter);
+   // secondriverButtonA.whileTrue(pivottoangle30);
+   // secondriverButtonB.whileTrue(pivottoangle35); //B button
     secondriverButtonY.onTrue(pivottoangle60); //Y button
+    secondriverButtonA.whileTrue(setpivot);
+    secondriverButtonB.whileTrue(otherwaypivot);
 
     
+
     secondriverleftbumper.whileTrue(waitshoot); //left bumper
     secondriverrightbumper.whileTrue(runIntake); //right bumper
     //secondriverButtonA.whileTrue(runShooter); //A button

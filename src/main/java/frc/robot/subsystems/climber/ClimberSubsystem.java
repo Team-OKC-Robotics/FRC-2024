@@ -85,7 +85,7 @@ public static class PIDF {
 
 
 
-public void climbspeed(double power) {
+public void climbupspeed(double power) {
     rightclimbmotor.set(power);
     leftclimbmotor.set(power);
 
@@ -130,15 +130,18 @@ public Command climbIt(double Speed) {
     climberSwitch.setBoolean(ClimberLimitSwitch.get());
   }
 
-  public void ClimbIt(double speed) {
-    rightclimbmotor.set(speed);
-    leftclimbmotor.set(speed);
-   
+  public void climbretractspeed(double power) {
+    rightclimbmotor.set(-power);
+    leftclimbmotor.set(-power);
   }
 
   public boolean hasClimbed() {
     return ClimberLimitSwitch.get();
   }
+
+//   public boolean hasRetracted() {
+//     return 
+//   }
 }
 
 

@@ -20,7 +20,7 @@ public PivotOtherway(PivotSubsystem pivot, double power) {
 
 @Override
 public void execute() {
-    pivot.PivotIt(-0.4);
+    pivot.PivotIt(-0.1);
 }
 
 @Override
