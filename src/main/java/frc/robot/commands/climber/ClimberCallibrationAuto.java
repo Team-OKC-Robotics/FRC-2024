@@ -27,12 +27,14 @@ public void initialize() {}
 @Override 
 public void execute() {
     if (this.speed < 0 && climber.leftHitLimitSwitch()) { //This only works for if the climber is at its lowest, remember to add another condition for if it is at its highest
+        climber.resetLeftClimberEncoder();
         climber.leftClimbspeed(0);
     } else {
         climber.leftClimbspeed(speed);
     }
 
     if (this.speed < 0 && climber.rightHitLimitSwitch()) {
+        climber.resetRightClimberEncoder();
         climber.rightClimbspeed(0);
     } else {
         climber.rightClimbspeed(speed);

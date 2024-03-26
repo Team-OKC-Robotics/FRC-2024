@@ -143,7 +143,13 @@ public Command climbIt(double Speed) {
    
   }
 
+  public void resetLeftClimberEncoder() {
+    leftclimbmotor.getEncoder().setPosition(0);
+  }
 
+  public void resetRightClimberEncoder() {
+    rightclimbmotor.getEncoder().setPosition(0);
+  }
 
   //Checks if the left climber is at its highest
 
