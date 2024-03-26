@@ -4,8 +4,14 @@
 
 package frc.robot;
 
+import java.io.File;
+
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -13,32 +19,28 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.pivot.PivotSubsystem;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.intake.BackwardIntake;
+import frc.robot.commands.intake.SetIntakeCommand;
+import frc.robot.commands.intake.SetIntakeCommandAuto;
+import frc.robot.commands.pivot.PivotOtherway;
+import frc.robot.commands.pivot.PivotToAngle;
+import frc.robot.commands.pivot.SetPivotCommand;
+import frc.robot.commands.shooter.ShootWait;
+import frc.robot.commands.shooter.ShootWaitAuto;
+import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
-import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
-import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
+import frc.robot.commands.vision.AutoAim;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
-
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.commands.shooter.*;
-import frc.robot.commands.vision.AutoAim;
-import frc.robot.commands.pivot.*;
-import frc.robot.commands.intake.*;
-import java.io.File;
-import java.util.Set;
-
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
-import frc.robot.subsystems.intake.IntakeSubsystem;
-import edu.wpi.first.wpilibj.Joystick;
+import frc.robot.utils.POVButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -78,8 +80,13 @@ public class RobotContainer
   private final JoystickButton secondriverButtonX = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
   private final JoystickButton secondriverleftbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
   private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
+<<<<<<< HEAD
   private final JoystickButton secondriverButton7 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton7);
   
+=======
+  private final POVButton secondriverPOVButton = new POVButton(secondriver, 0);
+
+>>>>>>> 06262616c4311dd3efb20216997f12fd1ddacd32
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
@@ -95,7 +102,10 @@ public class RobotContainer
   private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
 
 
-  private final AutoAim autoaim = new AutoAim(drivebase, m_vision);
+  private final AutoAim autoaim = new AutoAim(drivebase, m_vision, m_pivot,   () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(),
+                                                                                       OperatorConstants.LEFT_Y_DEADBAND) * -0.8),
+                                                          () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(),
+                                                                                       OperatorConstants.LEFT_X_DEADBAND) * -0.8));
 
   //makes the auto chooser
   private SendableChooser<String> autoChooser = new SendableChooser<String>();
@@ -176,18 +186,27 @@ public class RobotContainer
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     
    // secondriverButton5.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
-  //  driverControllerButtonB.whileTrue(autoaim); //B Button
+  // driverControllerButtonB.whileTrue(autoaim); //B Button
     driverControllerleftbumper.whileTrue(runIntake); //left bumper
     driverControllerrightbumper.whileTrue(backwardIntake);
     
     //secondriverButtonB.whileTrue(setpivot);//x button
    //secondriverButtonY.whileTrue(otherwaypivot);
+<<<<<<< HEAD
      secondriverButtonX.whileTrue(runShooter);
    // secondriverButtonA.whileTrue(pivottoangle30);
    // secondriverButtonB.whileTrue(pivottoangle35); //B button
     secondriverButtonY.onTrue(pivottoangle60); //Y button
     secondriverButtonA.whileTrue(setpivot);
     secondriverButtonB.whileTrue(otherwaypivot);
+=======
+    // secondriverButtonX.whileTrue(runShooter);
+    secondriverButtonA.whileTrue(pivottoangle30);
+  // secondriverButtonB.whileTrue(pivottoangle35); //B button
+    secondriverButtonY.onTrue(pivottoangle60); //Y button
+    secondriverButtonB.whileTrue(autoaim);
+    secondriverPOVButton.whileTrue(runShooter);
+>>>>>>> 06262616c4311dd3efb20216997f12fd1ddacd32
 
     
 
