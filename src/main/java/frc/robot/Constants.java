@@ -71,6 +71,15 @@ public final class Constants
     public static final int pivotmotorID = 11;
   }
 
+  public static final class AmpConstants {
+    public static final int ampdevicemotorID = 17;
+  }
+
+  public static final class LED {
+    public static final int PWMPort = 1;
+    public static final int Length = 20;
+  }
+
   public static class OI {
     //second driver buttons
     public static final int kSecondriverButton1 = 1;

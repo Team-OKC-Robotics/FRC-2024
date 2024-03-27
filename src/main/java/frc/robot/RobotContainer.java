@@ -35,12 +35,16 @@ import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.vision.AutoAim;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.AmpDevice.*;
+import frc.robot.commands.AmpDevice.*;
 import frc.robot.utils.POVButton;
+import frc.robot.commands.climber.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -57,6 +61,8 @@ public class RobotContainer
   private final VisionSubsystem m_vision = new VisionSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
+  private final ClimberSubsystem m_climber = new ClimberSubsystem();
+  private final AmpDeviceSubsystem m_amp = new AmpDeviceSubsystem();
   
 
   //controllers
@@ -80,13 +86,10 @@ public class RobotContainer
   private final JoystickButton secondriverButtonX = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
   private final JoystickButton secondriverleftbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
   private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
-<<<<<<< HEAD
   private final JoystickButton secondriverButton7 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton7);
+  private final JoystickButton secondriverButton8 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton8);
+  private final JoystickButton secondriverButton9 = new JoystickButton(secondriverXbox, 9); 
   
-=======
-  private final POVButton secondriverPOVButton = new POVButton(secondriver, 0);
-
->>>>>>> 06262616c4311dd3efb20216997f12fd1ddacd32
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
   private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
@@ -100,6 +103,12 @@ public class RobotContainer
   private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 58); 
   private final PivotToAngle pivottoangle35 = new PivotToAngle(m_pivot, 35);
   private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
+
+  private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 0.9);
+  private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -0.9);
+
+  private final AmpCommand setAmpCommand = new AmpCommand(m_amp, 0.3);
+  private final AmpCommand setOtherwayAmp = new AmpCommand(m_amp, -0.3);
 
 
   private final AutoAim autoaim = new AutoAim(drivebase, m_vision, m_pivot,   () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(),
@@ -119,6 +128,7 @@ public class RobotContainer
     NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.6));
+    NamedCommands.registerCommand("Calib Climber", new ClimberCommand(m_climber, -0.2));
 
     // add auto chooser options
     autoChooser.setDefaultOption("4 Piece", "4 Piece");
@@ -185,41 +195,29 @@ public class RobotContainer
    // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
     
-   // secondriverButton5.whileTrue(superstructure.toState(SuperState.INTAKE_NOTE));
+   
   // driverControllerButtonB.whileTrue(autoaim); //B Button
     driverControllerleftbumper.whileTrue(runIntake); //left bumper
     driverControllerrightbumper.whileTrue(backwardIntake);
     
     //secondriverButtonB.whileTrue(setpivot);//x button
    //secondriverButtonY.whileTrue(otherwaypivot);
-<<<<<<< HEAD
-     secondriverButtonX.whileTrue(runShooter);
+    secondriverButtonX.whileTrue(runShooter);
    // secondriverButtonA.whileTrue(pivottoangle30);
    // secondriverButtonB.whileTrue(pivottoangle35); //B button
     secondriverButtonY.onTrue(pivottoangle60); //Y button
     secondriverButtonA.whileTrue(setpivot);
     secondriverButtonB.whileTrue(otherwaypivot);
-=======
-    // secondriverButtonX.whileTrue(runShooter);
-    secondriverButtonA.whileTrue(pivottoangle30);
-  // secondriverButtonB.whileTrue(pivottoangle35); //B button
-    secondriverButtonY.onTrue(pivottoangle60); //Y button
-    secondriverButtonB.whileTrue(autoaim);
-    secondriverPOVButton.whileTrue(runShooter);
->>>>>>> 06262616c4311dd3efb20216997f12fd1ddacd32
-
-    
-
+    secondriverButton7.whileTrue(setAmpCommand);
+    secondriverButton8.whileTrue(setOtherwayAmp);
+   // secondriverButton7.whileTrue(setClimberUpSpeed);
+   // secondriverButton8.whileTrue(setClimberDownSpeed);
     secondriverleftbumper.whileTrue(waitshoot); //left bumper
     secondriverrightbumper.whileTrue(runIntake); //right bumper
     //secondriverButtonA.whileTrue(runShooter); //A button
 
     
-
-
-
-   
-  }
+}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

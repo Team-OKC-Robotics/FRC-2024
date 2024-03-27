@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.407706324685116,
-      "y": 4.098792791023527
+      "x": 0.5411044202972841,
+      "y": 3.9699735890199306
     },
     "rotation": 0
   },
@@ -18,7 +18,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left of Speaker 2 piece shoot"
+                  "pathName": "Start Against Wall Left then Shoot"
                 }
               },
               {

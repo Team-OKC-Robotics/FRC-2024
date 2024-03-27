@@ -18,7 +18,8 @@ import frc.robot.Constants;
 public class ClimberSubsystem extends SubsystemBase {
     private final CANSparkMax rightclimbmotor;
     private final CANSparkMax leftclimbmotor;
-    private final DigitalInput ClimberLimitSwitch;
+    private final DigitalInput LeftClimberLimitSwitch;
+    private final DigitalInput RightClimberLimitSwitch;
     private final SparkPIDController PIDController;
     
 
@@ -47,12 +48,13 @@ public ClimberSubsystem() {
     rightclimbmotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     leftclimbmotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     
-    ClimberLimitSwitch = new DigitalInput(11);
+    RightClimberLimitSwitch = new DigitalInput(3);
+    LeftClimberLimitSwitch = new DigitalInput(2);
     PIDController = leftclimbmotor.getPIDController();
     
     
-    rightclimbmotor.setInverted(true);
-    leftclimbmotor.setInverted(false);
+    rightclimbmotor.setInverted(false);
+    leftclimbmotor.setInverted(true);
 
     log = DataLogManager.getLog();
     posLog = new DoubleLogEntry(log, "/climber/pos");
@@ -80,11 +82,16 @@ public static class PIDF {
 
 
 
-public void climbupspeed(double power) {
+public void rightclimbspeed(double power) {
     rightclimbmotor.set(power);
-    leftclimbmotor.set(power);
+    
 
 }
+
+public void leftclimbspeed(double power) {
+    leftclimbmotor.set(power);
+}
+
 public void stopclimb() {
     rightclimbmotor.set(0);
     leftclimbmotor.set(0);
@@ -122,21 +129,33 @@ public Command climbIt(double Speed) {
     posLog.append(rightclimbmotor.get());
     outputLog.append(rightclimbmotor.get());
 
-    climberSwitch.setBoolean(ClimberLimitSwitch.get());
+    
   }
 
-  public void climbretractspeed(double power) {
-    rightclimbmotor.set(-power);
-    leftclimbmotor.set(-power);
+  public void ClimbIt(double speed) {
+    rightclimbmotor.set(speed);
+    leftclimbmotor.set(speed);
+  }
+  
+  public void resetleftencoder() {
+    leftclimbmotor.getEncoder().setPosition(0);
+    
+}
+
+  public void resetrightencoder() {
+    rightclimbmotor.getEncoder().setPosition(0);
   }
 
-  public boolean hasClimbed() {
-    return ClimberLimitSwitch.get();
+
+  public boolean hasleftHit() {
+    return !LeftClimberLimitSwitch.get();
+  }
+ 
+  public boolean hasrightHit() {
+    return !RightClimberLimitSwitch.get();
   }
 
-//   public boolean hasRetracted() {
-//     return 
-//   }
+
 }
 
 
