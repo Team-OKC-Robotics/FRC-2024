@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class LEDSubsystem extends SubsystemBase{
-    private final AddressableLED m_led = new AddressableLED(0);
+    private final AddressableLED m_led = new AddressableLED(4);
     private final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(Constants.LED.Length);
     private int m_rainbowFirstPixelHue;
     
@@ -30,13 +30,17 @@ public void rainbow() {
     m_led.setData(m_ledBuffer);
 }
 
+public void stopLED() {
+    m_led.stop();
+}
+
 private void setFrontAll(Color color) {
     for (var i = 0; i < m_ledBuffer.getLength() / 2; i++) {
         m_ledBuffer.setLED(i, color);
     }
 }
 
-public void setFronHalf() {
+public void setFrontHalf() {
     for (int i = 0; i < m_ledBuffer.getLength() / 2; i++) {
         if (i < m_ledBuffer.getLength() / 2) {
             m_ledBuffer.setLED(i, Color.kBlue);

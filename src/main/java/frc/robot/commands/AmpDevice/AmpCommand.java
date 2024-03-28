@@ -1,14 +1,14 @@
 package frc.robot.commands.AmpDevice;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.AmpDevice.*;
+import frc.robot.subsystems.pivot.*;
 
 public class AmpCommand extends Command {
-    private final AmpDeviceSubsystem amp;
-    private double power;
+    private final PivotSubsystem amp;
+    private double angle;
 
-public AmpCommand(AmpDeviceSubsystem amp, double power) {
+public AmpCommand(PivotSubsystem amp, double angle) {
     this.amp = amp;
-    this.power = power;
+    this.angle = angle;
     addRequirements(amp);
 }
 
@@ -17,12 +17,12 @@ public AmpCommand(AmpDeviceSubsystem amp, double power) {
 
 @Override
 public void execute() {
-    amp.AmpDeviceOut(0.3);
+    amp.desireAmpEngaged();
 }
 
 @Override
 public void end(boolean interuppted) {
-    amp.AmpDeviceOut(0);
+    amp.desireAmpIn();
 }
 
 @Override

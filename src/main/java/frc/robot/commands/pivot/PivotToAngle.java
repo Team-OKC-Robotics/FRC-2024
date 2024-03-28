@@ -13,16 +13,17 @@ public PivotToAngle(PivotSubsystem pivot, double angle) {
     }
 
     @Override
+
     public void initialize() {}
    
    @Override
    public void execute() {
-       pivot.PivotIttoAngle(this.angle);
+       pivot.SetTargetPivotAngle(angle);
    }
    
    @Override
    public void end(boolean interuppted) {
-       pivot.PivotIt(0);
+       //pivot.PivotIt(0);
    }
    
    @Override

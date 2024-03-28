@@ -106,13 +106,13 @@ public class AutoAim extends Command {
     distanceEntry.setDouble(distance);
     idealAngleEntry.setDouble(idealAngle);
 
-    pivot.PivotIttoAngle(idealAngle);
+    pivot.SetTargetPivotAngle(idealAngle);
 
   }
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    pivot.PivotIt(0);
+    //pivot.PivotIt(0);
   }
 
   // Returns true when the command should end.

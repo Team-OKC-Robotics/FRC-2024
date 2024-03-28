@@ -4,21 +4,25 @@ package frc.robot.commands.shooter;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.pivot.*;
 
 public class ShootWait extends Command {
      
     private final ShooterSubsystem shooter;
     private final IntakeSubsystem intake;
+    private final PivotSubsystem pivot;
+
 
     
     private double speed;
-    private double power;
+    private double RPM;
     private boolean hasNoteLeft = false;
 
-public ShootWait(ShooterSubsystem shooter, IntakeSubsystem intake, double power) {
+public ShootWait(ShooterSubsystem shooter, IntakeSubsystem intake, PivotSubsystem pivot) {
     this.shooter = shooter;
     this.intake = intake;
-    this.power = power;
+    this.pivot = pivot;
+    
 
     addRequirements(shooter, intake);
     
@@ -35,8 +39,14 @@ public void execute() {
         shooter.ShootIt(0);
         return;
     }
-    shooter.shootSpeed(5000);  //5000
-    if (shooter.getMinVelocity() > 4700) { //4700
+     
+    if (pivot.IsAmpIn()) {
+        RPM = 5000; 
+    } else {
+        RPM = 1500;
+    }
+     shooter.shootSpeed(this.RPM);
+    if (shooter.getMinVelocity() > (this.RPM * 0.9)) { 
         intake.SetIntake(1);
     }
 
