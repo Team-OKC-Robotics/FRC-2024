@@ -24,6 +24,7 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.leds.Leds;
 
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
@@ -55,6 +56,7 @@ public class RobotContainer
   private final VisionSubsystem m_vision = new VisionSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
+  private final Leds m_leds = new Leds();
   
 
   //controllers
@@ -220,5 +222,13 @@ public class RobotContainer
     m_shooter.stopShooter();
     m_intake.stopIntake();
     m_intake.stopIndexer();
+  }
+
+  public void setLeds() {
+    if(m_intake.hasNote()) {
+      m_leds.setAll(100);
+    } else {
+      m_leds.setAll(0);
+    }
   }
 }
