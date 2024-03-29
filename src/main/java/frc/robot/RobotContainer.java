@@ -194,12 +194,12 @@ public class RobotContainer
   }
 
   public void setLeds() {
-    Color bright = new Color(255, 255, 255);
-    Color dark = new Color(-255, -255, -255);
+    Color orange = new Color(200, 20, 0);
+    Color blue = new Color(0, 200, 50);
     if(m_intake.hasNote()) {
-      m_leds.setAll(bright);
+      m_leds.setAll(orange);
     } else {
-      m_leds.setAll(dark);
+      m_leds.setAll(blue);
     }
   }
 

@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Leds extends SubsystemBase {
 
-  private static final int PWMPORT = 0;
+  private static final int PWMPORT = 4;
   private static final int LENGTH = 20;
   private final AddressableLED m_led = new AddressableLED(Leds.PWMPORT);
   private final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(Leds.LENGTH);
