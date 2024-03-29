@@ -53,7 +53,7 @@ public ClimberSubsystem() {
     PIDController = leftclimbmotor.getPIDController();
     
     
-    rightclimbmotor.setInverted(false);
+    rightclimbmotor.setInverted(true);
     leftclimbmotor.setInverted(true);
 
     log = DataLogManager.getLog();

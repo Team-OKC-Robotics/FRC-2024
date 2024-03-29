@@ -215,8 +215,8 @@ public class RobotContainer
     secondriverButtonA.whileTrue(setAmpCommand);
     secondriverButtonX.whileTrue(autoaim);
     
-   // secondriverButton7.whileTrue(setClimberUpSpeed);
-   // secondriverButton8.whileTrue(setClimberDownSpeed);
+    secondriverButton7.whileTrue(setClimberUpSpeed);
+    secondriverButton8.whileTrue(setClimberDownSpeed);
     secondriverleftbumper.whileTrue(waitshoot); //left bumper
     secondriverrightbumper.whileTrue(runIntake); //right bumper
     //secondriverButtonA.whileTrue(runShooter); //A button

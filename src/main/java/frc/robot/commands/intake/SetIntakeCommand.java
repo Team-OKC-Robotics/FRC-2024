@@ -6,12 +6,12 @@ import frc.robot.subsystems.LED.*;
 
 public class SetIntakeCommand extends Command {
     private final IntakeSubsystem intake;
-    private final LEDSubsystem LEDs;
+   // private final LEDSubsystem LEDs;
     private double speed;
 
-    public SetIntakeCommand(IntakeSubsystem intake, LEDSubsystem LEDs, double speed) {
+    public SetIntakeCommand(IntakeSubsystem intake,  double speed) {
         this.intake = intake;
-        this.LEDs = LEDs;
+      
         this.speed = speed;
 
         addRequirements(intake);
@@ -31,9 +31,7 @@ public class SetIntakeCommand extends Command {
             intake.indexerSpeed(0);
         }
 
-        if (intake.hasNote()) {
-            LEDs.setAll(Color.kBlue);
-        }
+        
     }
 
 @Override
