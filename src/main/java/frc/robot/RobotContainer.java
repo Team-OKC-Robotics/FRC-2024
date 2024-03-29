@@ -41,7 +41,7 @@ import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
-
+import frc.robot.commands.vision.AutoAimInAuto;
 import frc.robot.commands.AmpDevice.*;
 import frc.robot.utils.POVButton;
 import frc.robot.commands.climber.*;
@@ -132,6 +132,7 @@ public class RobotContainer
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.6));
     NamedCommands.registerCommand("Calib Climber", new ClimberCommand(m_climber, -0.2));
+    NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase, m_vision, m_pivot));
 
     // add auto chooser options
     autoChooser.setDefaultOption("4 Piece", "4 Piece");
@@ -147,6 +148,7 @@ public class RobotContainer
     autoChooser.addOption("Left Speaker Shoot Pre-Loaded", "Left Speaker Shoot Pre-Loaded");
     autoChooser.addOption("Middle Speaker 3 Piece Right", "Middle Speaker 3 Piece Right");
     autoChooser.addOption("3 piece preload and two in mid field", "3 piece preload and two in mid field");
+    autoChooser.addOption("4 Piece Fast", "4 Piece Fast");
 
 
 
@@ -211,6 +213,7 @@ public class RobotContainer
    // secondriverButtonA.whileTrue(setpivot);
     secondriverButtonB.whileTrue(otherwaypivot);
     secondriverButtonA.whileTrue(setAmpCommand);
+    secondriverButtonX.whileTrue(autoaim);
     
    // secondriverButton7.whileTrue(setClimberUpSpeed);
    // secondriverButton8.whileTrue(setClimberDownSpeed);
