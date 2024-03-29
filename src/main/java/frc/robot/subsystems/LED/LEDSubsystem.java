@@ -34,22 +34,21 @@ public void stopLED() {
     m_led.stop();
 }
 
-private void setFrontAll(Color color) {
-    for (var i = 0; i < m_ledBuffer.getLength() / 2; i++) {
-        m_ledBuffer.setLED(i, color);
-    }
+public void setLEDs() {
+    rainbow();
+    m_led.setData(m_ledBuffer);
 }
 
-public void setFrontHalf() {
-    for (int i = 0; i < m_ledBuffer.getLength() / 2; i++) {
-        if (i < m_ledBuffer.getLength() / 2) {
-            m_ledBuffer.setLED(i, Color.kBlue);
-
-        } else {
-            m_ledBuffer.setLED(i, Color.kRed);
-        }
-    }
-}
+//public void setFrontHalf() {
+//    for (int i = 0; i < m_ledBuffer.getLength() / 2; i++) {
+//        if (i < m_ledBuffer.getLength() / 2) {
+//            m_ledBuffer.setLED(i, Color.kBlue);
+//
+//        } else {
+//            m_ledBuffer.setLED(i, Color.kRed);
+//        }
+//    }
+//}
 
 public void setBackAll(Color color) {
     for (var i = m_ledBuffer.getLength() / 2; i < m_ledBuffer.getLength(); i++) {

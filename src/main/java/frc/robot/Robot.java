@@ -32,6 +32,7 @@ public class Robot extends TimedRobot
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
+  
 
   public Robot()
   {
@@ -94,7 +95,8 @@ public class Robot extends TimedRobot
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
     }
-  }
+}
+  
 
   /**
    * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.

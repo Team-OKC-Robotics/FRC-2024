@@ -1,13 +1,17 @@
 package frc.robot.commands.intake;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.LED.*;
 
 public class SetIntakeCommand extends Command {
     private final IntakeSubsystem intake;
+    private final LEDSubsystem LEDs;
     private double speed;
 
-    public SetIntakeCommand(IntakeSubsystem intake, double speed) {
+    public SetIntakeCommand(IntakeSubsystem intake, LEDSubsystem LEDs, double speed) {
         this.intake = intake;
+        this.LEDs = LEDs;
         this.speed = speed;
 
         addRequirements(intake);
@@ -25,6 +29,10 @@ public class SetIntakeCommand extends Command {
         } else {    //otherwise
             intake.setSpeed(0);       //the intake and indexer should be off
             intake.indexerSpeed(0);
+        }
+
+        if (intake.hasNote()) {
+            LEDs.setAll(Color.kBlue);
         }
     }
 
