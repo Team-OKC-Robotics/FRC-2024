@@ -46,6 +46,7 @@ public IntakeSubsystem() {
     intakemotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     intakemotor.setInverted(true);
     IntakeLimitSwitch = new DigitalInput(8);
+    IntakeLimitSwitch2 = new DigitalInput(6);
     
     
 
@@ -107,6 +108,10 @@ public void SetIntake(double speed) {
 //testing if the limit switch sees the note or not
 public boolean hasNote() {
     return !IntakeLimitSwitch.get();
+}
+
+public boolean secondSwitchHit() {
+    return IntakeLimitSwitch2.get();
 }
 
 
