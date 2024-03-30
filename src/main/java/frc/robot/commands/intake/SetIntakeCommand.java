@@ -2,7 +2,6 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.LED.*;
 
 public class SetIntakeCommand extends Command {
     private final IntakeSubsystem intake;

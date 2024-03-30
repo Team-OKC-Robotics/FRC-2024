@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -37,6 +38,7 @@ import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.vision.AutoAim;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.leds.*;
 import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -45,7 +47,6 @@ import frc.robot.commands.vision.AutoAimInAuto;
 import frc.robot.commands.AmpDevice.*;
 import frc.robot.utils.POVButton;
 import frc.robot.commands.climber.*;
-import frc.robot.subsystems.LED.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -63,9 +64,7 @@ public class RobotContainer
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
-  
-  private final LEDSubsystem m_led = new LEDSubsystem();
-  
+  private final Leds m_leds = new Leds();
 
   //controllers
   XboxController driverXbox = new XboxController(0); 
@@ -223,6 +222,16 @@ public class RobotContainer
 
     
 }
+
+  public void setLeds() {
+    Color orange = new Color(200, 20, 0);
+    Color blue = new Color(0, 200, 50);
+    if(m_intake.hasNote()) {
+      m_leds.setAll(orange);
+    } else {
+      m_leds.setAll(blue);
+    }
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
