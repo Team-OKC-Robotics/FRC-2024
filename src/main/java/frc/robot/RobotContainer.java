@@ -33,6 +33,7 @@ import frc.robot.commands.pivot.SetPivotCommand;
 import frc.robot.commands.shooter.ShootWait;
 import frc.robot.commands.shooter.ShootWaitAuto;
 import frc.robot.commands.shooter.ShooterCommand;
+import frc.robot.commands.shooter.SpinUpAuto;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
 import frc.robot.commands.vision.AutoAim;
@@ -64,7 +65,7 @@ public class RobotContainer
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
-  private final Leds m_leds = new Leds();
+  private final LEDSubsystem m_leds = new LEDSubsystem();
 
   //controllers
   XboxController driverXbox = new XboxController(0); 
@@ -89,7 +90,7 @@ public class RobotContainer
   private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
   private final JoystickButton secondriverButton7 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton7);
   private final JoystickButton secondriverButton8 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton8);
-  private final JoystickButton secondriverButton9 = new JoystickButton(secondriverXbox, 9); 
+ 
   
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
@@ -129,9 +130,10 @@ public class RobotContainer
     //commands for the autos
     NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
-    NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.6));
+    NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.8));
     NamedCommands.registerCommand("Calib Climber", new ClimberCommand(m_climber, -0.2));
     NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase, m_vision, m_pivot));
+    NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter, 1));
 
     // add auto chooser options
     autoChooser.setDefaultOption("4 Piece", "4 Piece");
@@ -148,7 +150,8 @@ public class RobotContainer
     autoChooser.addOption("Middle Speaker 3 Piece Right", "Middle Speaker 3 Piece Right");
     autoChooser.addOption("3 piece preload and two in mid field", "3 piece preload and two in mid field");
     autoChooser.addOption("4 Piece Fast", "4 Piece Fast");
-
+    autoChooser.addOption("5 Piece", "5 Piece");
+    autoChooser.addOption("Line to Line", "Line to Line");
 
 
     tab.add(autoChooser);

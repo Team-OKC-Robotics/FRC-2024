@@ -46,7 +46,7 @@ public class AutoAimInAuto extends Command {
   public AutoAimInAuto(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot) {
     // Use addRequirements() here to declare subsystem dependencies.
 
-    addRequirements(swerve, vision, pivot);
+    addRequirements(vision, pivot);
 
     this.swerve = swerve;
     this.vision = vision;
@@ -86,17 +86,17 @@ public class AutoAimInAuto extends Command {
 
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(0, 0, swerve.getHeading().getSin(), swerve.getHeading().getCos());
     
-    Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
-    translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
-                                           Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
-                                           swerve.getSwerveDriveConfiguration());
+    // Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
+    // translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
+    //                                        Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
+    //                                        swerve.getSwerveDriveConfiguration());
    
-                                           if (target == null) {
-      swerve.drive(translation, 0, true);
-    } else {
-      double yaw = vision.getYaw(targetAprilTag);
-      swerve.drive(translation, -0.1 * yaw, true);
-    }
+    //                                        if (target == null) {
+    //   swerve.drive(translation, 0, true);
+    // } else {
+    //   double yaw = vision.getYaw(targetAprilTag);
+    //   swerve.drive(translation, -0.1 * yaw, true);
+    // }
     
     double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle, distanceThreshold, angleThreshold));
     distance = distance - 3.9; // Camera + robot offset

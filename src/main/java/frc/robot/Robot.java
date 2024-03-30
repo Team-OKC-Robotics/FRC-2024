@@ -27,11 +27,12 @@ public class Robot extends TimedRobot
 {
 
   private static Robot   instance;
-  private        Command m_autonomousCommand;
+  private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
+  private Alliance ally;
   
 
   public Robot()
@@ -87,6 +88,8 @@ public class Robot extends TimedRobot
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
+    DriverStation.getAlliance();
+    
   }
 
   @Override
@@ -96,7 +99,9 @@ public class Robot extends TimedRobot
     {
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
+
     }
+    Optional <Alliance> ally = DriverStation.getAlliance();
 }
   
 
