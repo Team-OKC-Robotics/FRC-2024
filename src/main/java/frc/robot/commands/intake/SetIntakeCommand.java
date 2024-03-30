@@ -32,7 +32,7 @@ public class SetIntakeCommand extends Command {
                 if (pivot.getPivotAngle() < 42) { //and the pivot ange is low enough
                     intake.setSpeed(speed / 2);     //then slow down the speed
                     intake.indexerSpeed(speed / 2);
-                } else {
+                } else {    //if the pivot angle is too high
                     intake.setSpeed(0);     //set the speed to 0
                     intake.indexerSpeed(0);                    
                 }
@@ -57,6 +57,6 @@ public void end(boolean interuppted) {
 
     @Override
     public boolean isFinished() {
-        return intake.hasNote();  //the command is finished when the intake has the note
+        return intake.hasNote() && !intake.secondSwitchHit();  //the command is finished when the intake has the note
     }
 }

@@ -57,6 +57,6 @@ public void end(boolean interuppted) {
 
     @Override
     public boolean isFinished() {
-        return intake.hasNote();
+        return intake.hasNote() && !intake.secondSwitchHit();
     }
 }
