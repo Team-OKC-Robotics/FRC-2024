@@ -1,11 +1,13 @@
 package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.pivot.*;
+import frc.robot.subsystems.pivot.PivotSubsystem;
 
 public class SetIntakeCommandAuto extends Command {
     private final IntakeSubsystem intake;
     private double speed;
+
+    private PivotSubsystem pivot;
 
     public SetIntakeCommandAuto(IntakeSubsystem intake, double speed) {
         this.intake = intake;
@@ -27,7 +29,7 @@ public class SetIntakeCommandAuto extends Command {
                 intake.indexerSpeed(speed);
             } else if (intake.secondSwitchHit()) { //if the note is far up enough in the intake
 
-                if (getPivotAngle() < 42) { //and the pivot ange is low enough
+                if (pivot.getPivotAngle() < 42) { //and the pivot ange is low enough
                     intake.setSpeed(speed / 2);     //then slow down the speed
                     intake.indexerSpeed(speed / 2);
                 } else {

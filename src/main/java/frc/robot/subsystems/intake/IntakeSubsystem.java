@@ -22,6 +22,7 @@ public class IntakeSubsystem extends SubsystemBase{
 
     private final CANSparkMax intakemotor;
     private final DigitalInput IntakeLimitSwitch;
+    private final DigitalInput IntakeLimitSwitch2;
     private final CANSparkMax indexerMotor;
     private DataLog log;
     private DoubleLogEntry posLog;
