@@ -107,7 +107,7 @@ public class RobotContainer
   // private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
   private final PivotOtherway otherwaypivot = new PivotOtherway(m_pivot, 0.9);
   private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 58); 
-  // private final PivotToAngle pivottoangle35 = new PivotToAngle(m_pivot, 35);
+ private final PivotToAngle pivottoangle45 = new PivotToAngle(m_pivot, 43);
   // private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
 
   private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 0.9);
@@ -134,7 +134,6 @@ public class RobotContainer
     NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.8));
-    NamedCommands.registerCommand("Calib Climber", new ClimberCommand(m_climber, -0.2));
     NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase, m_vision, m_pivot));
     NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter, 1));
 
@@ -185,7 +184,7 @@ public class RobotContainer
    
 
     drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
-    //m_pivot.setDefaultCommand(new PivotToAngle(m_pivot, 60)); TODO GET BETTER
+    
   }
 
   /**
@@ -202,11 +201,8 @@ public class RobotContainer
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
     new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
-   // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-//    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
-    
-   
-  // driverControllerButtonB.whileTrue(autoaim); //B Button
+
+
     driverXboxleftbumper.whileTrue(runIntake); //left bumper
     driverXboxrightbumper.whileTrue(backwardIntake);
     
@@ -219,13 +215,14 @@ public class RobotContainer
     // secondriverXboxButtonA.whileTrue(otherwaypivot);
     secondriverXboxButtonA.whileTrue(setAmpCommand); //button B
     secondriverXboxButtonB.whileTrue(autoaim); //button A
+    secondriverXboxButtonX.whileTrue(pivottoangle45); //button Y
     
     secondriverXboxButtonPlus.whileTrue(setClimberUpSpeed);
     secondriverXboxButtonMinus.whileTrue(setClimberDownSpeed);
     secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
     secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
     secondriverXboxDpad.whileTrue(runShooter);
-    //secondriverXboxButtonA.whileTrue(runShooter); //A button
+   
 
     
 }
@@ -269,7 +266,24 @@ public class RobotContainer
     }
   }
 
-  
+  public void setLEDsAutoAim() {
+    Color green = new Color(0, 153, 0);
+
+  }
+
+  public void setLEDsAt60() {
+    Color purple = new Color(68, 29, 158);
+    if (m_pivot.PivotAngleis60()) {
+      m_leds.setAll(purple);
+    }
+  }
+
+  public void setLEDsAt45() {
+    Color lightpurple = new Color(151, 107, 255);
+    if (m_pivot.PivotAngleis45()){
+      m_leds.setAll(lightpurple);
+    }
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

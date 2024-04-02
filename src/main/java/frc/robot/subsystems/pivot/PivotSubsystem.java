@@ -233,4 +233,20 @@ public double getDevicePosition() {
     } 
     return -rawvalue *100; //some weird ahh math, I know
 }
+
+public boolean PivotAngleis60() {
+    if (getPivotAngle() == 57) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+public boolean PivotAngleis45() {
+    if(getPivotAngle() == 43) {
+        return true;
+    } else {
+        return false;
+    }
+}
 }

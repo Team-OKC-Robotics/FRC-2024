@@ -27,13 +27,13 @@ public class ShooterSubsystem extends SubsystemBase {
   private final RelativeEncoder leftEncoder;
   private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
 
-  private GenericEntry shooterP = tab.add("Shooter P", PIDF.PORPORTION).getEntry();
-  private GenericEntry shooterI = tab.add("Shooter I", PIDF.INTEGRAL).getEntry();
-  private GenericEntry shooterF = tab.add("Shooter F", PIDF.FEEDFORWARD).getEntry();
-  private GenericEntry pidSetButton = tab.add("Set PID", false).getEntry();
+  // private GenericEntry shooterP = tab.add("Shooter P", PIDF.PORPORTION).getEntry();
+  // private GenericEntry shooterI = tab.add("Shooter I", PIDF.INTEGRAL).getEntry();
+  // private GenericEntry shooterF = tab.add("Shooter F", PIDF.FEEDFORWARD).getEntry();
+  // private GenericEntry pidSetButton = tab.add("Set PID", false).getEntry();
   
-  private GenericEntry shooterRight = tab.add("shooter right", 0.0).getEntry();
-  private GenericEntry shooterLeft = tab.add("shooter leftt", 0.0).getEntry();
+  //private GenericEntry shooterRight = tab.add("shooter right", 0.0).getEntry();
+  //private GenericEntry shooterLeft = tab.add("shooter leftt", 0.0).getEntry();
 
   public double target_Speed;
 
@@ -154,13 +154,13 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shooterRight.setDouble(rightEncoder.getVelocity());
-    shooterLeft.setDouble(leftEncoder.getVelocity());
-
-    if (pidSetButton.getBoolean(false)) {
-      pidSetButton.setBoolean(false);
-      set(shooterP.getDouble(PIDF.PORPORTION), shooterI.getDouble(PIDF.INTEGRAL), PIDF.DERIVATIVE, shooterF.getDouble(PIDF.FEEDFORWARD), PIDF.INTEGRAL_ZONE);
-    }
+    // shooterRight.setDouble(rightEncoder.getVelocity());
+    // shooterLeft.setDouble(leftEncoder.getVelocity());
+// 
+    // if (pidSetButton.getBoolean(false)) {
+      // pidSetButton.setBoolean(false);
+      // set(shooterP.getDouble(PIDF.PORPORTION), shooterI.getDouble(PIDF.INTEGRAL), PIDF.DERIVATIVE, shooterF.getDouble(PIDF.FEEDFORWARD), PIDF.INTEGRAL_ZONE);
+    // }
   }
 
   public void ShootIt(double speed) {

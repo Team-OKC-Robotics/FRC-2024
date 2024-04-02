@@ -109,6 +109,8 @@ public class AutoAim extends Command {
     pivot.SetTargetPivotAngle(idealAngle);
 
   }
+
+ 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
