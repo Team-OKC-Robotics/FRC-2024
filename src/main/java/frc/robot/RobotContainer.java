@@ -5,15 +5,18 @@
 package frc.robot;
 
 import java.io.File;
+import java.util.Optional;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -77,20 +80,20 @@ public class RobotContainer
  
   //driver buttons
 
-  private final JoystickButton driverControllerButtonB = new JoystickButton(driverController, Constants.OI.kdriverControllerButton2);
-  private final JoystickButton driverControllerleftbumper = new JoystickButton(driverController, Constants.OI.kdriverControllerButton5);
-  private final JoystickButton driverControllerrightbumper = new JoystickButton(driverController, Constants.OI.kdriverControllerButton6);
+  private final JoystickButton driverXboxButtonB = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton2);
+  private final JoystickButton driverXboxleftbumper = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton5);
+  private final JoystickButton driverXboxrightbumper = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton6);
   
   //second driver buttons
-  private final JoystickButton secondriverButtonB = new JoystickButton(secondriver, Constants.OI.kSecondriverButton2);
-  private final JoystickButton secondriverButtonY = new JoystickButton(secondriver, Constants.OI.kSecondriverButton4);
-  private final JoystickButton secondriverButtonA = new JoystickButton(secondriver, Constants.OI.kSecondriverButton1);
-  private final JoystickButton secondriverButtonX = new JoystickButton(secondriver, Constants.OI.kSecondriverButton3);
-  private final JoystickButton secondriverleftbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton5);
-  private final JoystickButton secondriverrightbumper = new JoystickButton(secondriver, Constants.OI.kSecondriverButton6);
-  private final JoystickButton secondriverButton7 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton7);
-  private final JoystickButton secondriverButton8 = new JoystickButton(secondriver, Constants.OI.kSecondriverButton8);
- 
+  private final JoystickButton secondriverXboxButtonB = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton2);
+  private final JoystickButton secondriverXboxButtonY = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton4);
+  private final JoystickButton secondriverXboxButtonA = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton1);
+  private final JoystickButton secondriverXboxButtonX = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton3);
+  private final JoystickButton secondriverXboxleftbumper = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton5);
+  private final JoystickButton secondriverXboxrightbumper = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton6);
+  private final JoystickButton secondriverXboxButtonMinus = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton7);
+  private final JoystickButton secondriverXboxButtonPlus = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton8);
+  private final POVButton secondriverXboxDpad = new POVButton(secondriverXbox, 0);
   
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
@@ -101,11 +104,11 @@ public class RobotContainer
   private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.9);
   private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.8);
   //pivot commands
-  private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
+  // private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
   private final PivotOtherway otherwaypivot = new PivotOtherway(m_pivot, 0.9);
   private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 58); 
-  private final PivotToAngle pivottoangle35 = new PivotToAngle(m_pivot, 35);
-  private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
+  // private final PivotToAngle pivottoangle35 = new PivotToAngle(m_pivot, 35);
+  // private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
 
   private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 0.9);
   private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -0.9);
@@ -204,37 +207,69 @@ public class RobotContainer
     
    
   // driverControllerButtonB.whileTrue(autoaim); //B Button
-    driverControllerleftbumper.whileTrue(runIntake); //left bumper
-    driverControllerrightbumper.whileTrue(backwardIntake);
+    driverXboxleftbumper.whileTrue(runIntake); //left bumper
+    driverXboxrightbumper.whileTrue(backwardIntake);
     
     
     
-   // secondriverButtonA.whileTrue(pivottoangle30);
-   // secondriverButtonB.whileTrue(pivottoangle35); //B button
-    secondriverButtonY.onTrue(pivottoangle60); //Y button
-   // secondriverButtonA.whileTrue(setpivot);
-    secondriverButtonB.whileTrue(otherwaypivot);
-    secondriverButtonA.whileTrue(setAmpCommand);
-    secondriverButtonX.whileTrue(autoaim);
+   // secondriverXboxButtonA.whileTrue(pivottoangle30);
+   // secondriverXboxButtonB.whileTrue(pivottoangle35); 
+    secondriverXboxButtonY.onTrue(pivottoangle60); //button X
+   // secondriverXboxButtonA.whileTrue(setpivot);
+    // secondriverXboxButtonA.whileTrue(otherwaypivot);
+    secondriverXboxButtonA.whileTrue(setAmpCommand); //button B
+    secondriverXboxButtonB.whileTrue(autoaim); //button A
     
-    secondriverButton7.whileTrue(setClimberUpSpeed);
-    secondriverButton8.whileTrue(setClimberDownSpeed);
-    secondriverleftbumper.whileTrue(waitshoot); //left bumper
-    secondriverrightbumper.whileTrue(runIntake); //right bumper
-    //secondriverButtonA.whileTrue(runShooter); //A button
+    secondriverXboxButtonPlus.whileTrue(setClimberUpSpeed);
+    secondriverXboxButtonMinus.whileTrue(setClimberDownSpeed);
+    secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
+    secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
+    secondriverXboxDpad.whileTrue(runShooter);
+    //secondriverXboxButtonA.whileTrue(runShooter); //A button
 
     
 }
 
   public void setLeds() {
-    Color orange = new Color(200, 20, 0);
-    Color blue = new Color(0, 200, 50);
+    Color orange = new Color(255, 43, 0);
+    Color cyan = new Color(0, 200, 50);
+    
     if(m_intake.hasNote()) {
       m_leds.setAll(orange);
     } else {
-      m_leds.setAll(blue);
+      m_leds.setAll(cyan);
+    }
+}
+
+  public void setLEDsAlliance(){
+    Color red = new Color (200, 0, 0);
+    Color blue = new Color (0, 0, 200);
+
+    Optional <Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent()) {
+      if(ally.get() == Alliance.Red) {
+        m_leds.setAll(red);
+      } else 
+      if(ally.isPresent()) {
+        if (ally.get() == Alliance.Blue) {
+          m_leds.setAll(blue);
+        }
+      }
+    
     }
   }
+
+  public void setLEDsAuto() {
+    Color pink = new Color(255, 0, 128);
+    Color teal = new Color(36, 225, 212);
+    if(m_intake.hasNote()) {
+      m_leds.setAll(pink);
+    } else {
+      m_leds.setAll(teal);
+    }
+  }
+
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

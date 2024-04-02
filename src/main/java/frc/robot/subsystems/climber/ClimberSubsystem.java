@@ -25,10 +25,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
    
      
-    private DataLog log;
-    private DoubleLogEntry posLog;
-    private DoubleLogEntry outputLog;
-    private DoubleLogEntry setpointLog;
+    
     
     
     public double target_climb;
@@ -56,10 +53,7 @@ public ClimberSubsystem() {
     rightclimbmotor.setInverted(true);
     leftclimbmotor.setInverted(true);
 
-    log = DataLogManager.getLog();
-    posLog = new DoubleLogEntry(log, "/climber/pos");
-    outputLog = new DoubleLogEntry(log, "/climber/output");
-    setpointLog = new DoubleLogEntry(log, "/climber/setpoints");
+   
 
 
     set(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE,
@@ -126,8 +120,7 @@ public Command climbIt(double Speed) {
 @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    posLog.append(rightclimbmotor.get());
-    outputLog.append(rightclimbmotor.get());
+    
 
     
   }

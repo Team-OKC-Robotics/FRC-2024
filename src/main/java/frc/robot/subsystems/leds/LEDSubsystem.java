@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class LEDSubsystem extends SubsystemBase {
 
-  private static final int PWMPORT = 4;
-  private static final int LENGTH = 20;
-  private final AddressableLED m_led = new AddressableLED(LEDSubsystem.PWMPORT);
-  private final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(LEDSubsystem.LENGTH);
+ 
+  private final AddressableLED m_led = new AddressableLED(Constants.LEDS.PWMPort);
+  private final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(Constants.LEDS.Length);
   private int m_rainbowFirstPixelHue;
   private int blinkNum;
 

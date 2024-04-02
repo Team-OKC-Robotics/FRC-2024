@@ -19,7 +19,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem.PIDF;
 import java.util.function.DoubleSupplier;
 
 public class PivotSubsystem extends SubsystemBase{
-   // private final CANSparkMax leftpivot;
+   
     private final CANSparkMax pivotmotor;
     private final CANSparkMax ampdevicemotor;
     private final PIDController AmpPidController;

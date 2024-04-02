@@ -23,10 +23,7 @@ public class IntakeSubsystem extends SubsystemBase{
     private final CANSparkMax intakemotor;
     private final DigitalInput IntakeLimitSwitch;
     private final CANSparkMax indexerMotor;
-    private DataLog log;
-    private DoubleLogEntry posLog;
-    private DoubleLogEntry outputLog;
-    private DoubleLogEntry setpointLog;
+    
 
     private int direction = 0;
 
@@ -49,10 +46,7 @@ public IntakeSubsystem() {
     
     
 
-    log = DataLogManager.getLog();
-        posLog = new DoubleLogEntry(log, "/intake/pos");
-        outputLog = new DoubleLogEntry(log, "/intake/output");
-        setpointLog = new DoubleLogEntry(log, "/intake/setpoint");
+  
 }
 //sets intake speed 
 public void setSpeed(double power) {
@@ -93,8 +87,7 @@ public Command runIntake(double Speed){
 @Override
 public void periodic() {
 
-    posLog.append(intakemotor.get());
-    outputLog.append(intakemotor.get());
+   
 
     intakeSwitch.setBoolean(IntakeLimitSwitch.get());
     

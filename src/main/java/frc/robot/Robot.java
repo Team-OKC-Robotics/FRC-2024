@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -76,7 +78,7 @@ public class Robot extends TimedRobot
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    m_robotContainer.setLeds();
+    
   }
 
   /**
@@ -88,10 +90,11 @@ public class Robot extends TimedRobot
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
-    DriverStation.getAlliance();
     
-  }
-
+      
+    }
+  
+  
   @Override
   public void disabledPeriodic()
   {
@@ -101,7 +104,8 @@ public class Robot extends TimedRobot
       disabledTimer.stop();
 
     }
-    Optional <Alliance> ally = DriverStation.getAlliance();
+    m_robotContainer.setLEDsAlliance();
+    
 }
   
 
@@ -131,6 +135,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousPeriodic()
   {
+    m_robotContainer.setLEDsAuto();
   }
 
   @Override
@@ -158,6 +163,7 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic()
   {
+    m_robotContainer.setLeds();
   }
 
   @Override

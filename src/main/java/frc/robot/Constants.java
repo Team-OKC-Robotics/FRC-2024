@@ -75,8 +75,8 @@ public final class Constants
     public static final int ampdevicemotorID = 17;
   }
 
-  public static final class LED {
-    public static final int PWMPort = 1;
+  public static final class LEDS {
+    public static final int PWMPort = 4;
     public static final int Length = 20;
   }
 
