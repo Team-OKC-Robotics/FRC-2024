@@ -98,7 +98,7 @@ public class AutoAimInAuto extends Command {
     //   swerve.drive(translation, -0.1 * yaw, true);
     // }
     
-    double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle, distanceThreshold, angleThreshold));
+    double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle));
     distance = distance - 3.9; // Camera + robot offset
     double idealAngle = angleLUT.getAngleFromDistance(distance);
 

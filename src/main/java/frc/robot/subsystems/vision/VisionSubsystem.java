@@ -127,8 +127,7 @@ public PhotonTrackedTarget getBestTarget() {
         return hasTarget; // Returns whether or not a target was found
     }
 
-    public double distanceToTarget(double tagHeight, double cameraHeight, double cameraAngle, double distanceThreshold,
-    double angleThreshold) {
+    public double distanceToTarget(double tagHeight, double cameraHeight, double cameraAngle) {
 
     var result = camera.getLatestResult();
 
