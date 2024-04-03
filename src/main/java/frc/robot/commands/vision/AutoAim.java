@@ -69,9 +69,13 @@ public class AutoAim extends Command {
 
   double tagHeight = 57.13;
   double cameraHeight = 25;
-  double distanceThreshold = 0; // placeholder
   double cameraAngle = 30; // placeholder
+<<<<<<< HEAD
   double angleThreshold = 0; // placeholder
+=======
+
+    
+>>>>>>> 97143cba8434a7abb89da37ee0cca12e49a4f205
 
   // Called when the command is initially scheduled.
   @Override
@@ -100,9 +104,8 @@ public class AutoAim extends Command {
       double yaw = vision.getYaw(targetAprilTag);
       swerve.drive(translation, -0.1 * yaw, true);
     }
-
-    double distance = Units.metersToFeet(
-        visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle, distanceThreshold, angleThreshold));
+    
+    double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle));
     distance = distance - 3.9; // Camera + robot offset
     double idealAngle = angleLUT.getAngleFromDistance(distance);
 
