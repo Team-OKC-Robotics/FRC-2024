@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4401522816275876,
-      "y": 5.539434091159694
+      "x": 0.465504777163402,
+      "y": 4.02571266680995
     },
     "rotation": 0
   },
@@ -14,32 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Pivot to 60"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Get Left Note Fast"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
+            "name": "Spin Up"
           }
         },
         {
@@ -47,9 +22,9 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "path",
                 "data": {
-                  "waitTime": 0.3
+                  "pathName": "3 piece against left wall shoot path"
                 }
               },
               {
@@ -74,7 +49,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left Note to Middle Note"
+                  "pathName": "3 piece against L wall get far note"
                 }
               },
               {
@@ -84,6 +59,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3 piece against L wall shoot far note"
           }
         },
         {
@@ -118,7 +99,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle Note to Right Note"
+                  "pathName": "3 piece get second far note"
                 }
               },
               {
@@ -128,31 +109,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.2
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Auto Aim"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
           }
         }
       ]

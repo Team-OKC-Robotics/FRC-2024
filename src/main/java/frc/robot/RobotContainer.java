@@ -154,36 +154,16 @@ public class RobotContainer
     autoChooser.addOption("4 Piece Fast", "4 Piece Fast");
     autoChooser.addOption("5 Piece", "5 Piece");
     autoChooser.addOption("Line to Line", "Line to Line");
+    autoChooser.addOption("3 piece start against wall left", "3 piece start against wall left");
+    autoChooser.addOption("3 piece start against L wall far notes", "3 piece start against L wall far notes");
 
 
     tab.add(autoChooser);
     configureBindings();
 
-    AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase,
-                                                          // Applies deadbands and inverts controls because joysticks
-                                                          // are back-right positive while robot
-                                                          // controls are front-left positive
-                                                          () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                       OperatorConstants.LEFT_Y_DEADBAND) * -0.8),
-                                                          () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                       OperatorConstants.LEFT_X_DEADBAND) * -0.8),
-                                                          () -> -driverXbox.getRightX(),
-                                                          () -> -driverXbox.getRightY());
-
-    AbsoluteFieldDrive closedFieldAbsoluteDrive = new AbsoluteFieldDrive(drivebase,
-                                                                         () ->
-                                                                             MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                                    OperatorConstants.LEFT_Y_DEADBAND),
-                                                                         () -> MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                                      OperatorConstants.LEFT_X_DEADBAND),
-                                                                         () -> driverXbox.getRawAxis(2));
-
+  AbsoluteDrive closedAbsoluteDrive = new AbsoluteDrive(drivebase, driverXbox);
     
-
-    
-   
-
-    drivebase.setDefaultCommand(!RobotBase.isSimulation() ? closedAbsoluteDrive : closedFieldAbsoluteDrive);
+  drivebase.setDefaultCommand(closedAbsoluteDrive);
     
   }
 
@@ -266,11 +246,6 @@ public class RobotContainer
     }
   }
 
-  public void setLEDsAutoAim() {
-    Color green = new Color(0, 153, 0);
-
-  }
-
   public void setLEDsAt60() {
     Color purple = new Color(68, 29, 158);
     if (m_pivot.PivotAngleis60()) {
@@ -282,6 +257,13 @@ public class RobotContainer
     Color lightpurple = new Color(151, 107, 255);
     if (m_pivot.PivotAngleis45()){
       m_leds.setAll(lightpurple);
+    }
+  }
+
+  public void setLEDsforAutoAimButton() {
+    Color green = new Color(0, 153, 0);
+    if (secondriverXbox.getBButtonPressed()) {
+      m_leds.setAll(green);
     }
   }
 

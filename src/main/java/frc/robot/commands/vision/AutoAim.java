@@ -32,7 +32,7 @@ public class AutoAim extends Command {
   private int targetAprilTag = 4;
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
-  LerpedLUT angleLUT= new LerpedLUT();
+  LerpedLUT angleLUT = new LerpedLUT();
 
   private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
 
@@ -41,9 +41,9 @@ public class AutoAim extends Command {
 
   private DoubleSupplier xSupplier;
   private DoubleSupplier ySupplier;
-  
 
-  public AutoAim(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+  public AutoAim(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot, DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier) {
     // Use addRequirements() here to declare subsystem dependencies.
 
     addRequirements(swerve, vision, pivot);
@@ -56,15 +56,14 @@ public class AutoAim extends Command {
 
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
       this.targetAprilTag = 7;
-    
-    
-    angleLUT.addEntry(-100, 60);
-    angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
-    angleLUT.addEntry(2.17, 43);
-    angleLUT.addEntry(3.37, 38);
-    angleLUT.addEntry(4.33, 32.7);
-    angleLUT.addEntry(5.33, 29);
-    angleLUT.addEntry(6.33, 27.5);
+
+      angleLUT.addEntry(-100, 60);
+      angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
+      angleLUT.addEntry(2.17, 43);
+      angleLUT.addEntry(3.37, 38);
+      angleLUT.addEntry(4.33, 32.7);
+      angleLUT.addEntry(5.33, 29);
+      angleLUT.addEntry(6.33, 27.5);
     }
   }
 
@@ -73,33 +72,37 @@ public class AutoAim extends Command {
   double distanceThreshold = 0; // placeholder
   double cameraAngle = 30; // placeholder
   double angleThreshold = 0; // placeholder
-    
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
+
     PhotonTrackedTarget target = vision.getTargetWithID(targetAprilTag);
     // vision.getTargetWithID(4);
 
-    ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(), swerve.getHeading().getSin(), swerve.getHeading().getCos());
-    
+    ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(),
+        swerve.getHeading().getSin(), swerve.getHeading().getCos());
+
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
     translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
-                                           Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
-                                           swerve.getSwerveDriveConfiguration());
-   
-                                           if (target == null) {
+        Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
+        swerve.getSwerveDriveConfiguration());
+
+    if (target == null) {
       swerve.drive(translation, 0, true);
     } else {
       double yaw = vision.getYaw(targetAprilTag);
       swerve.drive(translation, -0.1 * yaw, true);
     }
-    
-    double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle, distanceThreshold, angleThreshold));
+
+    double distance = Units.metersToFeet(
+        visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle, distanceThreshold, angleThreshold));
     distance = distance - 3.9; // Camera + robot offset
     double idealAngle = angleLUT.getAngleFromDistance(distance);
 
@@ -110,7 +113,6 @@ public class AutoAim extends Command {
 
   }
 
- 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
@@ -121,10 +123,10 @@ public class AutoAim extends Command {
   @Override
   public boolean isFinished() {
     return false;
-  //   if (vision.getTargetWithID(targetAprilTag) == null) {
-  //     return false;
-  //   } else {
-  //     return Math.abs(vision.getTargetWithID(targetAprilTag).getYaw()) < 1;
-  // }
-}
+    // if (vision.getTargetWithID(targetAprilTag) == null) {
+    // return false;
+    // } else {
+    // return Math.abs(vision.getTargetWithID(targetAprilTag).getYaw()) < 1;
+    // }
+  }
 }
