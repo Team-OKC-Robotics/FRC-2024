@@ -70,12 +70,7 @@ public class AutoAim extends Command {
   double tagHeight = 57.13;
   double cameraHeight = 25;
   double cameraAngle = 30; // placeholder
-<<<<<<< HEAD
   double angleThreshold = 0; // placeholder
-=======
-
-    
->>>>>>> 97143cba8434a7abb89da37ee0cca12e49a4f205
 
   // Called when the command is initially scheduled.
   @Override
