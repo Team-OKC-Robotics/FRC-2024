@@ -22,16 +22,10 @@ public class ClimberSubsystem extends SubsystemBase {
     private final DigitalInput RightClimberLimitSwitch;
     private final SparkPIDController PIDController;
     
-
-   
-     
-    
-    
-    
     public double target_climb;
 
-    private ShuffleboardTab tab = Shuffleboard.getTab("climber");
-    private GenericEntry climberSwitch = tab.add("climber switch", false).getEntry();
+    // private ShuffleboardTab tab = Shuffleboard.getTab("climber");
+    // private GenericEntry climberSwitch = tab.add("climber switch", false).getEntry();
     
 
 

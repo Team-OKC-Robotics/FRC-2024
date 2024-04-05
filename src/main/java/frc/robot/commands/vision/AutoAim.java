@@ -56,6 +56,7 @@ public class AutoAim extends Command {
 
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
       this.targetAprilTag = 7;
+    }
 
       angleLUT.addEntry(-100, 60);
       angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
@@ -64,7 +65,6 @@ public class AutoAim extends Command {
       angleLUT.addEntry(4.33, 32.7);
       angleLUT.addEntry(5.33, 29);
       angleLUT.addEntry(6.33, 27.5);
-    }
   }
 
   double tagHeight = 57.13;

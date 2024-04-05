@@ -97,7 +97,7 @@ public class RobotContainer
   
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
-  private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
+  // private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
   private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake, m_pivot);
   
   // intake commands
@@ -105,10 +105,10 @@ public class RobotContainer
   private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.8);
   //pivot commands
   // private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
-  private final PivotOtherway otherwaypivot = new PivotOtherway(m_pivot, 0.9);
+  // private final PivotOtherway otherwaypivot = new PivotOtherway(m_pivot, 0.9);
   private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 58); 
- private final PivotToAngle pivottoangle45 = new PivotToAngle(m_pivot, 43);
-  // private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 30);
+  private final PivotToAngle pivottoangle45 = new PivotToAngle(m_pivot, 43);
+ 
 
   private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 0.9);
   private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -0.9);
@@ -142,20 +142,20 @@ public class RobotContainer
     autoChooser.addOption("Middle Speaker 2 piece", "Middle Speaker 2 piece");
     autoChooser.addOption("Left of Speaker 2 piece", "Left of Speaker 2 piece");
     autoChooser.addOption("Right of Speaker 2 piece", "Right of Speaker 2 piece");
-    autoChooser.addOption("Left of Speaker get far note", "Left of Speaker get far note");
+    // autoChooser.addOption("Left of Speaker get far note", "Left of Speaker get far note");
     autoChooser.addOption("Right of Speaker Wait then Shoot Auto", "Right of Speaker Wait then Shoot Auto");
     autoChooser.addOption("Left of Speaker Wait then Shoot Auto", "Left of Speaker Wait then Shoot Auto");
-    autoChooser.addOption("Right of Speaker get far note", "Right of Speaker get far note");
+    // autoChooser.addOption("Right of Speaker get far note", "Right of Speaker get far note");
     autoChooser.addOption("Middle Speaker 3 Piece Left", "Middle Speaker 3 Piece Left");
     autoChooser.addOption("Right Speaker Shoot Pre-Loaded", "Right Speaker Shoot Pre-Loaded");
     autoChooser.addOption("Left Speaker Shoot Pre-Loaded", "Left Speaker Shoot Pre-Loaded");
     autoChooser.addOption("Middle Speaker 3 Piece Right", "Middle Speaker 3 Piece Right");
-    autoChooser.addOption("3 piece preload and two in mid field", "3 piece preload and two in mid field");
+    autoChooser.addOption("3 piece start against amp wall", "3 piece start against amp wall");
     autoChooser.addOption("4 Piece Fast", "4 Piece Fast");
-    autoChooser.addOption("5 Piece", "5 Piece");
-    autoChooser.addOption("Line to Line", "Line to Line");
-    autoChooser.addOption("3 piece start against wall left", "3 piece start against wall left");
-    autoChooser.addOption("3 piece start against L wall far notes", "3 piece start against L wall far notes");
+    // autoChooser.addOption("5 Piece", "5 Piece");
+    // autoChooser.addOption("Line to Line", "Line to Line");
+    autoChooser.addOption("3 piece start against source wall", "3 piece start against source wall");
+    autoChooser.addOption("2.5 piece start against source wall far notes", "2.5 piece start against source wall far notes");
 
 
     tab.add(autoChooser);
@@ -202,20 +202,31 @@ public class RobotContainer
     secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
     secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
     secondriverXboxDpad.whileTrue(runShooter);
-   
-
-    
 }
 
   public void setLeds() {
     Color orange = new Color(255, 43, 0);
     Color cyan = new Color(0, 200, 50);
+    Color green = new Color(0, 153, 0);
+    Color darkteal = new Color(0, 102, 102);
+
+    if (secondriverXbox.getBButton() == true) {
+      m_leds.setAll(green);
+      return;
+    } 
+
+    if (m_climber.hasleftHit() == true) {
+      m_leds.setAll(darkteal);
+      return;
+    } 
     
     if(m_intake.hasNote()) {
       m_leds.setAll(orange);
     } else {
       m_leds.setAll(cyan);
     }
+    
+
 }
 
   public void setLEDsAlliance(){
@@ -238,32 +249,11 @@ public class RobotContainer
 
   public void setLEDsAuto() {
     Color pink = new Color(255, 0, 128);
-    Color teal = new Color(36, 225, 212);
+    //Color teal = new Color(36, 225, 212);
     if(m_intake.hasNote()) {
       m_leds.setAll(pink);
     } else {
-      m_leds.setAll(teal);
-    }
-  }
-
-  public void setLEDsAt60() {
-    Color purple = new Color(68, 29, 158);
-    if (m_pivot.PivotAngleis60()) {
-      m_leds.setAll(purple);
-    }
-  }
-
-  public void setLEDsAt45() {
-    Color lightpurple = new Color(151, 107, 255);
-    if (m_pivot.PivotAngleis45()){
-      m_leds.setAll(lightpurple);
-    }
-  }
-
-  public void setLEDsforAutoAimButton() {
-    Color green = new Color(0, 153, 0);
-    if (secondriverXbox.getBButtonPressed()) {
-      m_leds.setAll(green);
+      m_leds.rainbow();
     }
   }
 

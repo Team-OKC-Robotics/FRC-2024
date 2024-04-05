@@ -25,7 +25,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SparkPIDController LeftPIDController;
   private final RelativeEncoder rightEncoder;
   private final RelativeEncoder leftEncoder;
-  private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
+  // private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
 
   // private GenericEntry shooterP = tab.add("Shooter P", PIDF.PORPORTION).getEntry();
   // private GenericEntry shooterI = tab.add("Shooter I", PIDF.INTEGRAL).getEntry();

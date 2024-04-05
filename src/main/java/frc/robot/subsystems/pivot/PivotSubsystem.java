@@ -35,13 +35,14 @@ public class PivotSubsystem extends SubsystemBase{
     
 
     private ShuffleboardTab pivottab = Shuffleboard.getTab("pivot");
-    private ShuffleboardTab amptab = Shuffleboard.getTab("amp");
+    //private ShuffleboardTab amptab = Shuffleboard.getTab("amp");
+    private ShuffleboardTab comptab = Shuffleboard.getTab("comp");
   
-    private GenericEntry AmpDeviceEncoder = amptab.add("amp encoder", 0).getEntry();
+    private GenericEntry AmpDeviceEncoder = comptab.add("amp encoder", 0).getEntry();
   
     private GenericEntry pivotabsoluteencoder = pivottab.add("absolute encoder", 0).getEntry();
 
-    private GenericEntry CurrentState = amptab.add("Current State", "Amp In").getEntry();
+    private GenericEntry CurrentState = comptab.add("Current State", "Amp In").getEntry();
 
 public PivotSubsystem() {
    
@@ -121,8 +122,8 @@ public void periodic() {
     }
 
     if(currentState == State.AMP_MOVING_PIVOT_OUT && targetState == State.AMP_ENGAGED) {
-        targetAmpangle = -25;
-    if(getDevicePosition() < -23) {
+        targetAmpangle = -22.5;
+    if(getDevicePosition() < -20) {
         currentState = State.AMP_OUT_PIVOT_MOVING;
     }
     }
@@ -156,7 +157,7 @@ public void periodic() {
 
     if(currentState == State.AMP_IN_PIVOT_MOVING && targetState == State.AMP_IN) {
         targetPivotangle = 57;
-    if(getPivotAngle() > 55) {
+    if(getPivotAngle() > 53) {
         currentState = State.AMP_IN;
     }
     }

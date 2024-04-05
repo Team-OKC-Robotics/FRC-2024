@@ -14,12 +14,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Calib Climber"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Pivot to 60"
           }
         },

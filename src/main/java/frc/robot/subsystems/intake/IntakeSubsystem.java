@@ -28,12 +28,12 @@ public class IntakeSubsystem extends SubsystemBase{
     private int direction = 0;
 
     // shuffleboard
-    private ShuffleboardTab tab = Shuffleboard.getTab("intake");
+    private ShuffleboardTab comptab = Shuffleboard.getTab("intake");
 
    
 
     //sensors 
-    private GenericEntry intakeSwitch = tab.add("intake switch", false).getEntry();
+    private GenericEntry intakeSwitch = comptab.add("intake switch", false).getEntry();
 
 public IntakeSubsystem() {
     intakemotor = new CANSparkMax(Constants.IntakeConstants.intakemotorID, CANSparkLowLevel.MotorType.kBrushless);
@@ -43,36 +43,37 @@ public IntakeSubsystem() {
     intakemotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     intakemotor.setInverted(true);
     IntakeLimitSwitch = new DigitalInput(8);
-    
-    
-
-  
 }
+
 //sets intake speed 
 public void setSpeed(double power) {
     intakemotor.set(power);
 }
+
 //stops intake
 public void stopIntake() {
     intakemotor.set(0);
 }
+
 //for backwards intake
 public void setbackSpeed(double power) {
     intakemotor.set(-power);
-    
 }
+
 //for backwards index
 public void setIndexerback(double power) {
     indexerMotor.set(-power);
 }
+
 //sets indexer motor speed
 public void indexerSpeed(double power) {
     indexerMotor.set(power);
-  }
+}
+
 //stops indexer
 public void stopIndexer() {
     indexerMotor.set(0);
-  }
+}
 
 
 public double getSpeed() {
@@ -84,19 +85,18 @@ public Command runIntake(double Speed){
         setSpeed(Speed);
     });
 }
+
 @Override
 public void periodic() {
+     intakeSwitch.setBoolean(IntakeLimitSwitch.get());
+}
 
-   
-
-    intakeSwitch.setBoolean(IntakeLimitSwitch.get());
-    
-    }
 //sets intake in commmand
 public void SetIntake(double speed) {
     intakemotor.set(speed);
     indexerMotor.set(speed);
 } 
+
 //testing if the limit switch sees the note or not
 public boolean hasNote() {
     return !IntakeLimitSwitch.get();
