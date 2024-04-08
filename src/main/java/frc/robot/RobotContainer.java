@@ -50,6 +50,7 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.commands.vision.AutoAimInAuto;
 import frc.robot.commands.AmpDevice.*;
 import frc.robot.utils.POVButton;
+import frc.robot.utils.TriggerButton;
 import frc.robot.commands.climber.*;
 
 /**
@@ -83,6 +84,8 @@ public class RobotContainer
   private final JoystickButton driverXboxButtonB = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton2);
   private final JoystickButton driverXboxleftbumper = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton5);
   private final JoystickButton driverXboxrightbumper = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton6);
+  private final TriggerButton driverXboxLeftTrigger = new TriggerButton(driverXbox, 2, 0.8);
+  private final TriggerButton driverXboxRightTrigger = new TriggerButton(driverXbox, 3, 0.8);
   
   //second driver buttons
   private final JoystickButton secondriverXboxButtonB = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton2);
@@ -94,6 +97,8 @@ public class RobotContainer
   private final JoystickButton secondriverXboxButtonMinus = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton7);
   private final JoystickButton secondriverXboxButtonPlus = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton8);
   private final POVButton secondriverXboxDpad = new POVButton(secondriverXbox, 0);
+  private final TriggerButton secondriverXboxRightTrigger = new TriggerButton(secondriverXbox, 3, 0.8);
+  
   
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
@@ -133,7 +138,7 @@ public class RobotContainer
     //commands for the autos
     NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
-    NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.8));
+    NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.65));
     NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase, m_vision, m_pivot));
     NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter, 1));
 
@@ -185,6 +190,8 @@ public class RobotContainer
 
     driverXboxleftbumper.whileTrue(runIntake); //left bumper
     driverXboxrightbumper.whileTrue(backwardIntake);
+    driverXboxLeftTrigger.whileTrue(runIntake);
+    driverXboxRightTrigger.whileTrue(backwardIntake);
     
     
     
@@ -202,6 +209,7 @@ public class RobotContainer
     secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
     secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
     secondriverXboxDpad.whileTrue(runShooter);
+    secondriverXboxRightTrigger.whileTrue(backwardIntake);
 }
 
   public void setLeds() {
@@ -237,15 +245,13 @@ public class RobotContainer
     if (ally.isPresent()) {
       if(ally.get() == Alliance.Red) {
         m_leds.setAll(red);
-      } else 
-      if(ally.isPresent()) {
-        if (ally.get() == Alliance.Blue) {
+      } else  {
           m_leds.setAll(blue);
         }
       }
     
     }
-  }
+  
 
   public void setLEDsAuto() {
     Color pink = new Color(255, 0, 128);
@@ -282,5 +288,10 @@ public class RobotContainer
     m_shooter.stopShooter();
     m_intake.stopIntake();
     m_intake.stopIndexer();
+    
+  }
+
+  public void resetPivotPID() {
+    m_pivot.resetPID();
   }
 }

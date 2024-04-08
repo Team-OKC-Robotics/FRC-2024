@@ -14,7 +14,9 @@ public PivotToAngle(PivotSubsystem pivot, double angle) {
 
     @Override
 
-    public void initialize() {}
+    public void initialize() {
+        pivot.SetTargetPivotAngle(angle);
+    }
    
    @Override
    public void execute() {
@@ -28,7 +30,7 @@ public PivotToAngle(PivotSubsystem pivot, double angle) {
    
    @Override
    public boolean isFinished() {
-       return Math.abs(pivot.getPivotAngle() - this.angle) < 0.5;
+       return true;
     }
 }
    

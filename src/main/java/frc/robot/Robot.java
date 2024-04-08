@@ -118,6 +118,7 @@ public class Robot extends TimedRobot
     m_robotContainer.setMotorBrake(true);
     m_robotContainer.drivebase.zeroGyro();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_robotContainer.resetPivotPID();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null)
@@ -125,8 +126,8 @@ public class Robot extends TimedRobot
       m_autonomousCommand.schedule();
     }
     DriverStation.getAlliance();
-    
-    }
+
+   }
   
 
   /**
@@ -153,6 +154,7 @@ public class Robot extends TimedRobot
     m_robotContainer.setMotorBrake(true);
     //so the shooter doesn't continue running after auto ends in teleop
     m_robotContainer.resetrobot();
+    m_robotContainer.resetPivotPID();
 
    
   }

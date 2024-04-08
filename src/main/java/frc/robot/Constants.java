@@ -76,7 +76,7 @@ public final class Constants
   }
 
   public static final class LEDS {
-    public static final int PWMPort = 4;
+    public static final int PWMPort = 5;
     public static final int Length = 20;
   }
 

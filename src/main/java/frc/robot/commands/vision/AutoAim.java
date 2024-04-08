@@ -62,8 +62,8 @@ public class AutoAim extends Command {
       angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
       angleLUT.addEntry(2.17, 43);
       angleLUT.addEntry(3.37, 38);
-      angleLUT.addEntry(4.33, 32.7);
-      angleLUT.addEntry(5.33, 29);
+      angleLUT.addEntry(4.33, 34);
+      angleLUT.addEntry(5.33, 30);
       angleLUT.addEntry(6.33, 27.5);
   }
 

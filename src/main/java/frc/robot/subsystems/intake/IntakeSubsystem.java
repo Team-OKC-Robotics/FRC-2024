@@ -29,9 +29,6 @@ public class IntakeSubsystem extends SubsystemBase{
 
     // shuffleboard
     private ShuffleboardTab comptab = Shuffleboard.getTab("intake");
-
-   
-
     //sensors 
     private GenericEntry intakeSwitch = comptab.add("intake switch", false).getEntry();
 

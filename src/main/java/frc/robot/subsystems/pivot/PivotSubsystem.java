@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -44,6 +45,10 @@ public class PivotSubsystem extends SubsystemBase{
 
     private GenericEntry CurrentState = comptab.add("Current State", "Amp In").getEntry();
 
+    // private GenericEntry TargetEncoder = pivottab.add("target encoder", 60.0).getEntry();
+
+    // private GenericEntry motorpower = pivottab.add("motor power", 0.0).getEntry();
+
 public PivotSubsystem() {
    
     pivotmotor = new CANSparkMax(Constants.PivotConstants.pivotmotorID, CANSparkLowLevel.MotorType.kBrushless);
@@ -59,10 +64,9 @@ public PivotSubsystem() {
     AmpEncoder = new DutyCycleEncoder(0);
   
     pivotmotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    ampdevicemotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    
+    ampdevicemotor.setIdleMode(CANSparkMax.IdleMode.kCoast);    
    
-    PivotPIDController = new PIDController(0.04, 0.0001, 0);
+    PivotPIDController = new PIDController(0.03, 0.001, 0);
     AmpPidController = new PIDController(0.04, 0.0001, 0);
     
     
@@ -104,6 +108,7 @@ public void stopAmp(double power) {
 public void periodic() {
     pivotabsoluteencoder.setDouble(getPivotAngle());
     AmpDeviceEncoder.setDouble(getDevicePosition());
+    // TargetEncoder.setDouble(targetPivotangle);
 
     CurrentState.setString(currentState.name());
 
@@ -165,6 +170,7 @@ public void periodic() {
 }
 
 public void PivotIt(double power) {
+    // motorpower.setDouble(power);
     //adds soft limits to avoid the pivot killing itself
     if (power > 0 && getPivotAngle() > 60) {
         pivotmotor.set(0);
@@ -179,13 +185,16 @@ public void PivotIt(double power) {
     }
 
 public void PivotIttoAngle(double angle) {
-    PivotIt(PivotPIDController.calculate(getPivotAngle(), angle)); 
+    double power = PivotPIDController.calculate(getPivotAngle(), angle);
+    power = MathUtil.clamp(power, -0.4, 0.4);
+    PivotIt(power); 
     
 }
 
 public void SetTargetPivotAngle(double angle) {
     if(currentState == State.AMP_IN) {
         targetPivotangle = angle;
+        PivotPIDController.reset();
 }
 }
 
@@ -249,5 +258,9 @@ public boolean PivotAngleis45() {
     } else {
         return false;
     }
+}
+
+public void resetPID() {
+    PivotPIDController.reset();
 }
 }
