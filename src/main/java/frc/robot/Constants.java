@@ -60,6 +60,7 @@ public final class Constants
   {
     public static final int intakemotorID = 9;
     public static final int limitSwitchBeanBrakeChannel = 1;
+    public static final int IntakeLimitSwitch = 8;
   }
   
   public static final class ClimberConstants 

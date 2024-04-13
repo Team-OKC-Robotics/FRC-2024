@@ -15,7 +15,8 @@ public class ShootWait extends Command {
 
     
     private double speed;
-    private double RPM;
+    private double LeftRPM;
+    private double RightRPM;
     private boolean hasNoteLeft = false;
 
 public ShootWait(ShooterSubsystem shooter, IntakeSubsystem intake, PivotSubsystem pivot) {
@@ -36,21 +37,25 @@ public ShootWait(ShooterSubsystem shooter, IntakeSubsystem intake, PivotSubsyste
 public void execute() {
     if (!intake.hasNote()) { 
         hasNoteLeft = true;
-        shooter.ShootIt(0);
+        shooter.RightShootIt(0);
+        shooter.LeftShootIt(0);
         return;
     }
      
     if (pivot.IsAmpIn()) {
-        RPM = 5000; 
+        LeftRPM = 5500; 
+        RightRPM = 5000;
     } else {
-        RPM = 1500;
+        LeftRPM = 1500;
+        RightRPM = 1500;
     }
-     shooter.shootSpeed(this.RPM);
-    if (shooter.getMinVelocity() > (this.RPM * 0.9)) { 
+     shooter.RightshootSpeed(this.RightRPM);
+     shooter.LeftshootSpeed(this.LeftRPM);
+    if (shooter.getMinVelocity() > (this.LeftRPM * 0.9)) { 
         intake.SetIntake(1);
     }
 
-   // shooter.indexerSpeed(1);
+  
     
     
 }
@@ -59,7 +64,7 @@ public void execute() {
 public void end(boolean interuppted) {
     shooter.stopShooter();
     intake.SetIntake(0);
-  //  shooter.indexerSpeed(0);
+  
 }
 
 @Override

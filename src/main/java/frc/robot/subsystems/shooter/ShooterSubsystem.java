@@ -25,15 +25,15 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SparkPIDController LeftPIDController;
   private final RelativeEncoder rightEncoder;
   private final RelativeEncoder leftEncoder;
-  // private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
+  private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
 
   // private GenericEntry shooterP = tab.add("Shooter P", PIDF.PORPORTION).getEntry();
   // private GenericEntry shooterI = tab.add("Shooter I", PIDF.INTEGRAL).getEntry();
   // private GenericEntry shooterF = tab.add("Shooter F", PIDF.FEEDFORWARD).getEntry();
   // private GenericEntry pidSetButton = tab.add("Set PID", false).getEntry();
   
-  //private GenericEntry shooterRight = tab.add("shooter right", 0.0).getEntry();
-  //private GenericEntry shooterLeft = tab.add("shooter leftt", 0.0).getEntry();
+  private GenericEntry shooterRight = tab.add("shooter right", 0.0).getEntry();
+  private GenericEntry shooterLeft = tab.add("shooter leftt", 0.0).getEntry();
 
   public double target_Speed;
 
@@ -74,7 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public static class PIDF {
     /*Feedforward constant for PID loop */
-    public static final double FEEDFORWARD = 0.000182;
+    public static final double FEEDFORWARD = 0.000199;
     /*Porportion constant for PID loop */
     public static final double PORPORTION = 0.001;
     /*Integral constant for PID loop */
@@ -85,10 +85,19 @@ public class ShooterSubsystem extends SubsystemBase {
     public static final double INTEGRAL_ZONE = 0.0;
   }
 
-  public void shootSpeed(double power){
+  public void RightshootSpeed(double power){
     //rightShooterMotor.set(power);
     //leftShooterMotor.set(power);
     //indexerMotor.set(power);
+    RightPIDController.setReference(power, CANSparkMax.ControlType.kVelocity);
+    
+  }
+
+  public void LeftshootSpeed(double power) {
+    LeftPIDController.setReference(power, CANSparkMax.ControlType.kVelocity);
+  }
+
+  public void shootSpeed(double power) {
     RightPIDController.setReference(power, CANSparkMax.ControlType.kVelocity);
     LeftPIDController.setReference(power, CANSparkMax.ControlType.kVelocity);
   }
@@ -134,28 +143,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
  }
 
- public Command shootIt(double Speed) {
-  return run(() -> runPID(Speed));
- }
-
- public enum ShooterState{
-  HIGHPOWER(100),
-  MIDPOWER(50),
-  LOWPOWER(25),
-  OFF(0);
-
-  public double speed;
-
-  private ShooterState(double speed) {
-    this.speed = speed;
-  }
- }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // shooterRight.setDouble(rightEncoder.getVelocity());
-    // shooterLeft.setDouble(leftEncoder.getVelocity());
+     shooterRight.setDouble(rightEncoder.getVelocity());
+     shooterLeft.setDouble(leftEncoder.getVelocity());
 // 
     // if (pidSetButton.getBoolean(false)) {
       // pidSetButton.setBoolean(false);
@@ -163,12 +156,22 @@ public class ShooterSubsystem extends SubsystemBase {
     // }
   }
 
-  public void ShootIt(double speed) {
+  public void RightShootIt(double speed) {
     RightPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
-    LeftPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+
+    
    // rightShooterMotor.set(speed);
    // leftShooterMotor.set(speed);
     
+  }
+
+  public void LeftShootIt(double speed) {
+    LeftPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+  }
+
+  public void ShootIt(double speed) {
+    RightPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+    LeftPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
   }
 
   public double getMinVelocity() {

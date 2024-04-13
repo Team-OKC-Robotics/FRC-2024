@@ -27,28 +27,25 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.intake.BackwardIntake;
-import frc.robot.commands.intake.SetIntakeCommand;
-import frc.robot.commands.intake.SetIntakeCommandAuto;
-import frc.robot.commands.pivot.PivotOtherway;
-import frc.robot.commands.pivot.PivotToAngle;
-import frc.robot.commands.pivot.SetPivotCommand;
-import frc.robot.commands.shooter.ShootWait;
-import frc.robot.commands.shooter.ShootWaitAuto;
-import frc.robot.commands.shooter.ShooterCommand;
-import frc.robot.commands.shooter.SpinUpAuto;
-import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
-import frc.robot.commands.swervedrive.drivebase.AbsoluteFieldDrive;
-import frc.robot.commands.vision.AutoAim;
-import frc.robot.subsystems.climber.ClimberSubsystem;
-import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.leds.*;
-import frc.robot.subsystems.pivot.PivotSubsystem;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.commands.vision.AutoAimInAuto;
+
+
+import frc.robot.commands.pivot.*;
+import frc.robot.commands.shooter.*;
+import frc.robot.commands.intake.*;
+import frc.robot.commands.swervedrive.drivebase.*;
+import frc.robot.commands.vision.*;
 import frc.robot.commands.AmpDevice.*;
+
+
+import frc.robot.subsystems.climber.*;
+import frc.robot.subsystems.intake.*;
+import frc.robot.subsystems.leds.*;
+import frc.robot.subsystems.pivot.*;
+import frc.robot.subsystems.shooter.*;
+import frc.robot.subsystems.swervedrive.*;
+import frc.robot.subsystems.vision.*;
+
+
 import frc.robot.utils.POVButton;
 import frc.robot.utils.TriggerButton;
 import frc.robot.commands.climber.*;
@@ -79,8 +76,8 @@ public class RobotContainer
   private final Joystick driverController = new Joystick(0);
   private final Joystick secondriver = new Joystick(1);
  
+  
   //driver buttons
-
   private final JoystickButton driverXboxButtonB = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton2);
   private final JoystickButton driverXboxleftbumper = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton5);
   private final JoystickButton driverXboxrightbumper = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton6);
@@ -98,6 +95,7 @@ public class RobotContainer
   private final JoystickButton secondriverXboxButtonPlus = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton8);
   private final POVButton secondriverXboxDpad = new POVButton(secondriverXbox, 0);
   private final TriggerButton secondriverXboxRightTrigger = new TriggerButton(secondriverXbox, 3, 0.8);
+  private final TriggerButton secondriverXboxLeftTrigger = new TriggerButton(secondriverXbox,2, 0.8);
   
   
   // shooter commands
@@ -105,14 +103,15 @@ public class RobotContainer
   // private final ShooterCommand stopShooter = new ShooterCommand(m_shooter, 0);
   private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake, m_pivot);
   
+  
   // intake commands
-  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.9);
-  private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.8);
+  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.8);
+  private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.5);
   //pivot commands
   // private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
   // private final PivotOtherway otherwaypivot = new PivotOtherway(m_pivot, 0.9);
-  private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 58); 
-  private final PivotToAngle pivottoangle45 = new PivotToAngle(m_pivot, 43);
+  private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 59); 
+  private final PivotToAngle pivottoangle45 = new PivotToAngle(m_pivot, 44);
  
 
   private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 0.9);
@@ -210,8 +209,9 @@ public class RobotContainer
     secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
     secondriverXboxDpad.whileTrue(runShooter);
     secondriverXboxRightTrigger.whileTrue(backwardIntake);
+   
 }
-
+  // makes led settings
   public void setLeds() {
     Color orange = new Color(255, 43, 0);
     Color cyan = new Color(0, 200, 50);

@@ -45,7 +45,9 @@ public class PivotSubsystem extends SubsystemBase{
 
     private GenericEntry CurrentState = comptab.add("Current State", "Amp In").getEntry();
 
-    // private GenericEntry TargetEncoder = pivottab.add("target encoder", 60.0).getEntry();
+    private GenericEntry TargetEncoder = pivottab.add("target encoder", 60.0).getEntry();
+
+    private GenericEntry EncoderButton = pivottab.add("Set Encoder", false).getEntry();
 
     // private GenericEntry motorpower = pivottab.add("motor power", 0.0).getEntry();
 
@@ -109,6 +111,10 @@ public void periodic() {
     pivotabsoluteencoder.setDouble(getPivotAngle());
     AmpDeviceEncoder.setDouble(getDevicePosition());
     // TargetEncoder.setDouble(targetPivotangle);
+    if (EncoderButton.getBoolean(false)) {
+        EncoderButton.setBoolean(false);
+        targetPivotangle = TargetEncoder.getDouble(45);
+    }
 
     CurrentState.setString(currentState.name());
 
@@ -176,7 +182,7 @@ public void PivotIt(double power) {
         pivotmotor.set(0);
         return; 
     }
-    if (power < 0 && getPivotAngle() < 22) {
+    if (power < 0 && getPivotAngle() < 20) {
         pivotmotor.set(0);
         return;
         }
@@ -185,6 +191,10 @@ public void PivotIt(double power) {
     }
 
 public void PivotIttoAngle(double angle) {
+    if (Math.abs(getPivotAngle() - angle) < 0.3) {
+        PivotIt(0);
+        return;
+    }
     double power = PivotPIDController.calculate(getPivotAngle(), angle);
     power = MathUtil.clamp(power, -0.4, 0.4);
     PivotIt(power); 

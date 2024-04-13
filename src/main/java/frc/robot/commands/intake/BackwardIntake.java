@@ -21,8 +21,8 @@ public void initialize() {}
 
 @Override
 public void execute () {
-    intake.setbackSpeed(0.8);
-    intake.setIndexerback(0.8);
+    intake.setbackSpeed(0.5);
+    intake.setIndexerback(0.5);
 }
 
 @Override 

@@ -39,7 +39,7 @@ public IntakeSubsystem() {
     indexerMotor.restoreFactoryDefaults();
     intakemotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     intakemotor.setInverted(true);
-    IntakeLimitSwitch = new DigitalInput(8);
+    IntakeLimitSwitch = new DigitalInput(Constants.IntakeConstants.IntakeLimitSwitch);
 }
 
 //sets intake speed 
