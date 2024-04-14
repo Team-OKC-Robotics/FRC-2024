@@ -22,7 +22,7 @@ public SpinUpAuto (ShooterSubsystem shooter, double power) {
 
 @Override
 public void execute() {
-    shooter.shootSpeed(5000);
+    shooter.shootSpeed(5200);
    // shooter.indexerSpeed(1);
     
     

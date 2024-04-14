@@ -61,6 +61,9 @@ public class ShooterSubsystem extends SubsystemBase {
     RightPIDController = rightShooterMotor.getPIDController();
     LeftPIDController = leftShooterMotor.getPIDController();
 
+    RightPIDController.setOutputRange(0.0, 1.0);
+    LeftPIDController.setOutputRange(0.0, 1.0);
+
     RightPIDController.setFeedbackDevice(rightEncoder);
     set(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE,
               PIDF.FEEDFORWARD, PIDF.INTEGRAL_ZONE);

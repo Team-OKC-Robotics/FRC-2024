@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.4951056055958282,
-      "y": 7.074597995349838
+      "x": 0.5345733768390629,
+      "y": 7.05486410972822
     },
     "rotation": 0
   },
@@ -12,9 +12,41 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Spin Up"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Amp side get corner far note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Amp side shoot corner far note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Up"
+                }
+              }
+            ]
           }
         },
         {
@@ -22,9 +54,9 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "wait",
                 "data": {
-                  "pathName": "3 piece against wall R shoot path"
+                  "waitTime": 0.1
                 }
               },
               {
@@ -47,30 +79,31 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "3 piece against amp wall get far note"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Amp side get mid far note"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake"
+                      }
+                    }
+                  ]
                 }
               }
             ]
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "3 piece start against wall R shoot far note"
+            "pathName": "Amp side shoot mid far note"
           }
         },
         {

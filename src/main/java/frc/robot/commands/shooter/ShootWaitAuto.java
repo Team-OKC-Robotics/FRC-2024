@@ -13,6 +13,8 @@ public class ShootWaitAuto extends Command {
     
     private double speed;
     private double power;
+    private double LeftRPM = 5500;
+    private double RightRPM = 5000;
     private boolean hasNoteLeft = false;
 
 public ShootWaitAuto(ShooterSubsystem shooter, IntakeSubsystem intake, double power) {
@@ -35,8 +37,9 @@ public void execute() {
         // shooter.ShootIt(0);
         return;
     }
-    shooter.shootSpeed(5000);
-    if (shooter.getMinVelocity() > 4700) {
+    shooter.LeftshootSpeed(this.LeftRPM);
+    shooter.RightshootSpeed(this.RightRPM);
+    if (shooter.getMinVelocity() > 4900) {
         intake.SetIntake(1);
     }
 

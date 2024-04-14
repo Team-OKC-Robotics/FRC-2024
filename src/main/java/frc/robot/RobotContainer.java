@@ -135,7 +135,8 @@ public class RobotContainer
   public RobotContainer()
   {
     //commands for the autos
-    NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
+    NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 59));
+    NamedCommands.registerCommand("Pivot to 45", new PivotToAngle(m_pivot, 41));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.65));
     NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase, m_vision, m_pivot));
@@ -143,23 +144,36 @@ public class RobotContainer
 
     // add auto chooser options
     autoChooser.setDefaultOption("4 Piece", "4 Piece");
+
     autoChooser.addOption("Middle Speaker 2 piece", "Middle Speaker 2 piece");
-    autoChooser.addOption("Left of Speaker 2 piece", "Left of Speaker 2 piece");
-    autoChooser.addOption("Right of Speaker 2 piece", "Right of Speaker 2 piece");
-    // autoChooser.addOption("Left of Speaker get far note", "Left of Speaker get far note");
-    autoChooser.addOption("Right of Speaker Wait then Shoot Auto", "Right of Speaker Wait then Shoot Auto");
-    autoChooser.addOption("Left of Speaker Wait then Shoot Auto", "Left of Speaker Wait then Shoot Auto");
-    // autoChooser.addOption("Right of Speaker get far note", "Right of Speaker get far note");
-    autoChooser.addOption("Middle Speaker 3 Piece Left", "Middle Speaker 3 Piece Left");
-    autoChooser.addOption("Right Speaker Shoot Pre-Loaded", "Right Speaker Shoot Pre-Loaded");
-    autoChooser.addOption("Left Speaker Shoot Pre-Loaded", "Left Speaker Shoot Pre-Loaded");
-    autoChooser.addOption("Middle Speaker 3 Piece Right", "Middle Speaker 3 Piece Right");
-    autoChooser.addOption("3 piece start against amp wall", "3 piece start against amp wall");
-    autoChooser.addOption("4 Piece Fast", "4 Piece Fast");
-    // autoChooser.addOption("5 Piece", "5 Piece");
-    // autoChooser.addOption("Line to Line", "Line to Line");
+
+    autoChooser.addOption("Amp Side Get Far Notes (no preload)", "Amp Side Get Far Notes (no preload)");
+
+    autoChooser.addOption("Amp side 2 piece", "Amp side 2 piece");
+    
+    autoChooser.addOption("Amp Side Wait then Shoot Auto", "Amp Side Wait then Shoot Auto");
+
+    autoChooser.addOption("Source Side Wait then Shoot Auto", "Source Side Wait then Shoot Auto");
+
     autoChooser.addOption("3 piece start against source wall", "3 piece start against source wall");
+
+    autoChooser.addOption("Middle Speaker 3 Piece Source", "Middle Speaker 3 Piece Source");
+
+    autoChooser.addOption("Amp Side Shoot Pre-Loaded", "Amp Side Shoot Pre-Loaded");
+
+    autoChooser.addOption("Source Side Shoot Pre-Loaded", "Left Speaker Shoot Pre-Loaded");
+
+    autoChooser.addOption("Middle Speaker 3 Piece Amp", "Middle Speaker 3 Piece Amp");
+
+    autoChooser.addOption("2 piece start against amp wall", "2 piece start against amp wall");
+
+    autoChooser.addOption("4 Piece Fast", "4 Piece Fast");
+
+    autoChooser.addOption("2 piece start against source wall", "2 piece start against source wall");
+
     autoChooser.addOption("2.5 piece start against source wall far notes", "2.5 piece start against source wall far notes");
+
+    autoChooser.addOption("Source wall get mid far notes 1.5", "Source wall get mid far notes 1.5");
 
 
     tab.add(autoChooser);
@@ -212,23 +226,20 @@ public class RobotContainer
    
 }
   // makes led settings
+  
   public void setLeds() {
+    
     Color orange = new Color(255, 43, 0);
     Color cyan = new Color(0, 200, 50);
     Color green = new Color(0, 153, 0);
-    Color darkteal = new Color(0, 102, 102);
+   // Color darkteal = new Color(0, 102, 102);
 
     if (secondriverXbox.getBButton() == true) {
       m_leds.setAll(green);
       return;
     } 
 
-    if (m_climber.hasleftHit() == true) {
-      m_leds.setAll(darkteal);
-      return;
-    } 
-    
-    if(m_intake.hasNote()) {
+     if(m_intake.hasNote()) {
       m_leds.setAll(orange);
     } else {
       m_leds.setAll(cyan);

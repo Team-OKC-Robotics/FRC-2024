@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.465504777163402,
-      "y": 4.02571266680995
+      "x": 0.4951056055958282,
+      "y": 7.074597995349838
     },
     "rotation": 0
   },
@@ -12,9 +12,28 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Spin Up"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Up"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "3 piece against amp wall shoot path"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Auto Aim"
+                }
+              }
+            ]
           }
         },
         {
@@ -22,15 +41,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "3 piece against source wall shoot path"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Auto Aim"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.4
                 }
               }
             ]
@@ -49,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "3 piece source wall get far note"
+                  "pathName": "3 piece against amp wall get far note"
                 }
               },
               {
@@ -64,7 +83,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3 piece against source wall shoot far note"
+            "pathName": "3 piece start against amp wall shoot far note"
           }
         },
         {
@@ -74,7 +93,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.1
+                  "waitTime": 0.4
                 }
               },
               {
@@ -97,9 +116,15 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "Pivot to 60"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "3 piece get second far note"
+                  "pathName": "Amp side get mid far note"
                 }
               },
               {
@@ -109,6 +134,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

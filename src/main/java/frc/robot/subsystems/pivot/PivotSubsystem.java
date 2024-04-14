@@ -68,7 +68,7 @@ public PivotSubsystem() {
     pivotmotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     ampdevicemotor.setIdleMode(CANSparkMax.IdleMode.kCoast);    
    
-    PivotPIDController = new PIDController(0.03, 0.001, 0);
+    PivotPIDController = new PIDController(0.04, 0.002, 0);
     AmpPidController = new PIDController(0.04, 0.0001, 0);
     
     

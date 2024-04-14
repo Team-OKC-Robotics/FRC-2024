@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.465504777163402,
-      "y": 4.02571266680995
+      "x": 0.4951056055958282,
+      "y": 4.045446552431566
     },
     "rotation": 0
   },
@@ -12,44 +12,25 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Spin Up"
-          }
-        },
-        {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "3 piece against source wall shoot path"
+                  "name": "Pivot to 60"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Auto Aim"
+                  "name": "Spin Up"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "3 piece source wall get far note"
+                  "pathName": "Source wall get mid far note"
                 }
               },
               {
@@ -62,9 +43,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "3 piece against source wall shoot far note"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Source wall get mid far note back"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Pivot to 45"
+                }
+              }
+            ]
           }
         },
         {
@@ -74,7 +68,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.1
+                  "waitTime": 0.4
                 }
               },
               {
@@ -99,7 +93,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "3 piece get second far note"
+                  "pathName": "S wall get left mid far note"
                 }
               },
               {
@@ -109,6 +103,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

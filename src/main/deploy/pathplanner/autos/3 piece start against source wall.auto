@@ -24,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "3 piece against left wall shoot path"
+                  "pathName": "3 piece against source wall shoot path"
                 }
               },
               {
@@ -49,7 +49,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "3 piece against L wall get close note"
+                  "pathName": "3 piece against source wall get close note"
                 }
               },
               {
@@ -64,7 +64,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3 piece against L wall shoot close note"
+            "pathName": "3 piece against source wall shoot close note"
           }
         },
         {
@@ -99,7 +99,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "3 piece against L wall get far note"
+                  "pathName": "3 piece source wall get far note"
                 }
               },
               {
@@ -114,7 +114,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3 piece against L wall shoot far note"
+            "pathName": "3 piece against source wall shoot far note"
           }
         },
         {
