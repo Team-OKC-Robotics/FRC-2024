@@ -186,7 +186,7 @@ public class RobotContainer
 
     autoChooser.addOption("Source wall get mid far notes 1.5", "Source wall get mid far notes 1.5");
 
-    autoChooser.addOption("Offset Amp Side 4 Piece", "Offset Amp Side 4 Piece"
+    autoChooser.addOption("Offset Amp Side 4 Piece", "Offset Amp Side 4 Piece");
 
 
     tab.add(autoChooser);
