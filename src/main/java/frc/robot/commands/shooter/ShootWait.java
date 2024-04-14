@@ -35,12 +35,12 @@ public ShootWait(ShooterSubsystem shooter, IntakeSubsystem intake, PivotSubsyste
 
 @Override
 public void execute() {
-    if (!intake.hasNote()) { 
-        hasNoteLeft = true;
-        shooter.RightShootIt(0);
-        shooter.LeftShootIt(0);
-        return;
-    }
+    // if (!intake.hasNote()) { 
+    //     hasNoteLeft = true;
+    //     shooter.RightShootIt(0);
+    //     shooter.LeftShootIt(0);
+    //     return;
+    // }
      
     if (pivot.IsAmpIn()) {
         LeftRPM = 5500; 
@@ -69,7 +69,8 @@ public void end(boolean interuppted) {
 
 @Override
 public boolean isFinished() {
-    return shooter.getMinVelocity() < 2000 && hasNoteLeft;
+    return false;
+   // return shooter.getMinVelocity() < 2000 && hasNoteLeft;
     }   
 }
 

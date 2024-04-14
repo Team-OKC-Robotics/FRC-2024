@@ -29,7 +29,7 @@ public class PivotSubsystem extends SubsystemBase{
     private final DutyCycleEncoder pivotencoder;
 
     private double targetAmpangle = 24;
-    private double targetPivotangle = 57;
+    private double targetPivotangle = 59;
 
     private State currentState = State.AMP_IN;
     private State targetState= State.AMP_IN;
@@ -68,7 +68,7 @@ public PivotSubsystem() {
     pivotmotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     ampdevicemotor.setIdleMode(CANSparkMax.IdleMode.kCoast);    
    
-    PivotPIDController = new PIDController(0.04, 0.002, 0);
+    PivotPIDController = new PIDController(0.05, 0.001, 0);
     AmpPidController = new PIDController(0.04, 0.0001, 0);
     
     

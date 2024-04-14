@@ -62,12 +62,12 @@ public class AutoAim extends Command {
       angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
       angleLUT.addEntry(2.17, 43);
       angleLUT.addEntry(3.37, 38);
-      angleLUT.addEntry(3.9, 34.2);
-      angleLUT.addEntry(4.33, 34);
+      angleLUT.addEntry(3.9, 35.5);
+      angleLUT.addEntry(4.33, 35);
       angleLUT.addEntry(5.0, 31.5);
       angleLUT.addEntry(5.33, 32.8);
       angleLUT.addEntry(5.5, 30.6);
-      angleLUT.addEntry(6.33, 26);
+      angleLUT.addEntry(6.33, 29);
   }
 
   double tagHeight = 57.13;

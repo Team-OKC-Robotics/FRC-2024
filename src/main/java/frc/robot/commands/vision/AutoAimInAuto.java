@@ -62,8 +62,8 @@ public class AutoAimInAuto extends Command {
       angleLUT.addEntry(1.8, 44.5);
       angleLUT.addEntry(2.17, 43);
       angleLUT.addEntry(3.37, 38);
-      angleLUT.addEntry(3.9, 34.2);
-      angleLUT.addEntry(4.33, 34);
+      angleLUT.addEntry(3.9, 34);
+      angleLUT.addEntry(4.33, 33.7);
       angleLUT.addEntry(5.0, 31.5);
       angleLUT.addEntry(5.33, 32.8);
       angleLUT.addEntry(5.5, 30.6);

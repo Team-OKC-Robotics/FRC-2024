@@ -96,6 +96,13 @@ public class RobotContainer
   private final POVButton secondriverXboxDpad = new POVButton(secondriverXbox, 0);
   private final TriggerButton secondriverXboxRightTrigger = new TriggerButton(secondriverXbox, 3, 0.8);
   private final TriggerButton secondriverXboxLeftTrigger = new TriggerButton(secondriverXbox,2, 0.8);
+
+  Color orange = new Color(255, 43, 0);
+  Color cyan = new Color(0, 200, 50);
+  Color green = new Color(0, 153, 0);
+  Color red = new Color (200, 0, 0);
+  Color blue = new Color (0, 0, 200);
+  Color pink = new Color(255, 0, 128);
   
   
   // shooter commands
@@ -105,7 +112,7 @@ public class RobotContainer
   
   
   // intake commands
-  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.8);
+  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.7);
   private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.5);
   //pivot commands
   // private final SetPivotCommand setpivot = new SetPivotCommand(m_pivot, 0.9);
@@ -143,7 +150,11 @@ public class RobotContainer
     NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter, 1));
 
     // add auto chooser options
-    autoChooser.setDefaultOption("4 Piece", "4 Piece");
+    autoChooser.setDefaultOption("4 Piece Middle First", "4 Piece Middle First");
+
+    autoChooser.addOption("4 Piece Amp First", "4 Piece Amp First");
+
+    autoChooser.addOption("4 Piece Source First", "4 Piece Source First");
 
     autoChooser.addOption("Middle Speaker 2 piece", "Middle Speaker 2 piece");
 
@@ -174,6 +185,8 @@ public class RobotContainer
     autoChooser.addOption("2.5 piece start against source wall far notes", "2.5 piece start against source wall far notes");
 
     autoChooser.addOption("Source wall get mid far notes 1.5", "Source wall get mid far notes 1.5");
+
+    autoChooser.addOption("Offset Amp Side 4 Piece", "Offset Amp Side 4 Piece"
 
 
     tab.add(autoChooser);
@@ -229,10 +242,8 @@ public class RobotContainer
   
   public void setLeds() {
     
-    Color orange = new Color(255, 43, 0);
-    Color cyan = new Color(0, 200, 50);
-    Color green = new Color(0, 153, 0);
-   // Color darkteal = new Color(0, 102, 102);
+    
+  
 
     if (secondriverXbox.getBButton() == true) {
       m_leds.setAll(green);
@@ -249,8 +260,7 @@ public class RobotContainer
 }
 
   public void setLEDsAlliance(){
-    Color red = new Color (200, 0, 0);
-    Color blue = new Color (0, 0, 200);
+    
 
     Optional <Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
@@ -265,7 +275,7 @@ public class RobotContainer
   
 
   public void setLEDsAuto() {
-    Color pink = new Color(255, 0, 128);
+    
     //Color teal = new Color(36, 225, 212);
     if(m_intake.hasNote()) {
       m_leds.setAll(pink);

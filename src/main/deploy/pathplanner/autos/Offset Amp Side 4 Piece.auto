@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.465504777163402,
-      "y": 4.02571266680995
+      "x": 1.4521990582442719,
+      "y": 6.541783083566167
     },
     "rotation": 0
   },
@@ -16,6 +16,12 @@
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": "Offset 4 Piece shoot preload"
+                }
+              },
+              {
                 "type": "named",
                 "data": {
                   "name": "Spin Up"
@@ -24,7 +30,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Pivot to 45"
+                  "name": "Pivot to 60"
                 }
               }
             ]
@@ -35,15 +41,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "3 piece against source wall shoot path"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Auto Aim"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.3
                 }
               }
             ]
@@ -60,9 +66,15 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "Pivot to 60"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "3 piece source wall get far note"
+                  "pathName": "Offset 4 Piece grab first note"
                 }
               },
               {
@@ -77,26 +89,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3 piece against source wall shoot far note"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.1
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Auto Aim"
-                }
-              }
-            ]
+            "pathName": "Offset 4 Piece back from first note"
           }
         },
         {
@@ -112,7 +105,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "3 piece get second far note"
+                  "pathName": "Get Note Path"
                 }
               },
               {
@@ -122,6 +115,49 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Back Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Get Left Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Back From Left Note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

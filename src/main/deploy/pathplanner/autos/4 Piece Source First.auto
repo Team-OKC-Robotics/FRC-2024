@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.465504777163402,
-      "y": 4.02571266680995
+      "x": 1.4401522816275876,
+      "y": 5.539434091159694
     },
     "rotation": 0
   },
@@ -12,41 +12,9 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Spin Up"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Pivot to 45"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "3 piece against source wall shoot path"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Auto Aim"
-                }
-              }
-            ]
+            "name": "Pivot to 60"
           }
         },
         {
@@ -60,15 +28,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "3 piece source wall get far note"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Get Left Note"
                 }
               }
             ]
@@ -77,26 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3 piece against source wall shoot far note"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.1
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Auto Aim"
-                }
-              }
-            ]
+            "pathName": "Back From Left Note"
           }
         },
         {
@@ -110,18 +59,61 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "3 piece get second far note"
+                  "name": "Intake"
                 }
               },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Get Note Path"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Back Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
               {
                 "type": "named",
                 "data": {
                   "name": "Intake"
                 }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Get Right Note"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Back From Right Note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

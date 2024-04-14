@@ -44,9 +44,9 @@ public final class Constants
   {
 
     // Joystick Deadband
-    public static final double LEFT_X_DEADBAND = 0.3;
-    public static final double LEFT_Y_DEADBAND = 0.3;
-    public static final double RIGHT_X_DEADBAND = 0.3;
+    public static final double LEFT_X_DEADBAND = 0.2;
+    public static final double LEFT_Y_DEADBAND = 0.2;
+    public static final double RIGHT_X_DEADBAND = 0.2;
     public static final double TURN_CONSTANT = 0.75;
   }
 
@@ -78,7 +78,7 @@ public final class Constants
 
   public static final class LEDS {
     public static final int PWMPort = 5;
-    public static final int Length = 20;
+    public static final int Length = 19;
   }
 
   public static class OI {
