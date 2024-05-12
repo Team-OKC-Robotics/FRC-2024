@@ -83,6 +83,12 @@ public class RobotContainer
   private final JoystickButton driverXboxrightbumper = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton6);
   private final TriggerButton driverXboxLeftTrigger = new TriggerButton(driverXbox, 2, 0.8);
   private final TriggerButton driverXboxRightTrigger = new TriggerButton(driverXbox, 3, 0.8);
+  private final JoystickButton driverXboxButtonA = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton1);
+  private final JoystickButton driverXboxButtonY = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton4);
+  private final JoystickButton driverXboxButtonX = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton3);
+  private final JoystickButton driverXboxButtonMinus = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton7);
+  private final JoystickButton driverXboxButtonPlus = new JoystickButton(driverXbox, Constants.OI.kdriverControllerButton8);
+  private final POVButton driverXboxDpad = new POVButton(driverXbox, 0);
   
   //second driver buttons
   private final JoystickButton secondriverXboxButtonB = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton2);
@@ -218,26 +224,30 @@ public class RobotContainer
 
     driverXboxleftbumper.whileTrue(runIntake); //left bumper
     driverXboxrightbumper.whileTrue(backwardIntake);
-    driverXboxLeftTrigger.whileTrue(runIntake);
-    driverXboxRightTrigger.whileTrue(backwardIntake);
+    driverXboxLeftTrigger.whileTrue(waitshoot);
+    driverXboxRightTrigger.whileTrue(autoaim);
+    driverXboxButtonX.whileTrue(pivottoangle60);
+    driverXboxButtonY.whileTrue(pivottoangle45);
+    driverXboxDpad.whileTrue(runShooter);
+    driverXboxButtonMinus.whileTrue(setClimberDownSpeed);
+    driverXboxButtonPlus.whileTrue(setClimberUpSpeed);
     
-    
+    //second driver commands 
     
    // secondriverXboxButtonA.whileTrue(pivottoangle30);
    // secondriverXboxButtonB.whileTrue(pivottoangle35); 
-    secondriverXboxButtonY.onTrue(pivottoangle60); //button X
-   // secondriverXboxButtonA.whileTrue(setpivot);
-    // secondriverXboxButtonA.whileTrue(otherwaypivot);
+    // secondriverXboxButtonY.onTrue(pivottoangle60); //button X
+   
     //secondriverXboxButtonA.whileTrue(setAmpCommand); //button B
-    secondriverXboxButtonB.whileTrue(autoaim); //button A
-    secondriverXboxButtonX.whileTrue(pivottoangle45); //button Y
+    // secondriverXboxButtonB.whileTrue(autoaim); //button A
+    // secondriverXboxButtonX.whileTrue(pivottoangle45); //button Y
     
-    secondriverXboxButtonPlus.whileTrue(setClimberUpSpeed);
-    secondriverXboxButtonMinus.whileTrue(setClimberDownSpeed);
-    secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
-    secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
-    secondriverXboxDpad.whileTrue(runShooter);
-    secondriverXboxRightTrigger.whileTrue(backwardIntake);
+    // secondriverXboxButtonPlus.whileTrue(setClimberUpSpeed);
+    // secondriverXboxButtonMinus.whileTrue(setClimberDownSpeed);
+    // secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
+    // secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
+    // secondriverXboxDpad.whileTrue(runShooter);
+    // secondriverXboxRightTrigger.whileTrue(backwardIntake);
    
 }
   // makes led settings

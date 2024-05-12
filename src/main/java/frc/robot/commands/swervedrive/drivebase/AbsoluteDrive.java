@@ -79,11 +79,11 @@ public class AbsoluteDrive extends Command
       vY = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND) * -1);
     }
 
-    if (driverXbox.getYButton()) {
-      vX = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) * -0.3);
-
-      vY = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND) * -0.3);
-    }
+   // if (driverXbox.getYButton()) {
+   //   vX = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) * -0.3);
+//
+   //   vY = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND) * -0.3);
+   // }
 
     double headingHorizontal = -driverXbox.getRightX();
 
