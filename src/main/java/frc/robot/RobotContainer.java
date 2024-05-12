@@ -34,7 +34,7 @@ import frc.robot.commands.shooter.*;
 import frc.robot.commands.intake.*;
 import frc.robot.commands.swervedrive.drivebase.*;
 import frc.robot.commands.vision.*;
-import frc.robot.commands.AmpDevice.*;
+
 
 
 import frc.robot.subsystems.climber.*;
@@ -121,10 +121,10 @@ public class RobotContainer
   private final PivotToAngle pivottoangle45 = new PivotToAngle(m_pivot, 44);
  
 
-  private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 0.9);
-  private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -0.9);
+  private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 1);
+  private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -1);
 
-  private final AmpCommand setAmpCommand = new AmpCommand(m_pivot, 0);
+ 
   
 
 
@@ -142,7 +142,7 @@ public class RobotContainer
   public RobotContainer()
   {
     //commands for the autos
-    NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 59));
+    NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
     NamedCommands.registerCommand("Pivot to 45", new PivotToAngle(m_pivot, 41));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto( m_intake, 0.65));
@@ -150,7 +150,9 @@ public class RobotContainer
     NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter, 1));
 
     // add auto chooser options
-    autoChooser.setDefaultOption("4 Piece Middle First", "4 Piece Middle First");
+    autoChooser.setDefaultOption("4 Piece Middle First Then Amp", "4 Piece Middle First Then Amp");
+
+    autoChooser.addOption("4 Piece Middle First Then Source", "4 Piece Middle First Then Source");
 
     autoChooser.addOption("4 Piece Amp First", "4 Piece Amp First");
 
@@ -226,7 +228,7 @@ public class RobotContainer
     secondriverXboxButtonY.onTrue(pivottoangle60); //button X
    // secondriverXboxButtonA.whileTrue(setpivot);
     // secondriverXboxButtonA.whileTrue(otherwaypivot);
-    secondriverXboxButtonA.whileTrue(setAmpCommand); //button B
+    //secondriverXboxButtonA.whileTrue(setAmpCommand); //button B
     secondriverXboxButtonB.whileTrue(autoaim); //button A
     secondriverXboxButtonX.whileTrue(pivottoangle45); //button Y
     

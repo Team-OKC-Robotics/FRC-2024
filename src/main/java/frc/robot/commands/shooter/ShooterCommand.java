@@ -22,7 +22,8 @@ public ShooterCommand(ShooterSubsystem shooter, double power) {
 
 @Override
 public void execute() {
-    shooter.shootSpeed(5300);
+    shooter.LeftshootSpeed(5400);
+    shooter.RightshootSpeed(4900);
    // shooter.indexerSpeed(1);
     
     

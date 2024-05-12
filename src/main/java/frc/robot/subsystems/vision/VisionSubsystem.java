@@ -88,6 +88,9 @@ return false;
 
 public double getYaw(int targetID) {
   var result = camera.getLatestResult();
+  if (result == null) {
+    return 0;
+  }
 
   if (result.hasTargets()) {
     for (var target : result.getTargets()) {
@@ -95,6 +98,7 @@ public double getYaw(int targetID) {
       if (fiducialId == targetID)
       return target.getYaw(); { 
       }
+      
     }
   }
   return 0.0;

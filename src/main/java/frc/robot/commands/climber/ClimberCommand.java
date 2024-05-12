@@ -26,13 +26,13 @@ public void execute() {
     if (this.speed < 0 && climber.hasleftHit()) { //This only works for if the climber is at its lowest, remember to add another condition for if it is at its highest
         climber.leftclimbspeed(0);
     } else {
-        climber.leftclimbspeed(speed);
+        climber.leftclimbspeed(climber.isleftClose() ? 0.7 * speed : 1.0 * speed);
     }
 
     if (this.speed < 0 && climber.hasrightHit()) {
         climber.rightclimbspeed(0);
     } else {
-        climber.rightclimbspeed(speed);
+        climber.rightclimbspeed(climber.isrightClose() ? 0.7 * speed : 1.0 * speed);
     }
   }
 

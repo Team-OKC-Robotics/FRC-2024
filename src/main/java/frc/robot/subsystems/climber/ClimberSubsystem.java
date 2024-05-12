@@ -2,6 +2,7 @@ package frc.robot.subsystems.climber;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -24,6 +25,9 @@ public class ClimberSubsystem extends SubsystemBase {
     
     public double target_climb;
 
+    private final RelativeEncoder leftclimbencoder;
+    private final RelativeEncoder rightclimbencoder;
+
     // private ShuffleboardTab tab = Shuffleboard.getTab("climber");
     // private GenericEntry climberSwitch = tab.add("climber switch", false).getEntry();
     
@@ -45,7 +49,12 @@ public ClimberSubsystem() {
     
     
     rightclimbmotor.setInverted(true);
-    leftclimbmotor.setInverted(true);
+    leftclimbmotor.setInverted(false);
+
+    leftclimbencoder = leftclimbmotor.getEncoder();
+    rightclimbencoder = rightclimbmotor.getEncoder();
+
+
 
    
 
@@ -125,12 +134,12 @@ public Command climbIt(double Speed) {
   }
   
   public void resetleftencoder() {
-    leftclimbmotor.getEncoder().setPosition(0);
+    leftclimbencoder.setPosition(0);
     
 }
 
   public void resetrightencoder() {
-    rightclimbmotor.getEncoder().setPosition(0);
+    rightclimbencoder.setPosition(0);
   }
 
 
@@ -140,6 +149,14 @@ public Command climbIt(double Speed) {
  
   public boolean hasrightHit() {
     return !RightClimberLimitSwitch.get();
+  }
+
+  public boolean isleftClose() {
+    return leftclimbencoder.getPosition() < 25;
+  }
+
+  public boolean isrightClose() {
+    return rightclimbencoder.getPosition() < 25;
   }
 
 
