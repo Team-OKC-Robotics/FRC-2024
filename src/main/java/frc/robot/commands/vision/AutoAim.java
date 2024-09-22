@@ -99,7 +99,7 @@ public class AutoAim extends Command {
     if (target == null) {
       swerve.drive(translation, 0, true);
     } else {
-      double yaw = vision.getYaw(targetAprilTag);
+      double yaw = target.getYaw();
       swerve.drive(translation, -0.1 * yaw, true);
     }
     
