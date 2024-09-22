@@ -273,4 +273,8 @@ public boolean PivotAngleis45() {
 public void resetPID() {
     PivotPIDController.reset();
 }
+
+public boolean isPivotAtSetpoint() {
+    return Math.abs(getPivotAngle() - targetPivotangle) < 3;
+}
 }

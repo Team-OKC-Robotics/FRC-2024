@@ -254,20 +254,20 @@ public class RobotContainer
   
   public void setLeds() {
     
-    
-  
-
-    if (secondriverXbox.getBButton() == true) {
-      m_leds.setAll(green);
+    if (autoaim.isRunning()) {
+      if (autoaim.readyToShoot()) {
+        m_leds.setAll(green);
+      } else {
+        m_leds.setAll(red);
+      }
       return;
     } 
 
-     if(m_intake.hasNote()) {
+    if(m_intake.hasNote()) {
       m_leds.setAll(orange);
     } else {
       m_leds.setAll(cyan);
     }
-    
 
 }
 

@@ -133,11 +133,9 @@ public class VisionSubsystem extends SubsystemBase {
     return hasTarget; // Returns whether or not a target was found
   }
 
-  public double distanceToTarget(double tagHeight, double cameraHeight, double cameraAngle) {
+  public double distanceToTarget(PhotonTrackedTarget target, double tagHeight, double cameraHeight, double cameraAngle) {
 
-    var result = camera.getLatestResult();
-
-    if (result == null) {
+    if (target == null) {
       return 100;
     }
 
@@ -147,23 +145,14 @@ public class VisionSubsystem extends SubsystemBase {
     // Angle between horizontal and the camera.
     final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(30);
 
-    double angleRadians = Math.toRadians(cameraAngle);
-    double distance = (tagHeight - cameraHeight) / Math.tan(angleRadians);
+    // First calculate range
+    double range = PhotonUtils.calculateDistanceToTargetMeters(
+        CAMERA_HEIGHT_METERS,
+        TARGET_HEIGHT_METERS,
+        CAMERA_PITCH_RADIANS,
+        Units.degreesToRadians(target.getPitch()));
 
-    if (result.hasTargets()) {
-      // First calculate range
-      double range = PhotonUtils.calculateDistanceToTargetMeters(
-          CAMERA_HEIGHT_METERS,
-          TARGET_HEIGHT_METERS,
-          CAMERA_PITCH_RADIANS,
-          Units.degreesToRadians(result.getBestTarget().getPitch()));
-
-      return range;
-
-      // ShuffleboardTab tab = Shuffleboard.getTab("Vision");
-      // tab.add("Range", range);
-    }
-    return distance;
+    return range;
   }
 
   @Override
