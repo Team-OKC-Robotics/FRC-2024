@@ -55,20 +55,25 @@ public class AutoAim extends Command {
     this.xSupplier = xSupplier;
     this.ySupplier = ySupplier;
 
+  private double lastDistance = 0.0;
+  private double lastYaw = 0.0;
+  private boolean isRunning = false;
+
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
       this.targetAprilTag = 6;
     }
 
-      angleLUT.addEntry(-100, 60);
-      angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
-      angleLUT.addEntry(2.17, 43);
-      angleLUT.addEntry(3.37, 38);
-      angleLUT.addEntry(3.9, 35.5);
-      angleLUT.addEntry(4.33, 35);
-      angleLUT.addEntry(5.0, 31.5);
-      angleLUT.addEntry(5.33, 32.8);
-      angleLUT.addEntry(5.5, 30.6);
-      angleLUT.addEntry(6.33, 29);
+    targetSpeakerID.setInteger(this.targetAprilTag);
+    angleLUT.addEntry(-100, 60);
+    angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
+    angleLUT.addEntry(2.17, 43);
+    angleLUT.addEntry(3.37, 38);
+    angleLUT.addEntry(3.9, 35.5);
+    angleLUT.addEntry(4.33, 35);
+    angleLUT.addEntry(5.0, 31.5);
+    angleLUT.addEntry(5.33, 32.8);
+    angleLUT.addEntry(5.5, 30.6);
+    angleLUT.addEntry(6.33, 29);
   }
 
   double tagHeight = 57.13;
@@ -76,9 +81,19 @@ public class AutoAim extends Command {
   double cameraAngle = 30; // placeholder
   double angleThreshold = 0; // placeholder
 
+  public boolean readyToShoot() {
+    return lastDistance < 5.7 && lastYaw < 3 && pivot.isPivotAtSetpoint();
+  }
+  public boolean isRunning() {
+    return this.isRunning;
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    lastDistance = 20;
+    lastYaw = 20;
+    isRunning = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
