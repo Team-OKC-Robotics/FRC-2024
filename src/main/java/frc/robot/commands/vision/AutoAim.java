@@ -38,6 +38,7 @@ public class AutoAim extends Command {
 
   private GenericEntry distanceEntry = tab.add("Distance To Tag", 0.0).getEntry();
   private GenericEntry idealAngleEntry = tab.add("PivotAngle", 0.0).getEntry();
+  private GenericEntry yawErrorEntry = tab.add("Yaw Error", 0.0).getEntry();
 
   private DoubleSupplier xSupplier;
   private DoubleSupplier ySupplier;
@@ -55,7 +56,7 @@ public class AutoAim extends Command {
     this.ySupplier = ySupplier;
 
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-      this.targetAprilTag = 7;
+      this.targetAprilTag = 6;
     }
 
       angleLUT.addEntry(-100, 60);
@@ -98,9 +99,11 @@ public class AutoAim extends Command {
 
     if (target == null) {
       swerve.drive(translation, 0, true);
+      yawErrorEntry.setDouble(2718.0);
     } else {
-      double yaw = vision.getYaw(targetAprilTag);
+      double yaw = target.getYaw();
       swerve.drive(translation, -0.1 * yaw, true);
+      yawErrorEntry.setDouble(yaw);
     }
     
     double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle));
