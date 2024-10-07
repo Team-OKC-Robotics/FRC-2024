@@ -61,7 +61,7 @@ public class AutoAim extends Command {
     this.ySupplier = ySupplier;
 
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-      this.targetAprilTag = 6;
+      this.targetAprilTag = 7;
     }
 
     targetSpeakerID.setInteger(this.targetAprilTag);
