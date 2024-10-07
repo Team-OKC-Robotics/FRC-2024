@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.185791602352437,
-      "y": 4.676930892323324
+      "x": 1.0279205173794976,
+      "y": 4.54866063578281
     },
     "rotation": -57.619322293430834
   },
@@ -21,6 +21,12 @@
           "type": "named",
           "data": {
             "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source Move"
           }
         }
       ]

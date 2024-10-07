@@ -43,7 +43,7 @@ public class PivotSubsystem extends SubsystemBase{
   
     private GenericEntry pivotabsoluteencoder = pivottab.add("absolute encoder", 0).getEntry();
 
-    private GenericEntry CurrentState = comptab.add("Current State", "Amp In").getEntry();
+    // private GenericEntry CurrentState = comptab.add("Current State", "Amp In").getEntry();
 
     private GenericEntry TargetEncoder = pivottab.add("target encoder", 60.0).getEntry();
 
@@ -116,7 +116,7 @@ public void periodic() {
         targetPivotangle = TargetEncoder.getDouble(45);
     }
 
-    CurrentState.setString(currentState.name());
+    // CurrentState.setString(currentState.name());
 
     PivotIttoAngle(targetPivotangle);
     PivotAmpToAngle(targetAmpangle);

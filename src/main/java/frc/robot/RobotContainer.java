@@ -97,8 +97,8 @@ public class RobotContainer
   private final JoystickButton secondriverXboxButtonX = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton3);
   private final JoystickButton secondriverXboxleftbumper = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton5);
   private final JoystickButton secondriverXboxrightbumper = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton6);
-  private final JoystickButton secondriverXboxButtonMinus = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton7);
-  private final JoystickButton secondriverXboxButtonPlus = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton8);
+  // private final JoystickButton secondriverXboxButtonMinus = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton7);
+  // private final JoystickButton secondriverXboxButtonPlus = new JoystickButton(secondriverXbox, Constants.OI.kSecondriverButton8);
   private final POVButton secondriverXboxDpad = new POVButton(secondriverXbox, 0);
   private final TriggerButton secondriverXboxRightTrigger = new TriggerButton(secondriverXbox, 3, 0.8);
   private final TriggerButton secondriverXboxLeftTrigger = new TriggerButton(secondriverXbox,2, 0.8);
@@ -180,7 +180,7 @@ public class RobotContainer
 
     autoChooser.addOption("Amp Side Shoot Pre-Loaded", "Amp Side Shoot Pre-Loaded");
 
-    autoChooser.addOption("Source Side Shoot Pre-Loaded", "Left Speaker Shoot Pre-Loaded");
+    autoChooser.addOption("Source Side Shoot Pre-Loaded Then Move", "Left Speaker Shoot Pre-Loaded Then Move");
 
     autoChooser.addOption("Middle Speaker 3 Piece Amp", "Middle Speaker 3 Piece Amp");
 
@@ -217,12 +217,12 @@ public class RobotContainer
   
   private void configureBindings()
   {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+    
 
     new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
 
 
-    driverXboxleftbumper.whileTrue(runIntake); //left bumper
+    driverXboxleftbumper.whileTrue(runIntake); 
     driverXboxrightbumper.whileTrue(backwardIntake);
     driverXboxLeftTrigger.whileTrue(waitshoot);
     driverXboxRightTrigger.whileTrue(autoaim);
@@ -231,23 +231,20 @@ public class RobotContainer
     driverXboxDpad.whileTrue(runShooter);
     driverXboxButtonMinus.whileTrue(setClimberDownSpeed);
     driverXboxButtonPlus.whileTrue(setClimberUpSpeed);
+
     
     //second driver commands 
     
-   // secondriverXboxButtonA.whileTrue(pivottoangle30);
-   // secondriverXboxButtonB.whileTrue(pivottoangle35); 
-    // secondriverXboxButtonY.onTrue(pivottoangle60); //button X
+ 
+    secondriverXboxButtonY.onTrue(pivottoangle60); //button X
    
-    //secondriverXboxButtonA.whileTrue(setAmpCommand); //button B
-    // secondriverXboxButtonB.whileTrue(autoaim); //button A
-    // secondriverXboxButtonX.whileTrue(pivottoangle45); //button Y
     
-    // secondriverXboxButtonPlus.whileTrue(setClimberUpSpeed);
-    // secondriverXboxButtonMinus.whileTrue(setClimberDownSpeed);
-    // secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
-    // secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
-    // secondriverXboxDpad.whileTrue(runShooter);
-    // secondriverXboxRightTrigger.whileTrue(backwardIntake);
+     secondriverXboxButtonB.whileTrue(autoaim); //button A
+     secondriverXboxButtonX.whileTrue(pivottoangle45); //button Y
+     secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
+     secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
+     secondriverXboxDpad.whileTrue(runShooter);
+     secondriverXboxRightTrigger.whileTrue(backwardIntake);
    
 }
   // makes led settings
