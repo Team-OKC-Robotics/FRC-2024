@@ -38,15 +38,12 @@ public class AutoAim extends Command {
 
   private GenericEntry distanceEntry = tab.add("Distance To Tag", 0.0).getEntry();
   private GenericEntry idealAngleEntry = tab.add("PivotAngle", 0.0).getEntry();
+  private GenericEntry yawErrorEntry = tab.add("Yaw Error", 0.0).getEntry();
   private GenericEntry idealYaw = tab.add("Ideal Yaw", 0.0).getEntry();
   private GenericEntry targetSpeakerID = tab.add("Target Speaker ID", 0).getEntry();
 
   private DoubleSupplier xSupplier;
   private DoubleSupplier ySupplier;
-
-  private double lastDistance = 0.0;
-  private double lastYaw = 0.0;
-  private boolean isRunning = false;
 
   public AutoAim(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot, DoubleSupplier xSupplier,
       DoubleSupplier ySupplier) {
@@ -60,12 +57,15 @@ public class AutoAim extends Command {
     this.xSupplier = xSupplier;
     this.ySupplier = ySupplier;
 
+  private double lastDistance = 0.0;
+  private double lastYaw = 0.0;
+  private boolean isRunning = false;
+
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
-      this.targetAprilTag = 7;
+      this.targetAprilTag = 6;
     }
 
     targetSpeakerID.setInteger(this.targetAprilTag);
-
     angleLUT.addEntry(-100, 60);
     angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
     angleLUT.addEntry(2.17, 43);
@@ -86,7 +86,6 @@ public class AutoAim extends Command {
   public boolean readyToShoot() {
     return lastDistance < 5.7 && lastYaw < 3 && pivot.isPivotAtSetpoint();
   }
-
   public boolean isRunning() {
     return this.isRunning;
   }
@@ -94,7 +93,6 @@ public class AutoAim extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // Reset last values to make LEDs more accurate
     lastDistance = 20;
     lastYaw = 20;
     isRunning = true;
@@ -103,6 +101,7 @@ public class AutoAim extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
 
     PhotonTrackedTarget target = vision.getTargetWithID(targetAprilTag);
     // vision.getTargetWithID(4);
@@ -117,23 +116,15 @@ public class AutoAim extends Command {
 
     if (target == null) {
       swerve.drive(translation, 0, true);
-      idealYaw.setDouble(2718.0);
+      yawErrorEntry.setDouble(2718.0);
     } else {
       double yaw = target.getYaw();
-      idealYaw.setDouble(yaw);
-      lastYaw = yaw;
-      if (Math.abs(yaw) > 2) {
-        swerve.drive(translation, -0.10 * yaw, true);
-      } else {
-        swerve.drive(translation, 0, true);
-      }
+      swerve.drive(translation, -0.1 * yaw, true);
+      yawErrorEntry.setDouble(yaw);
     }
-
-    double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle));
+    
+    double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(tagHeight, cameraHeight, cameraAngle));
     distance = distance - 3.9; // Camera + robot offset
-
-    this.lastDistance = distance;
-
     double idealAngle = angleLUT.getAngleFromDistance(distance);
 
     distanceEntry.setDouble(distance);
@@ -146,12 +137,6 @@ public class AutoAim extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // Reset last values to make LEDs more accurate
-    lastDistance = 20;
-    lastYaw = 20;
-    isRunning = false;
-
-    // Reset pivot to "60"
     pivot.SetTargetPivotAngle(57);
   }
 

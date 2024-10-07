@@ -125,6 +125,8 @@ public class RobotContainer
   // private final PivotOtherway otherwaypivot = new PivotOtherway(m_pivot, 0.9);
   private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 59); 
   private final PivotToAngle pivottoangle45 = new PivotToAngle(m_pivot, 44);
+  private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 29);
+
  
 
   private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 1);
@@ -235,16 +237,20 @@ public class RobotContainer
     
     //second driver commands 
     
- 
-    secondriverXboxButtonY.onTrue(pivottoangle60); //button X
+   // secondriverXboxButtonA.whileTrue(pivottoangle30);
+   // secondriverXboxButtonB.whileTrue(pivottoangle35); 
+    // secondriverXboxButtonY.onTrue(pivottoangle60); //button X
    
+    //secondriverXboxButtonA.whileTrue(setAmpCommand); //button B
+    // secondriverXboxButtonB.whileTrue(autoaim); //button A
+    // secondriverXboxButtonX.whileTrue(pivottoangle45); //button Y
     
-     secondriverXboxButtonB.whileTrue(autoaim); //button A
-     secondriverXboxButtonX.whileTrue(pivottoangle45); //button Y
-     secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
-     secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
-     secondriverXboxDpad.whileTrue(runShooter);
-     secondriverXboxRightTrigger.whileTrue(backwardIntake);
+    // secondriverXboxButtonPlus.whileTrue(setClimberUpSpeed);
+    // secondriverXboxButtonMinus.whileTrue(setClimberDownSpeed);
+    // secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
+    // secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
+    // secondriverXboxDpad.whileTrue(runShooter);
+    // secondriverXboxRightTrigger.whileTrue(backwardIntake);
    
 }
   // makes led settings
