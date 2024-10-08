@@ -237,20 +237,21 @@ public class RobotContainer
     
     //second driver commands 
     
-   // secondriverXboxButtonA.whileTrue(pivottoangle30);
-   // secondriverXboxButtonB.whileTrue(pivottoangle35); 
-    // secondriverXboxButtonY.onTrue(pivottoangle60); //button X
+    //secondriverXboxButtonA.whileTrue(pivottoangle30);
+    //secondriverXboxButtonB.whileTrue(pivottoangle35); 
+     secondriverXboxButtonY.onTrue(pivottoangle60); //button X
    
     //secondriverXboxButtonA.whileTrue(setAmpCommand); //button B
-    // secondriverXboxButtonB.whileTrue(autoaim); //button A
-    // secondriverXboxButtonX.whileTrue(pivottoangle45); //button Y
+     secondriverXboxButtonB.whileTrue(autoaim); //button A
+     secondriverXboxButtonX.whileTrue(pivottoangle45); //button Y
     
     // secondriverXboxButtonPlus.whileTrue(setClimberUpSpeed);
     // secondriverXboxButtonMinus.whileTrue(setClimberDownSpeed);
-    // secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
-    // secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
-    // secondriverXboxDpad.whileTrue(runShooter);
-    // secondriverXboxRightTrigger.whileTrue(backwardIntake);
+     secondriverXboxleftbumper.whileTrue(waitshoot); //left bumper
+     secondriverXboxrightbumper.whileTrue(runIntake); //right bumper
+     secondriverXboxDpad.whileTrue(runShooter);
+     secondriverXboxRightTrigger.whileTrue(backwardIntake);
+     secondriverXboxLeftTrigger.whileTrue(waitshoot);
    
 }
   // makes led settings

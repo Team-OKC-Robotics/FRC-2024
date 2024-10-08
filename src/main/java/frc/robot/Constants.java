@@ -33,6 +33,8 @@ public final class Constants
     public static final double MAX_ACCELERATION = 2;
   }
 
+   
+
   public static final class Drivebase
   {
 
@@ -54,6 +56,7 @@ public final class Constants
     public static final int leftShooterMotorID = 14;
     public static final int rightShooterMotorID = 13;
     public static final int indexerMotorID = 10;
+    
   }
 
   public static final class IntakeConstants

@@ -52,8 +52,6 @@ public class ShooterSubsystem extends SubsystemBase {
     leftShooterMotor.setClosedLoopRampRate(1.0);
     rightShooterMotor.setClosedLoopRampRate(1.0);
 
-    leftShooterMotor.setClosedLoopRampRate(1.0);
-    rightShooterMotor.setClosedLoopRampRate(1.0);
 
     leftShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     rightShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
@@ -89,6 +87,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static final double DERIVATIVE = 0.0;
     /*Integral zone constant for PID loop */
     public static final double INTEGRAL_ZONE = 0.0;
+
+    
   }
 
   public void RightshootSpeed(double power){
