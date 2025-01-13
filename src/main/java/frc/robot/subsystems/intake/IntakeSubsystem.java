@@ -1,28 +1,26 @@
 package frc.robot.subsystems.intake;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.math.controller.PIDController;
+
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.util.datalog.DataLog;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase{
 
-    private final CANSparkMax intakemotor;
+    private final SparkMax intakemotor;
     private final DigitalInput IntakeLimitSwitch;
-    private final CANSparkMax indexerMotor;
+    private final SparkMax indexerMotor;
     
 
     private int direction = 0;
@@ -33,12 +31,18 @@ public class IntakeSubsystem extends SubsystemBase{
     private GenericEntry intakeSwitch = comptab.add("intake switch", false).getEntry();
 
 public IntakeSubsystem() {
-    intakemotor = new CANSparkMax(Constants.IntakeConstants.intakemotorID, CANSparkLowLevel.MotorType.kBrushless);
-    indexerMotor = new CANSparkMax(Constants.ShooterConstants.indexerMotorID, CANSparkLowLevel.MotorType.kBrushless);
-    intakemotor.restoreFactoryDefaults();
-    indexerMotor.restoreFactoryDefaults();
-    intakemotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    intakemotor.setInverted(true);
+    intakemotor = new SparkMax(Constants.IntakeConstants.intakemotorID, MotorType.kBrushless);
+    indexerMotor = new SparkMax(Constants.ShooterConstants.indexerMotorID, MotorType.kBrushless);
+
+    SparkMaxConfig intakeConfig = new SparkMaxConfig();
+    SparkMaxConfig indexerConfig = new SparkMaxConfig();
+
+    intakeConfig.inverted(true).idleMode(IdleMode.kBrake);
+    indexerConfig.inverted(false).idleMode(IdleMode.kBrake);
+
+    intakemotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    indexerMotor.configure(indexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
     IntakeLimitSwitch = new DigitalInput(Constants.IntakeConstants.IntakeLimitSwitch);
 }
 

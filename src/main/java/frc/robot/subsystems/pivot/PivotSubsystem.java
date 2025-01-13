@@ -1,28 +1,24 @@
 package frc.robot.subsystems.pivot;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.AnalogInput;
-import frc.robot.subsystems.shooter.ShooterSubsystem.PIDF;
-
-import java.util.function.DoubleSupplier;
 
 public class PivotSubsystem extends SubsystemBase{
    
-    private final CANSparkMax pivotmotor;
-    private final CANSparkMax ampdevicemotor;
+    private final SparkMax pivotmotor;
+    private final SparkMax ampdevicemotor;
     private final PIDController AmpPidController;
     private final PIDController PivotPIDController;
     private final DutyCycleEncoder AmpEncoder;
@@ -53,21 +49,21 @@ public class PivotSubsystem extends SubsystemBase{
 
 public PivotSubsystem() {
    
-    pivotmotor = new CANSparkMax(Constants.PivotConstants.pivotmotorID, CANSparkLowLevel.MotorType.kBrushless);
-    ampdevicemotor = new CANSparkMax(Constants.AmpConstants.ampdevicemotorID, CANSparkLowLevel.MotorType.kBrushless);
+    pivotmotor = new SparkMax(Constants.PivotConstants.pivotmotorID, MotorType.kBrushless);
+    ampdevicemotor = new SparkMax(Constants.AmpConstants.ampdevicemotorID, MotorType.kBrushless);
 
-    pivotmotor.restoreFactoryDefaults();
-    ampdevicemotor.restoreFactoryDefaults();
-   
-    pivotmotor.setInverted(false);
-    ampdevicemotor.setInverted(true);
+    SparkMaxConfig pivotconfig = new SparkMaxConfig();
+    SparkMaxConfig ampconfig = new SparkMaxConfig();
+
+    pivotconfig.inverted(false).idleMode(IdleMode.kBrake);
+    ampconfig.inverted(true).idleMode(IdleMode.kCoast);
+
+    pivotmotor.configure(pivotconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    ampdevicemotor.configure(ampconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
     pivotencoder = new DutyCycleEncoder(9);
     AmpEncoder = new DutyCycleEncoder(0);
   
-    pivotmotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    ampdevicemotor.setIdleMode(CANSparkMax.IdleMode.kCoast);    
-   
     PivotPIDController = new PIDController(0.05, 0.001, 0);
     AmpPidController = new PIDController(0.04, 0.0001, 0);
     
@@ -94,7 +90,7 @@ public void stopPivot() {
 }
 
 public double getAngle() {
-    return pivotencoder.getAbsolutePosition()*360;
+    return pivotencoder.get()*360; // TODO: This was changed, is it right?
 }
 
 public void AmpDeviceOut(double power) {
@@ -209,7 +205,7 @@ public void SetTargetPivotAngle(double angle) {
 }
 
 public double getPivotAngle() {
-    double rawvalue = pivotencoder.getAbsolutePosition();
+    double rawvalue = pivotencoder.get();
     if (rawvalue > 0.5) { //bc the absolute encoder is messed up :(
         rawvalue = rawvalue -1;
     } 
@@ -247,7 +243,7 @@ public boolean IsAmpIn() {
 }
 
 public double getDevicePosition() {
-    double rawvalue = AmpEncoder.getAbsolutePosition();
+    double rawvalue = AmpEncoder.get();
     if (rawvalue > 0.5) { //bc the absolute encoder is messed up :(
         rawvalue = rawvalue -1;
     } 

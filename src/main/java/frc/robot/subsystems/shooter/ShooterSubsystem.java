@@ -3,32 +3,34 @@ package frc.robot.subsystems.shooter;
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-import com.revrobotics.CANSparkLowLevel;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystem. */
 
-  private final CANSparkMax leftShooterMotor;
-  private final CANSparkMax rightShooterMotor;
-  
-  private final SparkPIDController RightPIDController;
-  private final SparkPIDController LeftPIDController;
-  private final RelativeEncoder rightEncoder;
+  private final SparkMax leftShooterMotor;
+  private final SparkMax rightShooterMotor;
+  private final SparkClosedLoopController RightPIDController;
+  private final SparkClosedLoopController LeftPIDController;
   private final RelativeEncoder leftEncoder;
+  private final RelativeEncoder rightEncoder;
+
   private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
 
-
-  
   private GenericEntry shooterRight = tab.add("shooter right", 0.0).getEntry();
   private GenericEntry shooterLeft = tab.add("shooter leftt", 0.0).getEntry();
 
@@ -36,44 +38,31 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public ShooterSubsystem() {
 
-    leftShooterMotor = new CANSparkMax(Constants.ShooterConstants.leftShooterMotorID , CANSparkLowLevel.MotorType.kBrushless);
-    rightShooterMotor = new CANSparkMax(Constants.ShooterConstants.rightShooterMotorID, CANSparkLowLevel.MotorType.kBrushless);
-    
+    leftShooterMotor = new SparkMax(Constants.ShooterConstants.leftShooterMotorID, MotorType.kBrushless);
+    rightShooterMotor = new SparkMax(Constants.ShooterConstants.rightShooterMotorID, MotorType.kBrushless);
 
-    
-   
-    leftShooterMotor.restoreFactoryDefaults();
-    rightShooterMotor.restoreFactoryDefaults();
-    
-    
-    rightShooterMotor.setInverted(false);
-    leftShooterMotor.setInverted(true);
-
-    leftShooterMotor.setClosedLoopRampRate(1.0);
-    rightShooterMotor.setClosedLoopRampRate(1.0);
-
-
-    leftShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    rightShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-
-    rightEncoder = rightShooterMotor.getEncoder();
     leftEncoder = leftShooterMotor.getEncoder();
+    rightEncoder = rightShooterMotor.getEncoder();
     
-    RightPIDController = rightShooterMotor.getPIDController();
-    LeftPIDController = leftShooterMotor.getPIDController();
+    SparkMaxConfig leftconfig = new SparkMaxConfig();
+    SparkMaxConfig rightconfig = new SparkMaxConfig();
 
-    RightPIDController.setOutputRange(0.0, 1.0);
-    LeftPIDController.setOutputRange(0.0, 1.0);
+    leftconfig.inverted(true).idleMode(IdleMode.kCoast).closedLoopRampRate(1.0);
+    rightconfig.inverted(false).idleMode(IdleMode.kCoast).closedLoopRampRate(1.0);
 
-    RightPIDController.setFeedbackDevice(rightEncoder);
-    set(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE,
-              PIDF.FEEDFORWARD, PIDF.INTEGRAL_ZONE);
+    leftconfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      .outputRange(0.0, 1.0)
+      .pidf(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE, PIDF.FEEDFORWARD);
+    
+    rightconfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      .outputRange(0.0, 1.0)
+      .pidf(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE, PIDF.FEEDFORWARD);
 
-    LeftPIDController.setFeedbackDevice(leftEncoder);
-    set(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE,
-              PIDF.FEEDFORWARD, PIDF.INTEGRAL_ZONE);
+    leftShooterMotor.configure(leftconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rightShooterMotor.configure(rightconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-
+    RightPIDController = rightShooterMotor.getClosedLoopController();
+    LeftPIDController = leftShooterMotor.getClosedLoopController();
   }
 
   public static class PIDF {
@@ -85,27 +74,23 @@ public class ShooterSubsystem extends SubsystemBase {
     public static final double INTEGRAL = 0;
     /*Derivative constant for PID loop */
     public static final double DERIVATIVE = 0.0;
-    /*Integral zone constant for PID loop */
-    public static final double INTEGRAL_ZONE = 0.0;
-
-    
   }
 
   public void RightshootSpeed(double power){
     //rightShooterMotor.set(power);
     //leftShooterMotor.set(power);
     //indexerMotor.set(power);
-    RightPIDController.setReference(power, CANSparkMax.ControlType.kVelocity);
+    RightPIDController.setReference(power, SparkMax.ControlType.kVelocity);
     
   }
 
   public void LeftshootSpeed(double power) {
-    LeftPIDController.setReference(power, CANSparkMax.ControlType.kVelocity);
+    LeftPIDController.setReference(power, SparkMax.ControlType.kVelocity);
   }
 
   public void shootSpeed(double power) {
-    RightPIDController.setReference(power, CANSparkMax.ControlType.kVelocity);
-    LeftPIDController.setReference(power, CANSparkMax.ControlType.kVelocity);
+    RightPIDController.setReference(power, SparkMax.ControlType.kVelocity);
+    LeftPIDController.setReference(power, SparkMax.ControlType.kVelocity);
   }
 
 
@@ -115,29 +100,14 @@ public class ShooterSubsystem extends SubsystemBase {
     rightShooterMotor.set(0);
     leftShooterMotor.set(0);
     
-    RightPIDController.setReference(0, CANSparkMax.ControlType.kVelocity);
-    LeftPIDController.setReference(0, CANSparkMax.ControlType.kVelocity);
+    RightPIDController.setReference(0, SparkMax.ControlType.kVelocity);
+    LeftPIDController.setReference(0, SparkMax.ControlType.kVelocity);
   }
-  
-  
 
- public void set(double p, double i, double d, double f, double iz) {
-  LeftPIDController.setP(p);
-  LeftPIDController.setI(i);
-  LeftPIDController.setD(d);
-  LeftPIDController.setFF(f);
-  LeftPIDController.setIZone(iz);
-
-  RightPIDController.setP(p);
-  RightPIDController.setI(i);
-  RightPIDController.setD(d);
-  RightPIDController.setFF(f);
-  RightPIDController.setIZone(iz);
- }
 
  public void runPID(double targetSpeed){
   target_Speed = targetSpeed;
-  //PIDController.setReference(targetSpeed, CANSparkMax.ControlType.kVelocity);
+  //PIDController.setReference(targetSpeed, SparkMax.ControlType.kVelocity);
  }
 
  public double getSpeed() {
@@ -164,7 +134,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void RightShootIt(double speed) {
-    RightPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+    RightPIDController.setReference(speed, SparkMax.ControlType.kVelocity);
 
     
    // rightShooterMotor.set(speed);
@@ -173,12 +143,12 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void LeftShootIt(double speed) {
-    LeftPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+    LeftPIDController.setReference(speed, SparkMax.ControlType.kVelocity);
   }
 
   public void ShootIt(double speed) {
-    RightPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
-    LeftPIDController.setReference(speed, CANSparkMax.ControlType.kVelocity);
+    RightPIDController.setReference(speed, SparkMax.ControlType.kVelocity);
+    LeftPIDController.setReference(speed, SparkMax.ControlType.kVelocity);
   }
 
   public double getMinVelocity() {
