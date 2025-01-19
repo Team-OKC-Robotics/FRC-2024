@@ -12,12 +12,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
-import frc.robot.subsystems.intake.*;
-import frc.robot.subsystems.vision.VisionSubsystem;
 import swervelib.parser.SwerveParser;
 
 /**
@@ -81,7 +77,7 @@ public class Robot extends TimedRobot
     
   }
 
-  /**
+    /**
    * This function is called once each time the robot enters Disabled mode.
    */
   @Override
@@ -90,24 +86,19 @@ public class Robot extends TimedRobot
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
-    
-      
-    }
-  
-  
+  }
+
   @Override
   public void disabledPeriodic()
   {
-    if (disabledTimer.hasElapsed(Constants.Drivebase.WHEEL_LOCK_TIME))
+    if (disabledTimer.hasElapsed(10))
     {
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
-
+      disabledTimer.reset();
     }
     m_robotContainer.setLEDsAlliance();
-    
-}
-  
+  }
 
   /**
    * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
