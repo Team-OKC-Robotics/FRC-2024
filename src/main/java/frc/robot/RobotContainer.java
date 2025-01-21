@@ -38,13 +38,11 @@ import frc.robot.commands.vision.*;
 import frc.robot.subsystems.climber.*;
 import frc.robot.subsystems.intake.*;
 import frc.robot.subsystems.leds.*;
+import frc.robot.subsystems.leds.LEDSubsystem.LEDState;
 import frc.robot.subsystems.pivot.*;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.swervedrive.*;
 import frc.robot.subsystems.vision.*;
-
-import frc.robot.utils.POVButton;
-import frc.robot.utils.TriggerButton;
 import frc.robot.commands.climber.*;
 
 /**
@@ -71,31 +69,23 @@ public class RobotContainer {
   CommandXboxController driverXbox = new CommandXboxController(0);
   CommandXboxController operatorXbox = new CommandXboxController(1);
 
-  Color orange = new Color(255, 43, 0);
-  Color cyan = new Color(0, 200, 50);
-  Color green = new Color(0, 153, 0);
-  Color red = new Color(200, 0, 0);
-  Color blue = new Color(0, 0, 200);
-  Color pink = new Color(255, 0, 128);
-  
   // drive commands
   private final AbsoluteDrive absoluteDrive = new AbsoluteDrive(drivebase, driverXbox.getHID());
 
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
-  private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake, m_pivot);
+  private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake);
 
   // intake commands
   private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.7);
   private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.5);
-  private final PivotToAngle pivottoangle60 = new PivotToAngle(m_pivot, 59);
-  private final PivotToAngle pivottoangle45 = new PivotToAngle(m_pivot, 44);
-  private final PivotToAngle pivottoangle30 = new PivotToAngle(m_pivot, 29);
+  private final PivotToAngle pivotToDeg60 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_60);
+  private final PivotToAngle pivotToDeg45 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_45);
 
   private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 1);
   private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -1);
 
-  private final AutoAim autoaim = new AutoAim(drivebase, m_vision, m_pivot,
+  private final AutoAim autoaim = new AutoAim(drivebase, m_vision, m_pivot, m_leds,
       () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(),
           OperatorConstants.LEFT_Y_DEADBAND) * -0.8),
       () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(),
@@ -112,7 +102,7 @@ public class RobotContainer {
     // commands for the autos
     NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
     NamedCommands.registerCommand("Pivot to 45", new PivotToAngle(m_pivot, 41));
-    NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake, 1));
+    NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto(m_intake, 0.65));
     NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase, m_vision, m_pivot));
     NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter, 1));
@@ -143,24 +133,27 @@ public class RobotContainer {
     tab.add(autoChooser);
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary predicate, or via the
-   * named factories in {@link edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4}
-   * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
-   * 
-   */
-  
-  public  void configureBindings()
-  {
+  public void configureBindings() {
+
+    // Set LEDs to be the team/note color by default
+    m_leds.setDefaultCommand(Commands.run(() -> {
+      if (m_intake.hasNote()) {
+        m_leds.setLEDState(LEDState.HAS_NOTE);
+      } else {
+        m_leds.setLEDState(LEDState.TEAM);
+      }
+    }));
+
+    // Pivot to 60 when the robot is doing nothing else
+    m_pivot.setDefaultCommand(pivotToDeg60);
+
     if (!DriverStation.isTest()) {
-      // drivebase.setDefaultCommand(absoluteDrive);
+      drivebase.setDefaultCommand(absoluteDrive);
 
       // driver commands
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().whileTrue(pivottoangle60);
-      driverXbox.y().whileTrue(pivottoangle45);
+      driverXbox.x().whileTrue(pivotToDeg60);
+      driverXbox.y().whileTrue(pivotToDeg45);
       driverXbox.povCenter().whileTrue(runShooter);
       driverXbox.back().whileTrue(setClimberDownSpeed);
       driverXbox.start().whileTrue(setClimberUpSpeed);
@@ -168,11 +161,11 @@ public class RobotContainer {
       driverXbox.rightBumper().whileTrue(backwardIntake);
       driverXbox.leftTrigger().whileTrue(waitshoot);
       driverXbox.rightTrigger().whileTrue(autoaim);
-      
+
       // operator commands
-      operatorXbox.y().whileTrue(pivottoangle60);
+      operatorXbox.y().whileTrue(pivotToDeg60);
       operatorXbox.b().whileTrue(autoaim);
-      operatorXbox.x().whileTrue(pivottoangle45);
+      operatorXbox.x().whileTrue(pivotToDeg45);
       operatorXbox.leftBumper().whileTrue(waitshoot);
       operatorXbox.rightBumper().whileTrue(runIntake);
       operatorXbox.povCenter().whileTrue(runShooter);
@@ -186,63 +179,10 @@ public class RobotContainer {
       driverXbox.y().whileTrue(m_pivot.sysIdPivotMotor(2));
       driverXbox.x().whileTrue(m_pivot.sysIdPivotMotor(3));
     }
-}
-  // makes led settings
-
-  public void setLeds() {
-
-    if (autoaim.isRunning()) {
-      if (autoaim.readyToShoot()) {
-        m_leds.setAll(green);
-      } else {
-        m_leds.setAll(red);
-      }
-      return;
-    }
-
-    if (m_intake.hasNote()) {
-      m_leds.setAll(orange);
-    } else {
-      m_leds.setAll(cyan);
-    }
-
   }
 
-  public void setLEDsAlliance() {
-
-    Optional<Alliance> ally = DriverStation.getAlliance();
-    if (ally.isPresent()) {
-      if (ally.get() == Alliance.Red) {
-        m_leds.setAll(red);
-      } else {
-        m_leds.setAll(blue);
-      }
-    }
-
-  }
-
-  public void setLEDsAuto() {
-
-    // Color teal = new Color(36, 225, 212);
-    if (m_intake.hasNote()) {
-      m_leds.setAll(pink);
-    } else {
-      m_leds.rainbow();
-    }
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
     return new PathPlannerAuto(autoChooser.getSelected());
-  }
-
-  public void setDriveMode() {
-    // drivebase.setDefaultCommand();
   }
 
   public void setMotorBrake(boolean brake) {
@@ -253,18 +193,9 @@ public class RobotContainer {
     m_pivot.setBrake(brake);
   }
 
-  public void resetrobot() {
+  public void resetRobot() {
     m_shooter.stopShooter();
     m_intake.stopIntake();
     m_intake.stopIndexer();
-
-  }
-
-  public void resetPivotPID() {
-    m_pivot.resetPID();
-  }
-
-  public void setLEDsRainbow() {
-    m_leds.rainbow();
   }
 }

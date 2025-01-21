@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
@@ -29,6 +30,7 @@ public class AutoAim extends Command {
   private final SwerveSubsystem swerve;
   private final VisionSubsystem vision;
   private final PivotSubsystem pivot;
+  private final LEDSubsystem leds;
   private int targetAprilTag = 4;
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
@@ -46,10 +48,9 @@ public class AutoAim extends Command {
 
   private double lastDistance = 0.0;
   private double lastYaw = 0.0;
-  private boolean isRunning = false;
 
-  public AutoAim(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot, DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier) {
+  public AutoAim(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot, LEDSubsystem leds,
+      DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     // Use addRequirements() here to declare subsystem dependencies.
 
     addRequirements(swerve, vision, pivot);
@@ -57,6 +58,7 @@ public class AutoAim extends Command {
     this.swerve = swerve;
     this.vision = vision;
     this.pivot = pivot;
+    this.leds = leds;
     this.xSupplier = xSupplier;
     this.ySupplier = ySupplier;
 
@@ -87,17 +89,14 @@ public class AutoAim extends Command {
     return lastDistance < 5.7 && lastYaw < 3 && pivot.isPivotAtSetpoint();
   }
 
-  public boolean isRunning() {
-    return this.isRunning;
-  }
-
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     // Reset last values to make LEDs more accurate
     lastDistance = 20;
     lastYaw = 20;
-    isRunning = true;
+
+    leds.setLEDState(LEDSubsystem.LEDState.NO_TARGET);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -105,7 +104,6 @@ public class AutoAim extends Command {
   public void execute() {
 
     PhotonTrackedTarget target = vision.getTargetWithID(targetAprilTag);
-    // vision.getTargetWithID(4);
 
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(),
         swerve.getHeading().getSin(), swerve.getHeading().getCos());
@@ -128,8 +126,8 @@ public class AutoAim extends Command {
         swerve.drive(translation, 0, true);
       }
     }
-
-    double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle));
+    double distance = Units
+        .metersToFeet(visionSubsystem.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle));
     distance = distance - 3.9; // Camera + robot offset
 
     this.lastDistance = distance;
@@ -139,8 +137,13 @@ public class AutoAim extends Command {
     distanceEntry.setDouble(distance);
     idealAngleEntry.setDouble(idealAngle);
 
-    pivot.SetTargetPivotAngle(idealAngle);
+    pivot.setTargetPivotAngle(idealAngle);
 
+    if (readyToShoot()) {
+      leds.setLEDState(LEDSubsystem.LEDState.TARGET_LOCKED);
+    } else {
+      leds.setLEDState(LEDSubsystem.LEDState.NO_TARGET);
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -149,20 +152,14 @@ public class AutoAim extends Command {
     // Reset last values to make LEDs more accurate
     lastDistance = 20;
     lastYaw = 20;
-    isRunning = false;
 
-    // Reset pivot to "60"
-    pivot.SetTargetPivotAngle(57);
+    // Reset pivot to 60
+    pivot.setTargetPivotAngle(PivotSubsystem.PivotLocations.DEG_60);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
-    // if (vision.getTargetWithID(targetAprilTag) == null) {
-    // return false;
-    // } else {
-    // return Math.abs(vision.getTargetWithID(targetAprilTag).getYaw()) < 1;
-    // }
   }
 }

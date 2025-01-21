@@ -93,7 +93,7 @@ public void periodic() {
 }
 
 //sets intake in commmand
-public void SetIntake(double speed) {
+public void setIntake(double speed) {
     intakemotor.set(speed);
     indexerMotor.set(speed);
 } 

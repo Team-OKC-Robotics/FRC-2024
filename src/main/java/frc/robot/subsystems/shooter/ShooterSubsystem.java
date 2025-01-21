@@ -43,7 +43,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     leftEncoder = leftShooterMotor.getEncoder();
     rightEncoder = rightShooterMotor.getEncoder();
-    
+
     SparkMaxConfig leftconfig = new SparkMaxConfig();
     SparkMaxConfig rightconfig = new SparkMaxConfig();
 
@@ -51,12 +51,12 @@ public class ShooterSubsystem extends SubsystemBase {
     rightconfig.inverted(false).idleMode(IdleMode.kCoast).closedLoopRampRate(1.0);
 
     leftconfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-      .outputRange(0.0, 1.0)
-      .pidf(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE, PIDF.FEEDFORWARD);
-    
+        .outputRange(0.0, 1.0)
+        .pidf(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE, PIDF.FEEDFORWARD);
+
     rightconfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-      .outputRange(0.0, 1.0)
-      .pidf(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE, PIDF.FEEDFORWARD);
+        .outputRange(0.0, 1.0)
+        .pidf(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE, PIDF.FEEDFORWARD);
 
     leftShooterMotor.configure(leftconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightShooterMotor.configure(rightconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -66,25 +66,25 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public static class PIDF {
-    /*Feedforward constant for PID loop */
+    /* Feedforward constant for PID loop */
     public static final double FEEDFORWARD = 0.000199;
-    /*Porportion constant for PID loop */
+    /* Porportion constant for PID loop */
     public static final double PORPORTION = 0.001;
-    /*Integral constant for PID loop */
+    /* Integral constant for PID loop */
     public static final double INTEGRAL = 0;
-    /*Derivative constant for PID loop */
+    /* Derivative constant for PID loop */
     public static final double DERIVATIVE = 0.0;
   }
 
-  public void RightshootSpeed(double power){
-    //rightShooterMotor.set(power);
-    //leftShooterMotor.set(power);
-    //indexerMotor.set(power);
+  public void setRightMotorRPM(double power) {
+    // rightShooterMotor.set(power);
+    // leftShooterMotor.set(power);
+    // indexerMotor.set(power);
     RightPIDController.setReference(power, SparkMax.ControlType.kVelocity);
-    
+
   }
 
-  public void LeftshootSpeed(double power) {
+  public void setLeftMotorRPM(double power) {
     LeftPIDController.setReference(power, SparkMax.ControlType.kVelocity);
   }
 
@@ -93,53 +93,48 @@ public class ShooterSubsystem extends SubsystemBase {
     LeftPIDController.setReference(power, SparkMax.ControlType.kVelocity);
   }
 
-
- 
-
   public void stopShooter() {
     rightShooterMotor.set(0);
     leftShooterMotor.set(0);
-    
+
     RightPIDController.setReference(0, SparkMax.ControlType.kVelocity);
     LeftPIDController.setReference(0, SparkMax.ControlType.kVelocity);
   }
 
+  public void runPID(double targetSpeed) {
+    target_Speed = targetSpeed;
+    // PIDController.setReference(targetSpeed, SparkMax.ControlType.kVelocity);
+  }
 
- public void runPID(double targetSpeed){
-  target_Speed = targetSpeed;
-  //PIDController.setReference(targetSpeed, SparkMax.ControlType.kVelocity);
- }
+  public double getSpeed() {
+    return rightShooterMotor.get();
 
- public double getSpeed() {
-  return rightShooterMotor.get();
-  
- }
+  }
 
- public double getPower() {
-  return rightShooterMotor.get();
+  public double getPower() {
+    return rightShooterMotor.get();
 
- }
-
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-     shooterRight.setDouble(rightEncoder.getVelocity());
-     shooterLeft.setDouble(leftEncoder.getVelocity());
-// 
+    shooterRight.setDouble(rightEncoder.getVelocity());
+    shooterLeft.setDouble(leftEncoder.getVelocity());
+    //
     // if (pidSetButton.getBoolean(false)) {
-      // pidSetButton.setBoolean(false);
-      // set(shooterP.getDouble(PIDF.PORPORTION), shooterI.getDouble(PIDF.INTEGRAL), PIDF.DERIVATIVE, shooterF.getDouble(PIDF.FEEDFORWARD), PIDF.INTEGRAL_ZONE);
+    // pidSetButton.setBoolean(false);
+    // set(shooterP.getDouble(PIDF.PORPORTION), shooterI.getDouble(PIDF.INTEGRAL),
+    // PIDF.DERIVATIVE, shooterF.getDouble(PIDF.FEEDFORWARD), PIDF.INTEGRAL_ZONE);
     // }
   }
 
   public void RightShootIt(double speed) {
     RightPIDController.setReference(speed, SparkMax.ControlType.kVelocity);
 
-    
-   // rightShooterMotor.set(speed);
-   // leftShooterMotor.set(speed);
-    
+    // rightShooterMotor.set(speed);
+    // leftShooterMotor.set(speed);
+
   }
 
   public void LeftShootIt(double speed) {

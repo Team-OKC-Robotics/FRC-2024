@@ -32,16 +32,16 @@ public class AutoAimInAuto extends Command {
   private int targetAprilTag = 4;
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
-  LerpedLUT angleLUT= new LerpedLUT();
+  LerpedLUT angleLUT = new LerpedLUT();
 
-  //private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
-//
-  //private GenericEntry distanceEntry = tab.add("Distance To Tag", 0.0).getEntry();
-  //private GenericEntry idealAngleEntry = tab.add("PivotAngle", 0.0).getEntry();
+  // private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
+  //
+  // private GenericEntry distanceEntry = tab.add("Distance To Tag",
+  // 0.0).getEntry();
+  // private GenericEntry idealAngleEntry = tab.add("PivotAngle", 0.0).getEntry();
 
   private DoubleSupplier xSupplier;
   private DoubleSupplier ySupplier;
-  
 
   public AutoAimInAuto(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -51,24 +51,22 @@ public class AutoAimInAuto extends Command {
     this.swerve = swerve;
     this.vision = vision;
     this.pivot = pivot;
-   
 
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
       this.targetAprilTag = 7;
-    
-    
-      angleLUT.addEntry(-100, 60);
-      angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
-      angleLUT.addEntry(1.8, 44.5);
-      angleLUT.addEntry(2.17, 43);
-      angleLUT.addEntry(3.37, 38);
-      angleLUT.addEntry(3.9, 34);
-      angleLUT.addEntry(4.33, 33.7);
-      angleLUT.addEntry(5.0, 31.5);
-      angleLUT.addEntry(5.33, 32.8);
-      angleLUT.addEntry(5.5, 30.6);
-      angleLUT.addEntry(6.33, 26);
     }
+
+    angleLUT.addEntry(-100, 60);
+    angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
+    angleLUT.addEntry(1.8, 44.5);
+    angleLUT.addEntry(2.17, 43);
+    angleLUT.addEntry(3.37, 38);
+    angleLUT.addEntry(3.9, 34);
+    angleLUT.addEntry(4.33, 33.7);
+    angleLUT.addEntry(5.0, 31.5);
+    angleLUT.addEntry(5.33, 32.8);
+    angleLUT.addEntry(5.5, 30.6);
+    angleLUT.addEntry(6.33, 26);
   }
 
   double tagHeight = 57.13;
@@ -76,11 +74,11 @@ public class AutoAimInAuto extends Command {
   double distanceThreshold = 0; // placeholder
   double cameraAngle = 30; // placeholder
   double angleThreshold = 0; // placeholder
-    
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -88,44 +86,27 @@ public class AutoAimInAuto extends Command {
     PhotonTrackedTarget target = vision.getTargetWithID(targetAprilTag);
     // vision.getTargetWithID(4);
 
-    ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(0, 0, swerve.getHeading().getSin(), swerve.getHeading().getCos());
-    
-    // Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
-    // translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
-    //                                        Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
-    //                                        swerve.getSwerveDriveConfiguration());
-   
-    //                                        if (target == null) {
-    //   swerve.drive(translation, 0, true);
-    // } else {
-    //   double yaw = vision.getYaw(targetAprilTag);
-    //   swerve.drive(translation, -0.1 * yaw, true);
-    // }
-    
-    double distance = Units.metersToFeet(visionSubsystem.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle));
+    double distance = Units
+        .metersToFeet(visionSubsystem.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle));
     distance = distance - 3.9; // Camera + robot offset
     double idealAngle = angleLUT.getAngleFromDistance(distance);
 
-   // distanceEntry.setDouble(distance);
-   // idealAngleEntry.setDouble(idealAngle);
+    // distanceEntry.setDouble(distance);
+    // idealAngleEntry.setDouble(idealAngle);
 
-    pivot.SetTargetPivotAngle(idealAngle);
+    pivot.setTargetPivotAngle(idealAngle);
 
   }
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //pivot.PivotIt(0);
+    // pivot.PivotIt(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
-  //   if (vision.getTargetWithID(targetAprilTag) == null) {
-  //     return false;
-  //   } else {
-  //     return Math.abs(vision.getTargetWithID(targetAprilTag).getYaw()) < 1;
-  // }
-}
+  }
 }
