@@ -45,7 +45,7 @@ public class VisionSubsystem extends SubsystemBase {
       double cameraAngle) {
 
     if (target == null) {
-      return -1;
+      return 1000; // Set very high so LUT commands the pivot down
     }
 
     return PhotonUtils.calculateDistanceToTargetMeters(

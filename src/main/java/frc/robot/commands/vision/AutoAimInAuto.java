@@ -3,9 +3,12 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.commands.vision;
 
+import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Meters;
+
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.pivot.PivotSubsystem;
@@ -17,6 +20,7 @@ public class AutoAimInAuto extends Command {
   private final VisionSubsystem vision;
   private final PivotSubsystem pivot;
   private int targetAprilTag = 4;
+  private Distance targetOffset = Feet.of(3.9);
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
   LerpedLUT angleLUT = new LerpedLUT();
@@ -61,18 +65,8 @@ public class AutoAimInAuto extends Command {
   @Override
   public void execute() {
     PhotonTrackedTarget target = vision.getTargetWithID(targetAprilTag);
-    // vision.getTargetWithID(4);
-
-    double distance = Units
-        .metersToFeet(visionSubsystem.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle));
-    distance = distance - 3.9; // Camera + robot offset
-    double idealAngle = angleLUT.getAngleFromDistance(distance);
-
-    // distanceEntry.setDouble(distance);
-    // idealAngleEntry.setDouble(idealAngle);
-
-    pivot.setTargetPivotAngle(idealAngle);
-
+    Distance targetDistance = Meters.of(vision.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle)).minus(targetOffset);
+    pivot.setTargetPivotAngle(angleLUT.getAngleFromDistance(targetDistance));
   }
 
   // Called once the command ends or is interrupted.

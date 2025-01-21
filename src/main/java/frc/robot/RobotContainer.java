@@ -89,11 +89,7 @@ public class RobotContainer {
   private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 1);
   private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -1);
 
-  // private final AutoAim autoaim = new AutoAim(drivebase, m_vision, m_pivot, m_leds,
-  //     () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(),
-  //         OperatorConstants.LEFT_Y_DEADBAND) * -0.8),
-  //     () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(),
-  //         OperatorConstants.LEFT_X_DEADBAND) * -0.8));
+  private final AutoAim autoaim = new AutoAim(drivebase, m_vision, m_pivot, m_leds, driveAngularVelocity);
 
   // makes the auto chooser
   private SendableChooser<String> autoChooser = new SendableChooser<String>();
@@ -164,11 +160,11 @@ public class RobotContainer {
       driverXbox.leftBumper().whileTrue(runIntake);
       driverXbox.rightBumper().whileTrue(backwardIntake);
       driverXbox.leftTrigger().whileTrue(waitshoot);
-      // driverXbox.rightTrigger().whileTrue(autoaim);
+      driverXbox.rightTrigger().whileTrue(autoaim);
 
       // operator commands
       operatorXbox.y().whileTrue(pivotToDeg60);
-      // operatorXbox.b().whileTrue(autoaim);
+      operatorXbox.b().whileTrue(autoaim);
       operatorXbox.x().whileTrue(pivotToDeg45);
       operatorXbox.leftBumper().whileTrue(waitshoot);
       operatorXbox.rightBumper().whileTrue(runIntake);

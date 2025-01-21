@@ -1,6 +1,10 @@
 package frc.robot.utils;
 
+import static edu.wpi.first.units.Units.Feet;
+
 import java.util.ArrayList;
+
+import edu.wpi.first.units.measure.Distance;
 
 public class LerpedLUT {
 
@@ -29,12 +33,14 @@ public class LerpedLUT {
         LUT.sort(null);
     }
 
-    public double getAngleFromDistance(double distance) {
+    public double getAngleFromDistance(Distance distance) {
+
+        double distance_feet = distance.in(Feet);
 
         // Find first index where the distance is larger
         int i = 0;
         for (;i<LUT.size(); i++) {
-            if (LUT.get(i).distance >= distance) {
+            if (LUT.get(i).distance >= distance_feet) {
                 break;
             }
         }
@@ -47,6 +53,6 @@ public class LerpedLUT {
         // Return the LERP'd value between the nearest two LUT entries
         LUTEntry lower = LUT.get(i - 1);
         LUTEntry higher = LUT.get(i);
-        return (lower.angle * (higher.distance - distance) + higher.angle * (distance - lower.distance)) / (higher.distance - lower.distance);
+        return (lower.angle * (higher.distance - distance_feet) + higher.angle * (distance_feet - lower.distance)) / (higher.distance - lower.distance);
     }
 }

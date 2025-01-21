@@ -3,27 +3,24 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.commands.vision;
 
-import java.util.List;
-import java.util.function.DoubleSupplier;
+import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Meters;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.utils.LerpedLUT;
-import swervelib.SwerveController;
-import swervelib.math.SwerveMath;
+import swervelib.SwerveInputStream;
 
 public class AutoAim extends Command {
   /** Creates a new AutoAim. */
@@ -31,42 +28,37 @@ public class AutoAim extends Command {
   private final VisionSubsystem vision;
   private final PivotSubsystem pivot;
   private final LEDSubsystem leds;
+
   private int targetAprilTag = 4;
+  private Distance targetOffset = Feet.of(3.9);
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
   LerpedLUT angleLUT = new LerpedLUT();
 
   private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
 
-  private GenericEntry distanceEntry = tab.add("Distance To Tag", 0.0).getEntry();
-  private GenericEntry idealAngleEntry = tab.add("PivotAngle", 0.0).getEntry();
-  private GenericEntry idealYaw = tab.add("Ideal Yaw", 0.0).getEntry();
-  private GenericEntry targetSpeakerID = tab.add("Target Speaker ID", 0).getEntry();
+  private GenericEntry targetYawEntry = tab.add("Target Yaw", 0.0).getEntry();
+  private GenericEntry targetSpeakerIDEntry = tab.add("Target Speaker ID", 0).getEntry();
 
-  private DoubleSupplier xSupplier;
-  private DoubleSupplier ySupplier;
-
-  private double lastDistance = 0.0;
-  private double lastYaw = 0.0;
+  private SwerveInputStream swerveInput;
 
   public AutoAim(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot, LEDSubsystem leds,
-      DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
-    // Use addRequirements() here to declare subsystem dependencies.
+      SwerveInputStream swerveInput) {
 
-    addRequirements(swerve, vision, pivot);
+    addRequirements(swerve, vision, pivot, leds);
 
     this.swerve = swerve;
     this.vision = vision;
     this.pivot = pivot;
     this.leds = leds;
-    this.xSupplier = xSupplier;
-    this.ySupplier = ySupplier;
+
+    this.swerveInput = swerveInput;
 
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
       this.targetAprilTag = 6;
     }
 
-    targetSpeakerID.setInteger(this.targetAprilTag);
+    targetSpeakerIDEntry.setInteger(this.targetAprilTag);
 
     angleLUT.addEntry(-100, 60);
     angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
@@ -85,17 +77,13 @@ public class AutoAim extends Command {
   double cameraAngle = 30; // placeholder
   double angleThreshold = 0; // placeholder
 
-  public boolean readyToShoot() {
-    return lastDistance < 5.7 && lastYaw < 3 && pivot.isPivotAtSetpoint();
+  public boolean readyToShoot(Distance distance, double yaw) {
+    return distance.in(Feet) < 5.7 && yaw < 3 && pivot.isPivotAtSetpoint();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // Reset last values to make LEDs more accurate
-    lastDistance = 20;
-    lastYaw = 20;
-
     leds.setLEDState(LEDSubsystem.LEDState.NO_TARGET);
   }
 
@@ -105,41 +93,26 @@ public class AutoAim extends Command {
 
     PhotonTrackedTarget target = vision.getTargetWithID(targetAprilTag);
 
-    ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(xSupplier.getAsDouble(), ySupplier.getAsDouble(),
-        swerve.getHeading().getSin(), swerve.getHeading().getCos());
+    double rotationSpeed = 0;
+    double targetYaw = 2718;
+    if (target != null) {
+      targetYaw = target.getYaw();
 
-    Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
-    translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
-        Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
-        swerve.getSwerveDriveConfiguration());
-
-    if (target == null) {
-      swerve.drive(translation, 0, true);
-      idealYaw.setDouble(2718.0);
-    } else {
-      double yaw = target.getYaw();
-      idealYaw.setDouble(yaw);
-      lastYaw = yaw;
-      if (Math.abs(yaw) > 2) {
-        swerve.drive(translation, -0.10 * yaw, true);
-      } else {
-        swerve.drive(translation, 0, true);
+      if (Math.abs(targetYaw) > 2) {
+        rotationSpeed = -0.1 * targetYaw;
       }
     }
-    double distance = Units
-        .metersToFeet(visionSubsystem.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle));
-    distance = distance - 3.9; // Camera + robot offset
 
-    this.lastDistance = distance;
+    targetYawEntry.setDouble(targetYaw);
 
-    double idealAngle = angleLUT.getAngleFromDistance(distance);
+    ChassisSpeeds chassisSpeeds = swerveInput.get();
+    chassisSpeeds.omegaRadiansPerSecond = rotationSpeed;
+    swerve.driveFieldOriented(chassisSpeeds);
 
-    distanceEntry.setDouble(distance);
-    idealAngleEntry.setDouble(idealAngle);
+    Distance targetDistance = Meters.of(vision.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle)).minus(targetOffset);
+    pivot.setTargetPivotAngle(angleLUT.getAngleFromDistance(targetDistance));
 
-    pivot.setTargetPivotAngle(idealAngle);
-
-    if (readyToShoot()) {
+    if (readyToShoot(targetDistance, targetYaw)) {
       leds.setLEDState(LEDSubsystem.LEDState.TARGET_LOCKED);
     } else {
       leds.setLEDState(LEDSubsystem.LEDState.NO_TARGET);
@@ -149,10 +122,6 @@ public class AutoAim extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // Reset last values to make LEDs more accurate
-    lastDistance = 20;
-    lastYaw = 20;
-
     // Reset pivot to 60
     pivot.setTargetPivotAngle(PivotSubsystem.PivotLocations.DEG_60);
   }

@@ -255,11 +255,12 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return SysId Drive Command
    */
   public Command sysIdDriveMotorCommand() {
-    return SwerveDriveTest.generateSysIdCommand(
-        SwerveDriveTest.setDriveSysIdRoutine(
-            new Config(),
-            this, swerveDrive, 12),
-        3.0, 5.0, 3.0);
+    return null; // TODO: Fix whatever is causing this to not build
+    // return SwerveDriveTest.generateSysIdCommand(
+    //     SwerveDriveTest.setDriveSysIdRoutine(
+    //         new Config(),
+    //         this, swerveDrive, 12.0),
+    //     3.0, 5.0, 3.0);
   }
 
   /**
