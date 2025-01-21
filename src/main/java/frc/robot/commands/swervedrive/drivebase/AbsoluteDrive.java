@@ -4,15 +4,12 @@
 
 package frc.robot.commands.swervedrive.drivebase;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.util.List;
 import java.util.function.DoubleSupplier;
@@ -26,9 +23,8 @@ public class AbsoluteDrive extends Command
 {
 
   private final SwerveSubsystem swerve;
- 
-  private final XboxController driverXbox;
-  
+  private final DoubleSupplier  vX, vY;
+  private final DoubleSupplier headingHorizontal, headingVertical;
   private boolean initRotation = false;
 
   /**
@@ -51,10 +47,14 @@ public class AbsoluteDrive extends Command
    *                          robot coordinate system, this is along the same axis as vX.  Should range from -1 to 1
    *                          with no deadband. Positive is away from the alliance wall.
    */
-  public AbsoluteDrive(SwerveSubsystem swerve, XboxController driverXbox) 
+  public AbsoluteDrive(SwerveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier headingHorizontal,
+                       DoubleSupplier headingVertical)
   {
     this.swerve = swerve;
-    this.driverXbox = driverXbox;
+    this.vX = vX;
+    this.vY = vY;
+    this.headingHorizontal = headingHorizontal;
+    this.headingVertical = headingVertical;
 
     addRequirements(swerve);
   }
@@ -69,39 +69,20 @@ public class AbsoluteDrive extends Command
   @Override
   public void execute()
   {
-    double vX = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) * -0.8);
-    
-    double vY = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND) * -0.8);
-
-    if (driverXbox.getBButton()) {
-      vX = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) * -1);
-    
-      vY = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND) * -1);
-    }
-
-   // if (driverXbox.getYButton()) {
-   //   vX = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND) * -0.3);
-//
-   //   vY = Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND) * -0.3);
-   // }
-
-    double headingHorizontal = -driverXbox.getRightX();
-
-    double headingVertical = -driverXbox.getRightY();
 
     // Get the desired chassis speeds based on a 2 joystick module.
-    ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX, vY,
-                                                         headingHorizontal,
-                                                         headingVertical);
+    ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
+                                                         headingHorizontal.getAsDouble(),
+                                                         headingVertical.getAsDouble());
 
     // Prevent Movement After Auto
-    if(initRotation)
+    if (initRotation)
     {
-      if(headingHorizontal == 0 && headingVertical == 0)
+      if (headingHorizontal.getAsDouble() == 0 && headingVertical.getAsDouble() == 0)
       {
         // Get the curretHeading
         Rotation2d firstLoopHeading = swerve.getHeading();
-      
+
         // Set the Current Heading to the desired Heading
         desiredSpeeds = swerve.getTargetSpeeds(0, 0, firstLoopHeading.getSin(), firstLoopHeading.getCos());
       }

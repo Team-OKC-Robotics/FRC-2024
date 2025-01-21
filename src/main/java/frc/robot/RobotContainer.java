@@ -5,34 +5,22 @@
 package frc.robot;
 
 import java.io.File;
-import java.util.Optional;
-
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 
 import frc.robot.commands.pivot.*;
 import frc.robot.commands.shooter.*;
 import frc.robot.commands.intake.*;
-import frc.robot.commands.swervedrive.drivebase.*;
 import frc.robot.commands.vision.*;
 
 import frc.robot.subsystems.climber.*;
@@ -43,6 +31,7 @@ import frc.robot.subsystems.pivot.*;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.swervedrive.*;
 import frc.robot.subsystems.vision.*;
+import swervelib.SwerveInputStream;
 import frc.robot.commands.climber.*;
 
 /**
@@ -70,26 +59,41 @@ public class RobotContainer {
   CommandXboxController operatorXbox = new CommandXboxController(1);
 
   // drive commands
-  private final AbsoluteDrive absoluteDrive = new AbsoluteDrive(drivebase, driverXbox.getHID());
+  /**
+   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
+   */
+  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+                                                                () -> driverXbox.getLeftY() * -1,
+                                                                () -> driverXbox.getLeftX() * -1)
+                                                            .withControllerRotationAxis(driverXbox::getRightX)
+                                                            .deadband(OperatorConstants.DEADBAND)
+                                                            .scaleTranslation(0.8)
+                                                            .allianceRelativeControl(true);
 
+  /**
+   * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
+   */
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driverXbox::getRightX,
+                                                                                             driverXbox::getRightY)
+                                                           .headingWhile(true);
   // shooter commands
-  private final ShooterCommand runShooter = new ShooterCommand(m_shooter, 1);
+  private final ShooterCommand runShooter = new ShooterCommand(m_shooter);
   private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake);
 
   // intake commands
   private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.7);
-  private final BackwardIntake backwardIntake = new BackwardIntake(m_intake, 0.5);
+  private final BackwardIntake backwardIntake = new BackwardIntake(m_intake);
   private final PivotToAngle pivotToDeg60 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_60);
   private final PivotToAngle pivotToDeg45 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_45);
 
   private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 1);
   private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -1);
 
-  private final AutoAim autoaim = new AutoAim(drivebase, m_vision, m_pivot, m_leds,
-      () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(),
-          OperatorConstants.LEFT_Y_DEADBAND) * -0.8),
-      () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(),
-          OperatorConstants.LEFT_X_DEADBAND) * -0.8));
+  // private final AutoAim autoaim = new AutoAim(drivebase, m_vision, m_pivot, m_leds,
+  //     () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftY(),
+  //         OperatorConstants.LEFT_Y_DEADBAND) * -0.8),
+  //     () -> Math.cbrt(MathUtil.applyDeadband(driverXbox.getLeftX(),
+  //         OperatorConstants.LEFT_X_DEADBAND) * -0.8));
 
   // makes the auto chooser
   private SendableChooser<String> autoChooser = new SendableChooser<String>();
@@ -104,8 +108,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Pivot to 45", new PivotToAngle(m_pivot, 41));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto(m_intake, 0.65));
-    NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase, m_vision, m_pivot));
-    NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter, 1));
+    NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(m_vision, m_pivot));
+    NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter));
 
     // add auto chooser options
     autoChooser.setDefaultOption("4 Piece Middle First Then Amp", "4 Piece Middle First Then Amp");
@@ -148,7 +152,7 @@ public class RobotContainer {
     m_pivot.setDefaultCommand(pivotToDeg60);
 
     if (!DriverStation.isTest()) {
-      drivebase.setDefaultCommand(absoluteDrive);
+      drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveDirectAngle));
 
       // driver commands
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
@@ -160,11 +164,11 @@ public class RobotContainer {
       driverXbox.leftBumper().whileTrue(runIntake);
       driverXbox.rightBumper().whileTrue(backwardIntake);
       driverXbox.leftTrigger().whileTrue(waitshoot);
-      driverXbox.rightTrigger().whileTrue(autoaim);
+      // driverXbox.rightTrigger().whileTrue(autoaim);
 
       // operator commands
       operatorXbox.y().whileTrue(pivotToDeg60);
-      operatorXbox.b().whileTrue(autoaim);
+      // operatorXbox.b().whileTrue(autoaim);
       operatorXbox.x().whileTrue(pivotToDeg45);
       operatorXbox.leftBumper().whileTrue(waitshoot);
       operatorXbox.rightBumper().whileTrue(runIntake);

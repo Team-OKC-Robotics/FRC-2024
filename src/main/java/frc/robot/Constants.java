@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
-import swervelib.parser.PIDFConfig;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean constants. This
@@ -19,36 +18,16 @@ import swervelib.parser.PIDFConfig;
  */
 public final class Constants
 {
+  public static final boolean COMPETITION_MODE = false;
 
-  public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
+  public static final double ROBOT_MASS = Units.lbsToKilograms(120);
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
-
-  public static final class Auton
-  {
-
-    public static final PIDFConfig TranslationPID     = new PIDFConfig(0.7, 0, 0);
-    public static final PIDFConfig angleAutoPID = new PIDFConfig(0.4, 0, 0.01);
-
-    public static final double MAX_ACCELERATION = 2;
-  }
-
-   
-
-  public static final class Drivebase
-  {
-
-    // Hold time on motor brakes when disabled
-    public static final double WHEEL_LOCK_TIME = 10; // seconds
-  }
+  public static final double MAX_SPEED  = Units.feetToMeters(15.1);
 
   public static class OperatorConstants
   {
-
-    // Joystick Deadband
-    public static final double LEFT_X_DEADBAND = 0.2;
-    public static final double LEFT_Y_DEADBAND = 0.2;
-    public static final double RIGHT_X_DEADBAND = 0.2;
+    public static final double DEADBAND = 0.25;
     public static final double TURN_CONSTANT = 0.75;
   }
 
@@ -61,52 +40,22 @@ public final class Constants
 
   public static final class IntakeConstants
   {
-    public static final int intakemotorID = 9;
-    public static final int limitSwitchBeanBrakeChannel = 1;
-    public static final int IntakeLimitSwitch = 8;
+    public static final int intakeMotorID = 9;
+    public static final int limitSwitchBeamBrakeChannel = 1;
+    public static final int intakeLimitSwitchChannel = 8;
   }
   
   public static final class ClimberConstants 
   {
-    public static final int rightclimbermotorID = 15;
-    public static final int leftclimbermotorID = 16;
+    public static final int rightClimberMotorID = 15;
+    public static final int leftClimberMotorID = 16;
   }
   public static final class PivotConstants {
-    public static final int pivotmotorID = 11;
-  }
-
-  public static final class AmpConstants {
-    public static final int ampdevicemotorID = 17;
+    public static final int pivotMotorID = 11;
   }
 
   public static final class LEDS {
     public static final int PWMPort = 5;
     public static final int Length = 20;
-  }
-
-  public static class OI {
-    //second driver buttons
-    public static final int kSecondriverButton1 = 1;
-    public static final int kSecondriverButton2 = 2;
-    public static final int kSecondriverButton3 = 3;
-    public static final int kSecondriverButton4 = 4;
-    public static final int kSecondriverButton5 = 5;
-    public static final int kSecondriverButton6 = 6;
-    public static final int kSecondriverButton7 = 7;
-    public static final int kSecondriverButton8 = 8;
-
-
-
-    // first driver buttons
-    public static final int kdriverControllerButton1 = 1;
-    public static final int kdriverControllerButton2 = 2;
-    public static final int kdriverControllerButton3 = 3;
-    public static final int kdriverControllerButton4 = 4;
-    public static final int kdriverControllerButton5 = 5;
-    public static final int kdriverControllerButton6 = 6;
-    public static final int kdriverControllerButton7 = 7;
-    public static final int kdriverControllerButton8 = 8;
-    
-
   }
 }

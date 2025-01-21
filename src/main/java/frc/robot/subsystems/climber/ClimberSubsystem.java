@@ -28,8 +28,8 @@ public class ClimberSubsystem extends SubsystemBase {
   // false).getEntry();
 
   public ClimberSubsystem() {
-    rightclimbmotor = new SparkMax(Constants.ClimberConstants.rightclimbermotorID, MotorType.kBrushless);
-    leftclimbmotor = new SparkMax(Constants.ClimberConstants.leftclimbermotorID, MotorType.kBrushless);
+    rightclimbmotor = new SparkMax(Constants.ClimberConstants.rightClimberMotorID, MotorType.kBrushless);
+    leftclimbmotor = new SparkMax(Constants.ClimberConstants.leftClimberMotorID, MotorType.kBrushless);
 
     SparkMaxConfig rightmotorconfig = new SparkMaxConfig();
     SparkMaxConfig leftmotorconfig = new SparkMaxConfig();

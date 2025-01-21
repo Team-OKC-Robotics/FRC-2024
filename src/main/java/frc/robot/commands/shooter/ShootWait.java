@@ -3,7 +3,6 @@ package frc.robot.commands.shooter;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
-import frc.robot.subsystems.pivot.*;
 
 public class ShootWait extends Command {
 

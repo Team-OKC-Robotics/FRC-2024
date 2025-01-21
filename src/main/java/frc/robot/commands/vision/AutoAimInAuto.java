@@ -3,30 +3,17 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.commands.vision;
 
-import java.util.List;
-import java.util.function.DoubleSupplier;
-
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.pivot.PivotSubsystem;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.utils.LerpedLUT;
-import swervelib.SwerveController;
-import swervelib.math.SwerveMath;
 
 public class AutoAimInAuto extends Command {
   /** Creates a new AutoAim. */
-  private final SwerveSubsystem swerve;
   private final VisionSubsystem vision;
   private final PivotSubsystem pivot;
   private int targetAprilTag = 4;
@@ -34,21 +21,11 @@ public class AutoAimInAuto extends Command {
   VisionSubsystem visionSubsystem = new VisionSubsystem();
   LerpedLUT angleLUT = new LerpedLUT();
 
-  // private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
-  //
-  // private GenericEntry distanceEntry = tab.add("Distance To Tag",
-  // 0.0).getEntry();
-  // private GenericEntry idealAngleEntry = tab.add("PivotAngle", 0.0).getEntry();
-
-  private DoubleSupplier xSupplier;
-  private DoubleSupplier ySupplier;
-
-  public AutoAimInAuto(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot) {
+  public AutoAimInAuto(VisionSubsystem vision, PivotSubsystem pivot) {
     // Use addRequirements() here to declare subsystem dependencies.
 
     addRequirements(vision, pivot);
 
-    this.swerve = swerve;
     this.vision = vision;
     this.pivot = pivot;
 
