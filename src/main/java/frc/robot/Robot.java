@@ -84,6 +84,7 @@ public class Robot extends TimedRobot
   public void disabledInit()
   {
     m_robotContainer.setMotorBrake(true);
+    m_robotContainer.setPivotBrake(false);
     disabledTimer.reset();
     disabledTimer.start();
   }
@@ -91,13 +92,14 @@ public class Robot extends TimedRobot
   @Override
   public void disabledPeriodic()
   {
-    if (disabledTimer.hasElapsed(10))
-    {
-      m_robotContainer.setMotorBrake(false);
-      disabledTimer.stop();
-      disabledTimer.reset();
-    }
-    m_robotContainer.setLEDsAlliance();
+    // if (disabledTimer.hasElapsed(10))
+    // {
+    //   m_robotContainer.setMotorBrake(false);
+    //   disabledTimer.stop();
+    //   disabledTimer.reset();
+    // }
+    // m_robotContainer.setLEDsAlliance();
+    m_robotContainer.setLEDsRainbow();
   }
 
   /**
@@ -141,8 +143,9 @@ public class Robot extends TimedRobot
     {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.setDriveMode();
+    m_robotContainer.configureBindings();
     m_robotContainer.setMotorBrake(true);
+    m_robotContainer.setPivotBrake(true);
     //so the shooter doesn't continue running after auto ends in teleop
     m_robotContainer.resetrobot();
     m_robotContainer.resetPivotPID();
@@ -164,13 +167,15 @@ public class Robot extends TimedRobot
   {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    try
-    {
-      new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
-    } catch (IOException e)
-    {
-      throw new RuntimeException(e);
-    }
+    m_robotContainer.setPivotBrake(true);
+    m_robotContainer.configureBindings();
+    // try
+    // {
+    //   new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
+    // } catch (IOException e)
+    // {
+    //   throw new RuntimeException(e);
+    // }
   }
 
   /**

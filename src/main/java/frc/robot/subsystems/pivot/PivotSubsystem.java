@@ -5,13 +5,17 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -23,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.MutAngle;
@@ -38,6 +43,9 @@ public class PivotSubsystem extends SubsystemBase {
     private final PIDController PivotPIDController;
     private final DutyCycleEncoder AmpEncoder;
     private final DutyCycleEncoder pivotencoder;
+
+    private final PIDController pivotVoltagePID;
+    private final ArmFeedforward pivotFeedforward;
 
     private final RelativeEncoder pivotRelativeEncoder;
 
@@ -55,6 +63,8 @@ public class PivotSubsystem extends SubsystemBase {
 
     private GenericEntry pivotabsoluteencoder = pivottab.add("absolute encoder", 0).getEntry();
     private GenericEntry pivotabsoluteencoderraw = pivottab.add("absolute encoder raw", 0).getEntry();
+    private GenericEntry pivotvoltageout = pivottab.add("voltage", 0).getEntry();
+
 
     // private GenericEntry CurrentState = comptab.add("Current State", "Amp
     // In").getEntry();
@@ -63,6 +73,9 @@ public class PivotSubsystem extends SubsystemBase {
 
     private GenericEntry EncoderButton = pivottab.add("Set Encoder", false).getEntry();
 
+    SparkMaxConfig pivotconfig = new SparkMaxConfig();
+    SparkMaxConfig ampconfig = new SparkMaxConfig();
+
     // private GenericEntry motorpower = pivottab.add("motor power",
     // 0.0).getEntry();
 
@@ -70,9 +83,6 @@ public class PivotSubsystem extends SubsystemBase {
 
         pivotmotor = new SparkMax(Constants.PivotConstants.pivotmotorID, MotorType.kBrushless);
         ampdevicemotor = new SparkMax(Constants.AmpConstants.ampdevicemotorID, MotorType.kBrushless);
-
-        SparkMaxConfig pivotconfig = new SparkMaxConfig();
-        SparkMaxConfig ampconfig = new SparkMaxConfig();
 
         pivotconfig.inverted(false).idleMode(IdleMode.kBrake);
         ampconfig.inverted(true).idleMode(IdleMode.kCoast);
@@ -85,6 +95,9 @@ public class PivotSubsystem extends SubsystemBase {
 
         PivotPIDController = new PIDController(0.05, 0.001, 0);
         AmpPidController = new PIDController(0.04, 0.0001, 0);
+
+        pivotFeedforward = new ArmFeedforward(0.23525, 0.040443, 0.0, 0.0);
+        pivotVoltagePID = new PIDController(0.19142, 0.0, 0.0018289);
 
         pivotmotor.set(0);
         ampdevicemotor.set(0);
@@ -125,6 +138,7 @@ public class PivotSubsystem extends SubsystemBase {
         pivotabsoluteencoder.setDouble(getPivotAngle());
         pivotabsoluteencoderraw.setDouble(pivotencoder.get());
         AmpDeviceEncoder.setDouble(getDevicePosition());
+        
         // TargetEncoder.setDouble(targetPivotangle);
         if (EncoderButton.getBoolean(false)) {
             EncoderButton.setBoolean(false);
@@ -133,7 +147,11 @@ public class PivotSubsystem extends SubsystemBase {
 
         // CurrentState.setString(currentState.name());
 
-        PivotIttoAngle(targetPivotangle);
+        // TODO: Enable later
+        if (!DriverStation.isTest()) {
+            PivotIttoAngle(targetPivotangle);
+        }
+
         // PivotAmpToAngle(targetAmpangle);
 
         // if (currentState == State.AMP_IN && targetState == State.AMP_ENGAGED) {
@@ -196,7 +214,7 @@ public class PivotSubsystem extends SubsystemBase {
     public void PivotIt(double power) {
         // motorpower.setDouble(power);
         // adds soft limits to avoid the pivot killing itself
-        if (power > 0 && getPivotAngle() > 60) {
+        if (power > 0 && getPivotAngle() > 70) {
             pivotmotor.set(0);
             return;
         }
@@ -213,10 +231,11 @@ public class PivotSubsystem extends SubsystemBase {
             PivotIt(0);
             return;
         }
-        double power = PivotPIDController.calculate(getPivotAngle(), angle);
-        power = MathUtil.clamp(power, -0.4, 0.4);
-        PivotIt(power);
-
+        // double power = PivotPIDController.calculate(getPivotAngle(), angle);
+        // power = MathUtil.clamp(power, -0.4, 0.4);
+        double voltage = pivotVoltagePID.calculate(getPivotAngle(), angle) + pivotFeedforward.calculate(angle, 0.0);
+        // PivotIt(power);
+        setVoltage(Voltage.ofBaseUnits(voltage, Volts));
     }
 
     public void SetTargetPivotAngle(double angle) {
@@ -231,7 +250,7 @@ public class PivotSubsystem extends SubsystemBase {
         if (rawvalue > 0.5) { // bc the absolute encoder is messed up :(
             rawvalue = rawvalue - 1;
         }
-        return -rawvalue * 338 + 33.1; // some weird ahh math, I know
+        return -rawvalue * 360 + 34.86; // some weird ahh math, I know
     }
 
     public void PivotAmp(double power) {
@@ -296,26 +315,29 @@ public class PivotSubsystem extends SubsystemBase {
         return Math.abs(getPivotAngle() - targetPivotangle) < 3;
     }
 
-    public Command sysIdPivotMotor() {
+    public Command sysIdPivotMotor(int index) {
         SysIdRoutine routine = new SysIdRoutine(
             new SysIdRoutine.Config(),
             new SysIdRoutine.Mechanism(this::setVoltage, this::logMotor, this)
         );
 
-        return routine.quasistatic(SysIdRoutine.Direction.kForward).withTimeout(5.0)
-                .andThen(Commands.waitSeconds(2))
-                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse)).withTimeout(5.0)
-                .andThen(Commands.waitSeconds(2))
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward)).withTimeout(5.0)
-                .andThen(Commands.waitSeconds(2))
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse)).withTimeout(5.0);
+        switch (index) {
+            case 0: return routine.quasistatic(SysIdRoutine.Direction.kForward).withTimeout(5.0);
+            case 1: return routine.quasistatic(SysIdRoutine.Direction.kReverse).withTimeout(5.0);
+            case 2: return routine.dynamic(SysIdRoutine.Direction.kForward).withTimeout(5.0);
+            case 3: return routine.dynamic(SysIdRoutine.Direction.kReverse).withTimeout(5.0);
+        }
+        return routine.quasistatic(SysIdRoutine.Direction.kForward).withTimeout(5.0);
     }
 
     public void setVoltage(Voltage volts) {
-        if (getPivotAngle() > 25 || getPivotAngle() < 55) {
-            pivotmotor.setVoltage(volts);
-        } else {
+        pivotvoltageout.setDouble(pivotmotor.getAppliedOutput() * pivotmotor.getBusVoltage());
+        if (volts.magnitude() < 0 && getPivotAngle() < 25) {
             pivotmotor.setVoltage(0);
+        } else if (volts.magnitude() > 0 && getPivotAngle() > 70) {
+            pivotmotor.setVoltage(0);
+        } else {
+            pivotmotor.setVoltage(volts);
         }
     }
 
@@ -326,8 +348,15 @@ public class PivotSubsystem extends SubsystemBase {
 
     public void logMotor(SysIdRoutineLog log) {
         log.motor("pivot")
-                .voltage(m_appliedVoltage.mut_replace(pivotmotor.get() * RobotController.getBatteryVoltage(), Volts))
-                .angularPosition(m_angle.mut_replace(pivotRelativeEncoder.getPosition() * 360.0, Degrees))
+                .voltage(m_appliedVoltage.mut_replace(pivotmotor.getAppliedOutput() * pivotmotor.getBusVoltage(), Volts))
+                .angularPosition(m_angle.mut_replace(getPivotAngle(), Degrees))
                 .angularVelocity(m_velocity.mut_replace(pivotRelativeEncoder.getVelocity() * 6.0, DegreesPerSecond));
+    }
+
+    public void setBrake(boolean brake) {
+        pivotconfig.inverted(false).idleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
+
+        pivotmotor.configure(pivotconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
     }
 }

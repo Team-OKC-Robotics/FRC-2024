@@ -155,7 +155,7 @@ public class RobotContainer {
   public  void configureBindings()
   {
     if (!DriverStation.isTest()) {
-      drivebase.setDefaultCommand(absoluteDrive);
+      // drivebase.setDefaultCommand(absoluteDrive);
 
       // driver commands
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
@@ -179,10 +179,12 @@ public class RobotContainer {
       operatorXbox.leftTrigger().whileTrue(waitshoot);
       operatorXbox.rightTrigger().whileTrue(backwardIntake);
     } else {
-      drivebase.setDefaultCommand(absoluteDrive);
+      drivebase.removeDefaultCommand();
 
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().whileTrue(m_pivot.sysIdPivotMotor());
+      driverXbox.a().whileTrue(m_pivot.sysIdPivotMotor(0));
+      driverXbox.b().whileTrue(m_pivot.sysIdPivotMotor(1));
+      driverXbox.y().whileTrue(m_pivot.sysIdPivotMotor(2));
+      driverXbox.x().whileTrue(m_pivot.sysIdPivotMotor(3));
     }
 }
   // makes led settings
@@ -247,6 +249,10 @@ public class RobotContainer {
     drivebase.setMotorBrake(brake);
   }
 
+  public void setPivotBrake(boolean brake) {
+    m_pivot.setBrake(brake);
+  }
+
   public void resetrobot() {
     m_shooter.stopShooter();
     m_intake.stopIntake();
@@ -256,5 +262,9 @@ public class RobotContainer {
 
   public void resetPivotPID() {
     m_pivot.resetPID();
+  }
+
+  public void setLEDsRainbow() {
+    m_leds.rainbow();
   }
 }
