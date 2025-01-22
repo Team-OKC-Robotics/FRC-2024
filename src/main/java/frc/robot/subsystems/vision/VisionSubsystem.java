@@ -20,7 +20,7 @@ public class VisionSubsystem extends SubsystemBase {
   private final double TARGET_HEIGHT_METERS = Units.inchesToMeters(57.13); // Speaker AprilTag Height
   private final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(30);
 
-  PhotonCamera camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
+  // PhotonCamera camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
 
   PhotonPipelineResult latestResult;
 
@@ -57,10 +57,13 @@ public class VisionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    List<PhotonPipelineResult> results = camera.getAllUnreadResults();
-    if (results.size() > 0) {
-      latestResult = results.get(0);
-    }
+    // if (!camera.isConnected()) {
+    //   return;
+    // }
+    // List<PhotonPipelineResult> results = camera.getAllUnreadResults();
+    // if (results.size() > 0) {
+    //   latestResult = results.get(0);
+    // }
   }
 
 }

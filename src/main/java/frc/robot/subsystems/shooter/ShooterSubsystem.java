@@ -47,8 +47,8 @@ public class ShooterSubsystem extends SubsystemBase {
     SparkMaxConfig leftconfig = new SparkMaxConfig();
     SparkMaxConfig rightconfig = new SparkMaxConfig();
 
-    leftconfig.inverted(true).idleMode(IdleMode.kCoast).closedLoopRampRate(1.0);
-    rightconfig.inverted(false).idleMode(IdleMode.kCoast).closedLoopRampRate(1.0);
+    leftconfig.inverted(true).idleMode(IdleMode.kCoast).closedLoopRampRate(1.0).openLoopRampRate(1.0);
+    rightconfig.inverted(false).idleMode(IdleMode.kCoast).closedLoopRampRate(1.0).openLoopRampRate(1.0);
 
     leftconfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .outputRange(0.0, 1.0)
@@ -94,8 +94,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void stopShooter() {
-    rightShooterMotor.set(0);
-    leftShooterMotor.set(0);
+    // rightShooterMotor.set(0);
+    // leftShooterMotor.set(0);
 
     RightPIDController.setReference(0, SparkMax.ControlType.kVelocity);
     LeftPIDController.setReference(0, SparkMax.ControlType.kVelocity);

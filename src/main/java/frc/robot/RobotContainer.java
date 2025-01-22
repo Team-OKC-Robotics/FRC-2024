@@ -8,6 +8,9 @@ import java.io.File;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -60,22 +63,26 @@ public class RobotContainer {
 
   // drive commands
   /**
-   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
+   * Converts driver input into a field-relative ChassisSpeeds that is controlled
+   * by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> driverXbox.getLeftY() * -1,
-                                                                () -> driverXbox.getLeftX() * -1)
-                                                            .withControllerRotationAxis(driverXbox::getRightX)
-                                                            .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(0.8)
-                                                            .allianceRelativeControl(true);
+      () -> driverXbox.getLeftY() * -1,
+      () -> driverXbox.getLeftX() * -1)
+      .withControllerRotationAxis(driverXbox::getRightX)
+      .deadband(OperatorConstants.DEADBAND)
+      .allianceRelativeControl(true)
+      .scaleTranslation(0.8);
 
   /**
-   * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
+   * Clone's the angular velocity input stream and converts it to a fieldRelative
+   * input stream.
    */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driverXbox::getRightX,
-                                                                                             driverXbox::getRightY)
-                                                           .headingWhile(true);
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
+      .withControllerHeadingAxis(() -> -driverXbox.getRightX(),
+          () -> -driverXbox.getRightY())
+      .headingWhile(true);
+      
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter);
   private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake);
@@ -142,7 +149,7 @@ public class RobotContainer {
       } else {
         m_leds.setLEDState(LEDState.TEAM);
       }
-    }));
+    }, m_leds));
 
     // Pivot to 60 when the robot is doing nothing else
     m_pivot.setDefaultCommand(pivotToDeg60);
@@ -155,22 +162,26 @@ public class RobotContainer {
       driverXbox.x().whileTrue(pivotToDeg60);
       driverXbox.y().whileTrue(pivotToDeg45);
       driverXbox.povCenter().whileTrue(runShooter);
-      driverXbox.back().whileTrue(setClimberDownSpeed);
-      driverXbox.start().whileTrue(setClimberUpSpeed);
+      // driverXbox.back().whileTrue(setClimberDownSpeed);
+      // driverXbox.start().whileTrue(setClimberUpSpeed);
       driverXbox.leftBumper().whileTrue(runIntake);
       driverXbox.rightBumper().whileTrue(backwardIntake);
       driverXbox.leftTrigger().whileTrue(waitshoot);
       driverXbox.rightTrigger().whileTrue(autoaim);
+      driverXbox.start().whileTrue(
+          drivebase.driveToPose(
+              new Pose2d(new Translation2d(13.9 + 0.6, 4.026), Rotation2d.fromDegrees(180)))
+                              );
 
-      // operator commands
-      operatorXbox.y().whileTrue(pivotToDeg60);
-      operatorXbox.b().whileTrue(autoaim);
-      operatorXbox.x().whileTrue(pivotToDeg45);
-      operatorXbox.leftBumper().whileTrue(waitshoot);
-      operatorXbox.rightBumper().whileTrue(runIntake);
-      operatorXbox.povCenter().whileTrue(runShooter);
-      operatorXbox.leftTrigger().whileTrue(waitshoot);
-      operatorXbox.rightTrigger().whileTrue(backwardIntake);
+      // // operator commands
+      // operatorXbox.y().whileTrue(pivotToDeg60);
+      // operatorXbox.b().whileTrue(autoaim);
+      // operatorXbox.x().whileTrue(pivotToDeg45);
+      // operatorXbox.leftBumper().whileTrue(waitshoot);
+      // operatorXbox.rightBumper().whileTrue(runIntake);
+      // operatorXbox.povCenter().whileTrue(runShooter);
+      // operatorXbox.leftTrigger().whileTrue(waitshoot);
+      // operatorXbox.rightTrigger().whileTrue(backwardIntake);
     } else {
       drivebase.removeDefaultCommand();
 
@@ -178,6 +189,9 @@ public class RobotContainer {
       driverXbox.b().whileTrue(m_pivot.sysIdPivotMotor(1));
       driverXbox.y().whileTrue(m_pivot.sysIdPivotMotor(2));
       driverXbox.x().whileTrue(m_pivot.sysIdPivotMotor(3));
+
+      driverXbox.start().whileTrue(drivebase.sysIdDriveMotorCommand());
+      driverXbox.back().whileTrue(drivebase.sysIdAngleMotorCommand());
     }
   }
 

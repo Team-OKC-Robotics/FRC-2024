@@ -44,10 +44,10 @@ public class LEDSubsystem extends SubsystemBase {
   private final LEDPattern m_rainbow = LEDPattern.rainbow(255, 128);
   private final LEDPattern m_scrollingRainbow = m_rainbow.scrollAtAbsoluteSpeed(kScrollingSpeed, kLedSpacing);
 
-  private final LEDPattern m_redAlliance = LEDPattern.gradient(GradientType.kDiscontinuous, Color.kRed, Color.kDarkRed);
+  private final LEDPattern m_redAlliance = LEDPattern.gradient(GradientType.kContinuous, Color.kRed, Color.kOrangeRed);
   private final LEDPattern m_scrollingRedAlliance = m_redAlliance.scrollAtAbsoluteSpeed(kScrollingSpeed, kLedSpacing);
 
-  private final LEDPattern m_blueAlliance = LEDPattern.gradient(GradientType.kDiscontinuous, Color.kBlue, Color.kDarkBlue);
+  private final LEDPattern m_blueAlliance = LEDPattern.gradient(GradientType.kContinuous, Color.kBlue, Color.kPurple);
   private final LEDPattern m_scrollingBlueAlliance = m_blueAlliance.scrollAtAbsoluteSpeed(kScrollingSpeed, kLedSpacing);
 
   private final Map<Double, Color> maskSteps = Map.of(0.0, Color.kWhite, 0.5, Color.kBlack);
