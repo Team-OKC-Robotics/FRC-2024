@@ -15,25 +15,16 @@ public class SetIntakeCommand extends Command {
 
     @Override
     public void initialize() {
+        intake.setStateIntake();
     }
 
     @Override
     public void execute() {
-        if (this.speed > 0 && !intake.hasNote()) { // if the intake does not have the note
-            intake.setSpeed(speed); // then run the indexer and intake
-            intake.indexerSpeed(speed);
-
-        } else { // otherwise
-            intake.setSpeed(0); // the intake and indexer should be off
-            intake.indexerSpeed(0);
-        }
-
     }
 
     @Override
     public void end(boolean interuppted) {
-        intake.setSpeed(0);
-        intake.indexerSpeed(0);
+        intake.setStateHold();
     }
 
     @Override

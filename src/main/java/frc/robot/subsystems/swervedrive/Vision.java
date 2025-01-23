@@ -320,8 +320,8 @@ public class Vision {
      * Center Camera
      */
     CENTER_CAM("Arducam_OV9281_USB_Camera",
-        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(30), Units.degreesToRadians(0)),
-        new Translation3d(Units.inchesToMeters(1.0),
+        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(28), Units.degreesToRadians(0)),
+        new Translation3d(Units.inchesToMeters(13.0),
             Units.inchesToMeters(0.0),
             Units.inchesToMeters(23)),
         VecBuilder.fill(1, 1, 4), VecBuilder.fill(0.5, 0.5, 1));

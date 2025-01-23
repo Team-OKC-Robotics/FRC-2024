@@ -25,6 +25,10 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     instance = this;
+
+    addPeriodic(() -> {
+      m_robotContainer.periodic5ms();
+    }, 0.005, 0.005);
   }
 
   public static Robot getInstance() {
@@ -94,7 +98,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotContainer.setMotorBrake(true);
     m_robotContainer.setPivotBrake(true);
-    m_robotContainer.drivebase.zeroGyro();
+    // m_robotContainer.drivebase.zeroGyro();
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     if (m_autonomousCommand != null) {

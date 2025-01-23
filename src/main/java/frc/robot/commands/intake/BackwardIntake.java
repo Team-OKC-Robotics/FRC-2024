@@ -13,19 +13,16 @@ public class BackwardIntake extends Command {
 
     @Override
     public void initialize() {
+        intake.setStateOuttake();
     }
 
     @Override
     public void execute() {
-        intake.setbackSpeed(0.5);
-        intake.setIndexerback(0.5);
     }
 
     @Override
     public void end(boolean interuppted) {
-
-        intake.setSpeed(0);
-        intake.indexerSpeed(0);
+        intake.setStateHold();
     }
 
     @Override

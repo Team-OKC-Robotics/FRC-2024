@@ -22,6 +22,12 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DigitalInput IntakeLimitSwitch;
     private final SparkMax indexerMotor;
 
+    private enum INTAKE_STATE {
+        INTAKE, OUTTAKE, HOLD
+    };
+
+    private INTAKE_STATE intakeState = INTAKE_STATE.HOLD;
+
     // shuffleboard
     private ShuffleboardTab comptab = Shuffleboard.getTab("intake");
     // sensors
@@ -86,6 +92,41 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         intakeSwitch.setBoolean(IntakeLimitSwitch.get());
+    }
+
+    public void setStateIntake() {
+        intakeState = INTAKE_STATE.INTAKE;
+    }
+
+    public void setStateOuttake() {
+        intakeState = INTAKE_STATE.OUTTAKE;
+    }
+
+    public void setStateHold() {
+        intakeState = INTAKE_STATE.HOLD;
+    }
+
+    public void stopIntakePeriodic() {
+        if (hasNote() && intakeState == INTAKE_STATE.INTAKE) {
+            intakeState = INTAKE_STATE.HOLD;
+            intakemotor.set(0);
+            indexerMotor.set(0);
+        }
+
+        switch (intakeState) {
+            case INTAKE:
+                intakemotor.set(0.7);
+                indexerMotor.set(0.7);
+                break;
+            case OUTTAKE:
+                intakemotor.set(-0.5);
+                indexerMotor.set(-0.5);
+                break;
+            default:
+                intakemotor.set(0);
+                indexerMotor.set(0);
+                break;
+        }
     }
 
     // sets intake in commmand

@@ -170,7 +170,7 @@ public class RobotContainer {
       driverXbox.rightTrigger().whileTrue(autoaim);
       driverXbox.start().whileTrue(
           drivebase.driveToPose(
-              new Pose2d(new Translation2d(13.9 + 0.6, 4.026), Rotation2d.fromDegrees(180)))
+              new Pose2d(new Translation2d(13.9 + 0.9, 4.026), Rotation2d.fromDegrees(180)))
                               );
 
       // // operator commands
@@ -211,5 +211,9 @@ public class RobotContainer {
     m_shooter.stopShooter();
     m_intake.stopIntake();
     m_intake.stopIndexer();
+  }
+
+  public void periodic5ms() {
+    m_intake.stopIntakePeriodic();
   }
 }
