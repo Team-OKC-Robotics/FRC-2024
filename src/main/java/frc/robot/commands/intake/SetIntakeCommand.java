@@ -5,11 +5,8 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 
 public class SetIntakeCommand extends Command {
     private final IntakeSubsystem intake;
-    private double speed;
-
     public SetIntakeCommand(IntakeSubsystem intake, double speed) {
         this.intake = intake;
-        this.speed = speed;
         addRequirements(intake);
     }
 

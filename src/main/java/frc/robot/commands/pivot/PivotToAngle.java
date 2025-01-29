@@ -27,6 +27,7 @@ public class PivotToAngle extends Command {
 
     @Override
     public void execute() {
+        pivot.setTargetPivotAngle(angle);
     }
 
     @Override

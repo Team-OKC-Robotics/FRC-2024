@@ -19,8 +19,6 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -56,8 +54,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class SwerveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
 
-  private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
-  private final boolean             visionDriveTest     = true;
+  private final boolean visionDriveTest = true;
   private Vision vision;
 
   public SwerveSubsystem(File directory) {
@@ -79,10 +76,10 @@ public class SwerveSubsystem extends SubsystemBase {
       throw new RuntimeException(e);
     }
 
-    if (visionDriveTest)
-    {
+    if (visionDriveTest) {
       setupPhotonVision();
-      // Stop the odometry thread if we are using vision that way we can synchronize updates better.
+      // Stop the odometry thread if we are using vision that way we can synchronize
+      // updates better.
       swerveDrive.stopOdometryThread();
     }
 
@@ -92,8 +89,7 @@ public class SwerveSubsystem extends SubsystemBase {
   /**
    * Setup the photon vision class.
    */
-  public void setupPhotonVision()
-  {
+  public void setupPhotonVision() {
     vision = new Vision(swerveDrive::getPose, swerveDrive.field);
   }
 
@@ -114,8 +110,7 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // When vision is enabled we must manually update odometry in SwerveDrive
-    if (visionDriveTest)
-    {
+    if (visionDriveTest) {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
     }
@@ -283,8 +278,7 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @return SysId Drive Command
    */
-  public Command sysIdDriveMotorCommand()
-  {
+  public Command sysIdDriveMotorCommand() {
     return SwerveDriveTest.generateSysIdCommand(
         SwerveDriveTest.setDriveSysIdRoutine(
             new Config(),

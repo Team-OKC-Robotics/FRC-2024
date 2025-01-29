@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems.vision;
 
-import java.util.List;
-
-import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;

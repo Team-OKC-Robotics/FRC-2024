@@ -1,9 +1,5 @@
 package frc.robot.subsystems.swervedrive;
 
-import static edu.wpi.first.units.Units.Microseconds;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.Seconds;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -19,9 +15,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -57,19 +51,9 @@ public class Vision {
    */
   public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
   /**
-   * Ambiguity defined as a value between (0,1). Used in
-   * {@link Vision#filterPose}.
-   */
-  private final double maximumAmbiguity = 0.25;
-  /**
    * Photon Vision Simulation
    */
   public VisionSystemSim visionSim;
-  /**
-   * Count of times that the odom thinks we're more than 10meters away from the
-   * april tag.
-   */
-  private double longDistangePoseEstimationCount = 0;
   /**
    * Current pose from the pose estimator using wheel odometry.
    */
@@ -187,46 +171,6 @@ public class Vision {
   }
 
   /**
-   * Filter pose via the ambiguity and find best estimate between all of the
-   * camera's throwing out distances more than
-   * 10m for a short amount of time.
-   *
-   * @param pose Estimated robot pose.
-   * @return Could be empty if there isn't a good reading.
-   */
-  @Deprecated(since = "2024", forRemoval = true)
-  private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose) {
-    if (pose.isPresent()) {
-      double bestTargetAmbiguity = 1; // 1 is max ambiguity
-      for (PhotonTrackedTarget target : pose.get().targetsUsed) {
-        double ambiguity = target.getPoseAmbiguity();
-        if (ambiguity != -1 && ambiguity < bestTargetAmbiguity) {
-          bestTargetAmbiguity = ambiguity;
-        }
-      }
-      // ambiguity to high dont use estimate
-      if (bestTargetAmbiguity > maximumAmbiguity) {
-        return Optional.empty();
-      }
-
-      // est pose is very far from recorded robot pose
-      if (PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d()) > 1) {
-        longDistangePoseEstimationCount++;
-
-        // if it calculates that were 10 meter away for more than 10 times in a row its
-        // probably right
-        if (longDistangePoseEstimationCount < 10) {
-          return Optional.empty();
-        }
-      } else {
-        longDistangePoseEstimationCount = 0;
-      }
-      return pose;
-    }
-    return Optional.empty();
-  }
-
-  /**
    * Get distance of the robot from the AprilTag pose.
    *
    * @param id AprilTag ID
@@ -319,7 +263,7 @@ public class Vision {
     /**
      * Center Camera
      */
-    CENTER_CAM("Arducam_OV9281_USB_Camera",
+    CENTER_CAM("Front Camera",
         new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(28), Units.degreesToRadians(0)),
         new Translation3d(Units.inchesToMeters(13.0),
             Units.inchesToMeters(0.0),
@@ -368,11 +312,6 @@ public class Vision {
      * queries.
      */
     public List<PhotonPipelineResult> resultsList = new ArrayList<>();
-    /**
-     * Last read from the camera timestamp to prevent lag due to slow data fetches.
-     */
-    private double lastReadTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
-
     /**
      * Construct a Photon Camera class with help. Standard deviations are fake
      * values, experiment and determine

@@ -8,6 +8,7 @@ import java.io.File;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -45,6 +46,7 @@ import frc.robot.commands.climber.*;
  * Instead, the structure of the robot (including subsystems, commands, and
  * trigger mappings) should be declared here.
  */
+@Logged
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
@@ -92,6 +94,7 @@ public class RobotContainer {
   private final BackwardIntake backwardIntake = new BackwardIntake(m_intake);
   private final PivotToAngle pivotToDeg60 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_60);
   private final PivotToAngle pivotToDeg45 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_45);
+  private final PivotToAngle pivotToDeg30 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_30);
 
   private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 1);
   private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -1);
@@ -160,7 +163,7 @@ public class RobotContainer {
       // driver commands
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.x().whileTrue(pivotToDeg60);
-      driverXbox.y().whileTrue(pivotToDeg45);
+      driverXbox.y().whileTrue(pivotToDeg30);
       driverXbox.povCenter().whileTrue(runShooter);
       // driverXbox.back().whileTrue(setClimberDownSpeed);
       // driverXbox.start().whileTrue(setClimberUpSpeed);
