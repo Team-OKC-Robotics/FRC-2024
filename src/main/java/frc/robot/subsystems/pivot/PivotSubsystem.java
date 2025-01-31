@@ -17,19 +17,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
@@ -37,7 +33,6 @@ import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 
-@Logged
 public class PivotSubsystem extends SubsystemBase {
 
     public enum PivotLocations {
@@ -64,11 +59,6 @@ public class PivotSubsystem extends SubsystemBase {
 
     private final EventLoop m_loop = new EventLoop();
 
-    // private boolean isPivotBraked = true;
-
-    private ShuffleboardTab pivotTab = Shuffleboard.getTab("pivot");
-    private GenericEntry pivotAngleEntry = pivotTab.add("pivot angle", 0).getEntry();
-
     private double targetPivotAngle = PivotLocations.DEG_60.getCommandedAngle();
 
     public PivotSubsystem() {
@@ -92,7 +82,7 @@ public class PivotSubsystem extends SubsystemBase {
 
     public void setBrake(boolean brake) {
         pivotConfig.idleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
-        // pivotMotor.configure(pivotConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        pivotMotor.configure(pivotConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void stopPivot() {
@@ -102,7 +92,7 @@ public class PivotSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         m_loop.poll();
-        pivotAngleEntry.setDouble(getPivotAngle());
+        SmartDashboard.putNumber("Pivot Angle", getPivotAngle());
 
         if (!DriverStation.isTest()) {
             updatePivotLoop();

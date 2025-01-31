@@ -6,29 +6,30 @@ package frc.robot.commands.vision;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Meters;
 
+import java.util.Optional;
+
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.pivot.PivotSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.utils.LerpedLUT;
 
 public class AutoAimInAuto extends Command {
   /** Creates a new AutoAim. */
-  private final VisionSubsystem vision;
+  private final Vision vision;
   private final PivotSubsystem pivot;
   private int targetAprilTag = 4;
   private Distance targetOffset = Feet.of(3.9);
 
-  VisionSubsystem visionSubsystem = new VisionSubsystem();
   LerpedLUT angleLUT = new LerpedLUT();
 
-  public AutoAimInAuto(VisionSubsystem vision, PivotSubsystem pivot) {
+  public AutoAimInAuto(Vision vision, PivotSubsystem pivot) {
     // Use addRequirements() here to declare subsystem dependencies.
 
-    addRequirements(vision, pivot);
+    addRequirements(pivot);
 
     this.vision = vision;
     this.pivot = pivot;
@@ -64,8 +65,11 @@ public class AutoAimInAuto extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    PhotonTrackedTarget target = vision.getTargetWithID(targetAprilTag);
-    Distance targetDistance = Meters.of(vision.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle)).minus(targetOffset);
+    Optional<Double> targetDistanceOptional = vision.getDistanceFromAprilTag(targetAprilTag);
+    Distance targetDistance = Distance.ofBaseUnits(100, Feet);
+    if (targetDistanceOptional.isPresent()) {
+      targetDistance = Meters.of(targetDistanceOptional.get()).minus(targetOffset);
+    }
     pivot.setTargetPivotAngle(angleLUT.getAngleFromDistance(targetDistance));
   }
 

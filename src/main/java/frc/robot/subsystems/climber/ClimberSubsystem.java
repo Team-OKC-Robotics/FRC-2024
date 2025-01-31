@@ -23,10 +23,6 @@ public class ClimberSubsystem extends SubsystemBase {
   private final RelativeEncoder leftclimbencoder;
   private final RelativeEncoder rightclimbencoder;
 
-  // private ShuffleboardTab tab = Shuffleboard.getTab("climber");
-  // private GenericEntry climberSwitch = tab.add("climber switch",
-  // false).getEntry();
-
   public ClimberSubsystem() {
     rightclimbmotor = new SparkMax(Constants.ClimberConstants.rightClimberMotorID, MotorType.kBrushless);
     leftclimbmotor = new SparkMax(Constants.ClimberConstants.leftClimberMotorID, MotorType.kBrushless);

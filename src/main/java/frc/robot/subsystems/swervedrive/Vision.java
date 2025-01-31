@@ -14,18 +14,17 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import java.awt.Desktop;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -63,9 +62,7 @@ public class Vision {
    */
   private Field2d field2d;
 
-  private ShuffleboardTab tab = Shuffleboard.getTab("camera_test");
-
-  private GenericEntry can_see_Target = tab.add("can_see_Target", false).getEntry();
+  private static final double TARGET_HEIGHT_METERS = Units.inchesToMeters(57.13); // Speaker AprilTag Height
 
   /**
    * Constructor for the Vision class.
@@ -78,16 +75,16 @@ public class Vision {
     this.currentPose = currentPose;
     this.field2d = field;
 
-    if (Robot.isSimulation()) {
-      visionSim = new VisionSystemSim("Vision");
-      visionSim.addAprilTags(fieldLayout);
+    // if (Robot.isSimulation()) {
+    //   visionSim = new VisionSystemSim("Vision");
+    //   visionSim.addAprilTags(fieldLayout);
 
-      for (Cameras c : Cameras.values()) {
-        c.addToVisionSim(visionSim);
-      }
+    //   for (Cameras c : Cameras.values()) {
+    //     c.addToVisionSim(visionSim);
+    //   }
 
-      openSimCameraViews();
-    }
+    //   openSimCameraViews();
+    // }
   }
 
   /**
@@ -116,29 +113,29 @@ public class Vision {
    * @param swerveDrive {@link SwerveDrive} instance.
    */
   public void updatePoseEstimation(SwerveDrive swerveDrive) {
-    if (SwerveDriveTelemetry.isSimulation && swerveDrive.getSimulationDriveTrainPose().isPresent()) {
-      /*
-       * In the maple-sim, odometry is simulated using encoder values, accounting for
-       * factors like skidding and drifting.
-       * As a result, the odometry may not always be 100% accurate.
-       * However, the vision system should be able to provide a reasonably accurate
-       * pose estimation, even when odometry is incorrect.
-       * (This is why teams implement vision system to correct odometry.)
-       * Therefore, we must ensure that the actual robot pose is provided in the
-       * simulator when updating the vision simulation during the simulation.
-       */
-      visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
-    }
+    // if (SwerveDriveTelemetry.isSimulation && swerveDrive.getSimulationDriveTrainPose().isPresent()) {
+    //   /*
+    //    * In the maple-sim, odometry is simulated using encoder values, accounting for
+    //    * factors like skidding and drifting.
+    //    * As a result, the odometry may not always be 100% accurate.
+    //    * However, the vision system should be able to provide a reasonably accurate
+    //    * pose estimation, even when odometry is incorrect.
+    //    * (This is why teams implement vision system to correct odometry.)
+    //    * Therefore, we must ensure that the actual robot pose is provided in the
+    //    * simulator when updating the vision simulation during the simulation.
+    //    */
+    //   visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
+    // }
     for (Cameras camera : Cameras.values()) {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent()) {
-        can_see_Target.setBoolean(true);
+        SmartDashboard.putBoolean("Vision Can See Target", true);
         var pose = poseEst.get();
         swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
             pose.timestampSeconds,
             camera.curStdDevs);
       } else {
-        can_see_Target.setBoolean(false);
+        SmartDashboard.putBoolean("Vision Can See Target", false);
       }
     }
 
@@ -156,17 +153,17 @@ public class Vision {
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Cameras camera) {
     Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
-    if (Robot.isSimulation()) {
-      Field2d debugField = visionSim.getDebugField();
-      // Uncomment to enable outputting of vision targets in sim.
-      poseEst.ifPresentOrElse(
-          est -> debugField
-              .getObject("VisionEstimation")
-              .setPose(est.estimatedPose.toPose2d()),
-          () -> {
-            debugField.getObject("VisionEstimation").setPoses();
-          });
-    }
+    // if (Robot.isSimulation()) {
+    //   Field2d debugField = visionSim.getDebugField();
+    //   // Uncomment to enable outputting of vision targets in sim.
+    //   poseEst.ifPresentOrElse(
+    //       est -> debugField
+    //           .getObject("VisionEstimation")
+    //           .setPose(est.estimatedPose.toPose2d()),
+    //       () -> {
+    //         debugField.getObject("VisionEstimation").setPoses();
+    //       });
+    // }
     return poseEst;
   }
 
@@ -176,9 +173,20 @@ public class Vision {
    * @param id AprilTag ID
    * @return Distance
    */
-  public double getDistanceFromAprilTag(int id) {
+  public Optional<Double> getDistanceFromAprilTag(int id) {
     Optional<Pose3d> tag = fieldLayout.getTagPose(id);
-    return tag.map(pose3d -> PhotonUtils.getDistanceToPose(currentPose.get(), pose3d.toPose2d())).orElse(-1.0);
+    return tag.map(pose3d -> PhotonUtils.getDistanceToPose(currentPose.get(), pose3d.toPose2d()));
+  }
+
+    /**
+   * Get distance of the robot from the AprilTag pose.
+   *
+   * @param id AprilTag ID
+   * @return Distance
+   */
+  public Optional<Double> getYawFromAprilTag(int id) {
+    Optional<Pose3d> tag = fieldLayout.getTagPose(id);
+    return tag.map(pose3d -> PhotonUtils.getYawToPose(currentPose.get(), pose3d.toPose2d()).getDegrees());
   }
 
   /**
@@ -263,12 +271,14 @@ public class Vision {
     /**
      * Center Camera
      */
-    CENTER_CAM("Front Camera",
+    CENTER_CAM("Front",
         new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(28), Units.degreesToRadians(0)),
         new Translation3d(Units.inchesToMeters(13.0),
             Units.inchesToMeters(0.0),
             Units.inchesToMeters(23)),
         VecBuilder.fill(1, 1, 4), VecBuilder.fill(0.5, 0.5, 1));
+
+    Alert connectedAlert;
 
     /**
      * Latency alert to use when high latency is detected.
@@ -302,7 +312,7 @@ public class Vision {
     /**
      * Estimated robot pose.
      */
-    public Optional<EstimatedRobotPose> estimatedRobotPose;
+    public Optional<EstimatedRobotPose> estimatedRobotPose = Optional.empty();
     /**
      * Simulated camera instance which only exists during simulations.
      */
@@ -332,6 +342,8 @@ public class Vision {
       latencyAlert = new Alert("'" + name + "' Camera is experiencing high latency.", AlertType.kWarning);
 
       camera = new PhotonCamera(name);
+
+      connectedAlert = new Alert("Camera \"" + name + "\" is not connected!", AlertType.kError);
 
       // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
       robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
@@ -410,6 +422,34 @@ public class Vision {
       return resultsList.isEmpty() ? Optional.empty() : Optional.of(resultsList.get(0));
     }
 
+    public PhotonTrackedTarget getTargetWithID(int fiducialId) {
+      if (resultsList.isEmpty()) {
+        return null;
+      }
+  
+      for (PhotonTrackedTarget target : resultsList.get(0).getTargets()) {
+        if (target.getFiducialId() == fiducialId) {
+          return target;
+        }
+      }
+  
+      return null;
+    }
+  
+    public double distanceToTarget(PhotonTrackedTarget target, double tagHeight, double cameraHeight,
+        double cameraAngle) {
+  
+      if (target == null) {
+        return 1000; // Set very high so LUT commands the pivot down
+      }
+  
+      return PhotonUtils.calculateDistanceToTargetMeters(
+          robotToCamTransform.getZ(),
+          TARGET_HEIGHT_METERS,
+          robotToCamTransform.getRotation().getY(),
+          Units.degreesToRadians(target.getPitch()));
+    }
+
     /**
      * Get the estimated robot pose. Updates the current robot pose estimation,
      * standard deviations, and flushes the
@@ -418,7 +458,13 @@ public class Vision {
      * @return Estimated pose.
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
-      updateUnreadResults();
+      if (camera.isConnected()) {
+        updateUnreadResults();
+        connectedAlert.set(false);
+      } else {
+        connectedAlert.set(true);
+      }
+
       return estimatedRobotPose;
     }
 
@@ -432,25 +478,6 @@ public class Vision {
       };
 
       updateEstimatedGlobalPose();
-      // double mostRecentTimestamp = resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
-      // double currentTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
-      // double debounceTime = Milliseconds.of(15).in(Seconds);
-
-      // for (PhotonPipelineResult result : resultsList) {
-      //   mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
-      // }
-
-      // if ((resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
-      //     (currentTimestamp - lastReadTimestamp) >= debounceTime) {
-      //   resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
-      //   lastReadTimestamp = currentTimestamp;
-      //   resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
-      //     return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
-      //   });
-      //   if (!resultsList.isEmpty()) {
-      //     updateEstimatedGlobalPose();
-      //   }
-      // }
     }
 
     /**

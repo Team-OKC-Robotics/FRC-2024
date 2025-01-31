@@ -6,46 +6,38 @@ package frc.robot.commands.vision;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Meters;
 
-import org.photonvision.targeting.PhotonTrackedTarget;
+import java.util.Optional;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.utils.LerpedLUT;
 import swervelib.SwerveInputStream;
 
 public class AutoAim extends Command {
   /** Creates a new AutoAim. */
   private final SwerveSubsystem swerve;
-  private final VisionSubsystem vision;
+  private final Vision vision;
   private final PivotSubsystem pivot;
   private final LEDSubsystem leds;
 
   private int targetAprilTag = 4;
   private Distance targetOffset = Feet.of(3.9);
 
-  VisionSubsystem visionSubsystem = new VisionSubsystem();
   LerpedLUT angleLUT = new LerpedLUT();
-
-  private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
-
-  private GenericEntry targetYawEntry = tab.add("Target Yaw", 0.0).getEntry();
-  private GenericEntry targetSpeakerIDEntry = tab.add("Target Speaker ID", 0).getEntry();
 
   private SwerveInputStream swerveInput;
 
-  public AutoAim(SwerveSubsystem swerve, VisionSubsystem vision, PivotSubsystem pivot, LEDSubsystem leds,
+  public AutoAim(SwerveSubsystem swerve, Vision vision, PivotSubsystem pivot, LEDSubsystem leds,
       SwerveInputStream swerveInput) {
 
-    addRequirements(swerve, vision, pivot, leds);
+    addRequirements(swerve, pivot, leds);
 
     this.swerve = swerve;
     this.vision = vision;
@@ -58,7 +50,7 @@ public class AutoAim extends Command {
       this.targetAprilTag = 6;
     }
 
-    targetSpeakerIDEntry.setInteger(this.targetAprilTag);
+    SmartDashboard.putNumber("AutoAim April Tag", this.targetAprilTag);
 
     angleLUT.addEntry(-100, 60);
     angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
@@ -90,26 +82,24 @@ public class AutoAim extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    Optional<Double> targetDistanceOptional = vision.getDistanceFromAprilTag(targetAprilTag);
+    Optional<Double> targetYawOptional = vision.getYawFromAprilTag(targetAprilTag);
 
-    PhotonTrackedTarget target = vision.getTargetWithID(targetAprilTag);
-
+    double targetYaw = 0.0;
     double rotationSpeed = 0;
-    double targetYaw = 2718;
-    if (target != null) {
-      targetYaw = target.getYaw();
-
-      if (Math.abs(targetYaw) > 2) {
-        rotationSpeed = -0.1 * targetYaw;
-      }
+    if (targetYawOptional.isPresent()) {
+      targetYaw = targetYawOptional.get();
+      rotationSpeed = -0.1 * targetYaw;
     }
-
-    targetYawEntry.setDouble(targetYaw);
 
     ChassisSpeeds chassisSpeeds = swerveInput.get();
     chassisSpeeds.omegaRadiansPerSecond = rotationSpeed;
     swerve.driveFieldOriented(chassisSpeeds);
 
-    Distance targetDistance = Meters.of(vision.distanceToTarget(target, tagHeight, cameraHeight, cameraAngle)).minus(targetOffset);
+    Distance targetDistance = Distance.ofBaseUnits(100, Feet);
+    if (targetDistanceOptional.isPresent()) {
+      targetDistance = Meters.of(targetDistanceOptional.get()).minus(targetOffset);
+    }
     pivot.setTargetPivotAngle(angleLUT.getAngleFromDistance(targetDistance));
 
     if (readyToShoot(targetDistance, targetYaw)) {

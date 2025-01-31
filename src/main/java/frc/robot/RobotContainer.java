@@ -8,15 +8,16 @@ import java.io.File;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.epilogue.Logged;
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -27,16 +28,13 @@ import frc.robot.commands.shooter.*;
 import frc.robot.commands.intake.*;
 import frc.robot.commands.vision.*;
 
-import frc.robot.subsystems.climber.*;
 import frc.robot.subsystems.intake.*;
 import frc.robot.subsystems.leds.*;
 import frc.robot.subsystems.leds.LEDSubsystem.LEDState;
 import frc.robot.subsystems.pivot.*;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.swervedrive.*;
-import frc.robot.subsystems.vision.*;
 import swervelib.SwerveInputStream;
-import frc.robot.commands.climber.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -46,18 +44,18 @@ import frc.robot.commands.climber.*;
  * Instead, the structure of the robot (including subsystems, commands, and
  * trigger mappings) should be declared here.
  */
-@Logged
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve/swerve"));
 
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private final VisionSubsystem m_vision = new VisionSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
-  private final ClimberSubsystem m_climber = new ClimberSubsystem();
+  // private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final LEDSubsystem m_leds = new LEDSubsystem();
+
+  private final LaserCan lidar = new LaserCan(30);
 
   // controllers
   CommandXboxController driverXbox = new CommandXboxController(0);
@@ -96,14 +94,13 @@ public class RobotContainer {
   private final PivotToAngle pivotToDeg45 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_45);
   private final PivotToAngle pivotToDeg30 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_30);
 
-  private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 1);
-  private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -1);
+  // private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 1);
+  // private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -1);
 
-  private final AutoAim autoaim = new AutoAim(drivebase, m_vision, m_pivot, m_leds, driveAngularVelocity);
+  private final AutoAim autoaim = new AutoAim(drivebase, drivebase.getVision(), m_pivot, m_leds, driveAngularVelocity);
 
   // makes the auto chooser
   private SendableChooser<String> autoChooser = new SendableChooser<String>();
-  private ShuffleboardTab tab = Shuffleboard.getTab("auto chooser");
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -114,7 +111,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Pivot to 45", new PivotToAngle(m_pivot, 41));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto(m_intake, 0.65));
-    NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(m_vision, m_pivot));
+    NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase.getVision(), m_pivot));
     NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter));
 
     // add auto chooser options
@@ -140,7 +137,17 @@ public class RobotContainer {
     autoChooser.addOption("Source wall get mid far notes 1.5", "Source wall get mid far notes 1.5");
     autoChooser.addOption("Offset Amp Side 4 Piece", "Offset Amp Side 4 Piece");
 
-    tab.add(autoChooser);
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+    SmartDashboard.putData("Pivot to 45", pivotToDeg45);
+    SmartDashboard.putData("Shooter Subsystem", m_shooter);
+
+    try {
+      lidar.setRangingMode(LaserCan.RangingMode.SHORT);
+      lidar.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      lidar.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    } catch (ConfigurationFailedException e) {
+      System.out.println("Configuration failed! " + e);
+    }
   }
 
   public void configureBindings() {
@@ -214,6 +221,14 @@ public class RobotContainer {
     m_shooter.stopShooter();
     m_intake.stopIntake();
     m_intake.stopIndexer();
+  }
+
+  public void periodic() {
+    Measurement lidar_measurement = lidar.getMeasurement();
+
+    if (lidar_measurement != null) {
+      SmartDashboard.putNumber("LIDAR mm", lidar_measurement.distance_mm);
+    }
   }
 
   public void periodic5ms() {

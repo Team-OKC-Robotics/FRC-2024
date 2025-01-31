@@ -10,10 +10,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -27,11 +25,6 @@ public class IntakeSubsystem extends SubsystemBase {
     };
 
     private INTAKE_STATE intakeState = INTAKE_STATE.HOLD;
-
-    // shuffleboard
-    private ShuffleboardTab comptab = Shuffleboard.getTab("intake");
-    // sensors
-    private GenericEntry intakeSwitch = comptab.add("intake switch", false).getEntry();
 
     public IntakeSubsystem() {
         intakemotor = new SparkMax(Constants.IntakeConstants.intakeMotorID, MotorType.kBrushless);
@@ -91,7 +84,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        intakeSwitch.setBoolean(IntakeLimitSwitch.get());
+        SmartDashboard.putBoolean("Intake Limit Switch", IntakeLimitSwitch.get());
     }
 
     public void setStateIntake() {

@@ -68,7 +68,7 @@ public class SwerveSubsystem extends SubsystemBase {
         new Translation2d(
             Inches.of(580),
             Inches.of(180)),
-        Rotation2d.fromDegrees(180));
+        Rotation2d.fromDegrees(90));
 
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED, startingPose);
@@ -91,6 +91,11 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void setupPhotonVision() {
     vision = new Vision(swerveDrive::getPose, swerveDrive.field);
+  }
+
+
+  public Vision getVision() {
+    return vision;
   }
 
   /**

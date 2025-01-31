@@ -13,9 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -28,13 +26,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SparkClosedLoopController LeftPIDController;
   private final RelativeEncoder leftEncoder;
   private final RelativeEncoder rightEncoder;
-
-  private ShuffleboardTab tab = Shuffleboard.getTab("shooter");
-
-  private GenericEntry shooterRight = tab.add("shooter right", 0.0).getEntry();
-  private GenericEntry shooterLeft = tab.add("shooter leftt", 0.0).getEntry();
-
-  public double target_Speed;
 
   public ShooterSubsystem() {
 
@@ -76,34 +67,23 @@ public class ShooterSubsystem extends SubsystemBase {
     public static final double DERIVATIVE = 0.0;
   }
 
-  public void setRightMotorRPM(double power) {
-    // rightShooterMotor.set(power);
-    // leftShooterMotor.set(power);
-    // indexerMotor.set(power);
-    RightPIDController.setReference(power, SparkMax.ControlType.kVelocity);
+  public void setRightMotorRPM(double rpm) {
+    RightPIDController.setReference(rpm, SparkMax.ControlType.kVelocity);
 
   }
 
-  public void setLeftMotorRPM(double power) {
-    LeftPIDController.setReference(power, SparkMax.ControlType.kVelocity);
+  public void setLeftMotorRPM(double rpm) {
+    LeftPIDController.setReference(rpm, SparkMax.ControlType.kVelocity);
   }
 
-  public void shootSpeed(double power) {
-    RightPIDController.setReference(power, SparkMax.ControlType.kVelocity);
-    LeftPIDController.setReference(power, SparkMax.ControlType.kVelocity);
+  public void setRPM(double rpm) {
+    setLeftMotorRPM(rpm);
+    setRightMotorRPM(rpm);
   }
 
   public void stopShooter() {
-    // rightShooterMotor.set(0);
-    // leftShooterMotor.set(0);
-
     RightPIDController.setReference(0, SparkMax.ControlType.kVelocity);
     LeftPIDController.setReference(0, SparkMax.ControlType.kVelocity);
-  }
-
-  public void runPID(double targetSpeed) {
-    target_Speed = targetSpeed;
-    // PIDController.setReference(targetSpeed, SparkMax.ControlType.kVelocity);
   }
 
   public double getSpeed() {
@@ -118,23 +98,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    shooterRight.setDouble(rightEncoder.getVelocity());
-    shooterLeft.setDouble(leftEncoder.getVelocity());
-    //
-    // if (pidSetButton.getBoolean(false)) {
-    // pidSetButton.setBoolean(false);
-    // set(shooterP.getDouble(PIDF.PORPORTION), shooterI.getDouble(PIDF.INTEGRAL),
-    // PIDF.DERIVATIVE, shooterF.getDouble(PIDF.FEEDFORWARD), PIDF.INTEGRAL_ZONE);
-    // }
+    SmartDashboard.putNumber("Shooter Right Encoder Velocity", rightEncoder.getVelocity());
+    SmartDashboard.putNumber("Shooter Left Encoder Velocity", leftEncoder.getVelocity());
   }
 
   public void RightShootIt(double speed) {
     RightPIDController.setReference(speed, SparkMax.ControlType.kVelocity);
-
-    // rightShooterMotor.set(speed);
-    // leftShooterMotor.set(speed);
-
   }
 
   public void LeftShootIt(double speed) {
