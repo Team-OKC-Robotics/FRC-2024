@@ -21,7 +21,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax indexerMotor;
 
     private enum INTAKE_STATE {
-        INTAKE, OUTTAKE, HOLD
+        INTAKE, OUTTAKE, HOLD, SHOOT
     };
 
     private INTAKE_STATE intakeState = INTAKE_STATE.HOLD;
@@ -85,6 +85,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Intake Limit Switch", IntakeLimitSwitch.get());
+        SmartDashboard.putString("Intake State", intakeState.toString());
     }
 
     public void setStateIntake() {
@@ -99,6 +100,10 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeState = INTAKE_STATE.HOLD;
     }
 
+    public void setStateShoot() {
+        intakeState = INTAKE_STATE.SHOOT;
+    }
+
     public void stopIntakePeriodic() {
         if (hasNote() && intakeState == INTAKE_STATE.INTAKE) {
             intakeState = INTAKE_STATE.HOLD;
@@ -107,7 +112,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         switch (intakeState) {
-            case INTAKE:
+            case INTAKE, SHOOT:
                 intakemotor.set(0.7);
                 indexerMotor.set(0.7);
                 break;

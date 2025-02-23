@@ -46,8 +46,8 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-      "swerve/swerve"));
+  // public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+  //     "swerve/swerve"));
 
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
@@ -55,7 +55,7 @@ public class RobotContainer {
   // private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final LEDSubsystem m_leds = new LEDSubsystem();
 
-  private final LaserCan lidar = new LaserCan(30);
+  // private final LaserCan lidar = new LaserCan(30);
 
   // controllers
   CommandXboxController driverXbox = new CommandXboxController(0);
@@ -66,22 +66,22 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled
    * by angular velocity.
    */
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-      () -> driverXbox.getLeftY() * -1,
-      () -> driverXbox.getLeftX() * -1)
-      .withControllerRotationAxis(driverXbox::getRightX)
-      .deadband(OperatorConstants.DEADBAND)
-      .allianceRelativeControl(true)
-      .scaleTranslation(0.8);
+  // SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+  //     () -> driverXbox.getLeftY() * -1,
+  //     () -> driverXbox.getLeftX() * -1)
+  //     .withControllerRotationAxis(driverXbox::getRightX)
+  //     .deadband(OperatorConstants.DEADBAND)
+  //     .allianceRelativeControl(true)
+  //     .scaleTranslation(0.8);
 
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative
    * input stream.
    */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
-      .withControllerHeadingAxis(() -> -driverXbox.getRightX(),
-          () -> -driverXbox.getRightY())
-      .headingWhile(true);
+  // SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
+  //     .withControllerHeadingAxis(() -> -driverXbox.getRightX(),
+  //         () -> -driverXbox.getRightY())
+  //     .headingWhile(true);
       
   // shooter commands
   private final ShooterCommand runShooter = new ShooterCommand(m_shooter);
@@ -90,14 +90,16 @@ public class RobotContainer {
   // intake commands
   private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.7);
   private final BackwardIntake backwardIntake = new BackwardIntake(m_intake);
-  private final PivotToAngle pivotToDeg60 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_60);
-  private final PivotToAngle pivotToDeg45 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_45);
-  private final PivotToAngle pivotToDeg30 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_30);
+  private final PivotToAngle pivotToDeg65 = new PivotToAngle(m_pivot, 65);
+  private final PivotToAngle pivotToDeg50 = new PivotToAngle(m_pivot, 50);
+  private final PivotToAngle pivotToDeg35 = new PivotToAngle(m_pivot, 35);
+  private final PivotToAngle pivotToDeg20 = new PivotToAngle(m_pivot, 20);
+
 
   // private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 1);
   // private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -1);
 
-  private final AutoAim autoaim = new AutoAim(drivebase, drivebase.getVision(), m_pivot, m_leds, driveAngularVelocity);
+  // private final AutoAim autoaim = new AutoAim(drivebase, drivebase.getVision(), m_pivot, m_leds, driveAngularVelocity);
 
   // makes the auto chooser
   private SendableChooser<String> autoChooser = new SendableChooser<String>();
@@ -111,7 +113,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Pivot to 45", new PivotToAngle(m_pivot, 41));
     NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake));
     NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto(m_intake, 0.65));
-    NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase.getVision(), m_pivot));
+    // NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase.getVision(), m_pivot));
     NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter));
 
     // add auto chooser options
@@ -138,16 +140,16 @@ public class RobotContainer {
     autoChooser.addOption("Offset Amp Side 4 Piece", "Offset Amp Side 4 Piece");
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
-    SmartDashboard.putData("Pivot to 45", pivotToDeg45);
+    // SmartDashboard.putData("Pivot to 45", pivotToDeg45);
     SmartDashboard.putData("Shooter Subsystem", m_shooter);
 
-    try {
-      lidar.setRangingMode(LaserCan.RangingMode.SHORT);
-      lidar.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-      lidar.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
-    } catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
-    }
+    // try {
+    //   lidar.setRangingMode(LaserCan.RangingMode.SHORT);
+    //   lidar.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+    //   lidar.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    // } catch (ConfigurationFailedException e) {
+    //   System.out.println("Configuration failed! " + e);
+    // }
   }
 
   public void configureBindings() {
@@ -160,28 +162,27 @@ public class RobotContainer {
         m_leds.setLEDState(LEDState.TEAM);
       }
     }, m_leds));
-
-    // Pivot to 60 when the robot is doing nothing else
-    m_pivot.setDefaultCommand(pivotToDeg60);
-
+    
     if (!DriverStation.isTest()) {
-      drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveDirectAngle));
+      // drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveDirectAngle));
 
       // driver commands
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().whileTrue(pivotToDeg60);
-      driverXbox.y().whileTrue(pivotToDeg30);
-      driverXbox.povCenter().whileTrue(runShooter);
+      // driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      driverXbox.a().onTrue(pivotToDeg20);
+      driverXbox.b().onTrue(pivotToDeg35);
+      driverXbox.y().onTrue(pivotToDeg50);
+      driverXbox.x().onTrue(pivotToDeg65);
+      // driverXbox.povCenter().whileTrue(runShooter);
       // driverXbox.back().whileTrue(setClimberDownSpeed);
       // driverXbox.start().whileTrue(setClimberUpSpeed);
       driverXbox.leftBumper().whileTrue(runIntake);
       driverXbox.rightBumper().whileTrue(backwardIntake);
       driverXbox.leftTrigger().whileTrue(waitshoot);
-      driverXbox.rightTrigger().whileTrue(autoaim);
-      driverXbox.start().whileTrue(
-          drivebase.driveToPose(
-              new Pose2d(new Translation2d(13.9 + 0.9, 4.026), Rotation2d.fromDegrees(180)))
-                              );
+      // driverXbox.rightTrigger().whileTrue(autoaim);
+      // driverXbox.start().whileTrue(
+      //     drivebase.driveToPose(
+      //         new Pose2d(new Translation2d(13.9 + 0.9, 4.026), Rotation2d.fromDegrees(180)))
+      //                         );
 
       // // operator commands
       // operatorXbox.y().whileTrue(pivotToDeg60);
@@ -193,15 +194,15 @@ public class RobotContainer {
       // operatorXbox.leftTrigger().whileTrue(waitshoot);
       // operatorXbox.rightTrigger().whileTrue(backwardIntake);
     } else {
-      drivebase.removeDefaultCommand();
+      // drivebase.removeDefaultCommand();
 
       driverXbox.a().whileTrue(m_pivot.sysIdPivotMotor(0));
       driverXbox.b().whileTrue(m_pivot.sysIdPivotMotor(1));
       driverXbox.y().whileTrue(m_pivot.sysIdPivotMotor(2));
       driverXbox.x().whileTrue(m_pivot.sysIdPivotMotor(3));
 
-      driverXbox.start().whileTrue(drivebase.sysIdDriveMotorCommand());
-      driverXbox.back().whileTrue(drivebase.sysIdAngleMotorCommand());
+      // driverXbox.start().whileTrue(drivebase.sysIdDriveMotorCommand());
+      // driverXbox.back().whileTrue(drivebase.sysIdAngleMotorCommand());
     }
   }
 
@@ -210,7 +211,7 @@ public class RobotContainer {
   }
 
   public void setMotorBrake(boolean brake) {
-    drivebase.setMotorBrake(brake);
+    // drivebase.setMotorBrake(brake);
   }
 
   public void setPivotBrake(boolean brake) {
@@ -224,11 +225,11 @@ public class RobotContainer {
   }
 
   public void periodic() {
-    Measurement lidar_measurement = lidar.getMeasurement();
+    // Measurement lidar_measurement = lidar.getMeasurement();
 
-    if (lidar_measurement != null) {
-      SmartDashboard.putNumber("LIDAR mm", lidar_measurement.distance_mm);
-    }
+    // if (lidar_measurement != null) {
+    //   SmartDashboard.putNumber("LIDAR mm", lidar_measurement.distance_mm);
+    // }
   }
 
   public void periodic5ms() {

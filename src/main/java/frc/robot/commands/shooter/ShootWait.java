@@ -21,6 +21,7 @@ public class ShootWait extends Command {
 
     @Override
     public void initialize() {
+        intake.setStateHold();
     }
 
     @Override
@@ -28,8 +29,8 @@ public class ShootWait extends Command {
         shooter.setRightMotorRPM(rightTaretRPM);
         shooter.setLeftMotorRPM(leftTargetRPM);
 
-        if (shooter.getMinVelocity() > (leftTargetRPM * 0.9)) {
-            intake.setIntake(1);
+        if (shooter.getMinVelocity() > (Math.min(leftTargetRPM, rightTaretRPM) - 100)) {
+            intake.setStateShoot();
         }
 
     }
@@ -37,7 +38,7 @@ public class ShootWait extends Command {
     @Override
     public void end(boolean interuppted) {
         shooter.stopShooter();
-        intake.setIntake(0);
+        intake.setStateHold();
     }
 
     @Override

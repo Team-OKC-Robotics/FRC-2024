@@ -71,8 +71,8 @@ public class PivotSubsystem extends SubsystemBase {
         pivotEncoder = new DutyCycleEncoder(9);
 
         pivotFeedforward = new ArmFeedforward(0.25, 0.05, 0.08);
-        pivotVoltagePID = new ProfiledPIDController(0.15, 0, 0.00095,
-            new TrapezoidProfile.Constraints(60.0, 150), 0.02);
+        pivotVoltagePID = new ProfiledPIDController(0.16, 0, 0.00095,
+            new TrapezoidProfile.Constraints(70.0, 150), 0.02);
 
         pivotVoltagePID.setGoal(PivotLocations.DEG_60.commandedAngle);
 
