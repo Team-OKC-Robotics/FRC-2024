@@ -33,10 +33,6 @@ public class Robot extends TimedRobot {
     instance = this;
 
     DataLogManager.start(); // Optional to mirror the NetworkTables-logged data to a file on disk
-
-    addPeriodic(() -> {
-      m_robotContainer.periodic5ms();
-    }, 0.005, 0.005);
   }
 
   public static Robot getInstance() {
@@ -84,7 +80,6 @@ public class Robot extends TimedRobot {
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    m_robotContainer.periodic();
 
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
   }

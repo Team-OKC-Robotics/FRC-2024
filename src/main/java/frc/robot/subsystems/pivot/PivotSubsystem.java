@@ -1,11 +1,8 @@
 package frc.robot.subsystems.pivot;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -13,34 +10,27 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.event.EventLoop;
-import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.subsystems.Vision;
+import frc.robot.utils.LerpedLUT;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.VoltageUnit;
-import edu.wpi.first.units.measure.MutAngle;
-import edu.wpi.first.units.measure.MutAngularVelocity;
-import edu.wpi.first.units.measure.MutVoltage;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 
 public class PivotSubsystem extends SubsystemBase {
 
     public enum PivotLocations {
-        DEG_60 (59),
-        DEG_45 (45),
-        DEG_30 (30);
+        DEG_60(59),
+        DEG_45(45),
+        DEG_30(30);
 
         private final double commandedAngle;
+
         PivotLocations(double commandedAngle) {
             this.commandedAngle = commandedAngle;
         }
@@ -50,108 +40,102 @@ public class PivotSubsystem extends SubsystemBase {
         }
     }
 
+    private final LerpedLUT angleLUT;
     private final SparkMax pivotMotor;
     private final DutyCycleEncoder pivotEncoder;
     private final ProfiledPIDController pivotVoltagePID;
     private final ArmFeedforward pivotFeedforward;
-    private final RelativeEncoder pivotRelativeEncoder;
     private final SparkMaxConfig pivotConfig;
-
-    private final EventLoop m_loop = new EventLoop();
-
-    private double targetPivotAngle = PivotLocations.DEG_60.getCommandedAngle();
 
     public PivotSubsystem() {
 
-        pivotMotor = new SparkMax(Constants.PivotConstants.pivotMotorID, MotorType.kBrushless);
-        pivotConfig =  new SparkMaxConfig();
+        pivotConfig = new SparkMaxConfig();
         pivotConfig.inverted(false).idleMode(IdleMode.kBrake);
+
+        pivotMotor = new SparkMax(Constants.PivotConstants.pivotMotorID, MotorType.kBrushless);
         pivotMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        pivotMotor.set(0);
 
         pivotEncoder = new DutyCycleEncoder(9);
 
         pivotFeedforward = new ArmFeedforward(0.25, 0.05, 0.08);
         pivotVoltagePID = new ProfiledPIDController(0.15, 0, 0.00095,
-            new TrapezoidProfile.Constraints(60.0, 150), 0.02);
-
+                new TrapezoidProfile.Constraints(60.0, 150), 0.02);
+        pivotVoltagePID.setTolerance(Constants.PivotConstants.angleTolerance);
         pivotVoltagePID.setGoal(PivotLocations.DEG_60.commandedAngle);
 
-        pivotMotor.set(0);
-        pivotRelativeEncoder = pivotMotor.getEncoder();
-    }
+        angleLUT = new LerpedLUT();
 
-    public void setBrake(boolean brake) {
-        pivotConfig.idleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
-        pivotMotor.configure(pivotConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-    }
-
-    public void stopPivot() {
-        pivotMotor.set(0);
+        angleLUT.addEntry(-100, 60);
+        angleLUT.addEntry(0, 58); // distance in feet, angle in degrees
+        angleLUT.addEntry(2.17, 43);
+        angleLUT.addEntry(3.37, 38);
+        angleLUT.addEntry(3.9, 35.5);
+        angleLUT.addEntry(4.33, 35);
+        angleLUT.addEntry(5.0, 31.5);
+        angleLUT.addEntry(5.33, 32.8);
+        angleLUT.addEntry(5.5, 30.6);
+        angleLUT.addEntry(6.33, 29);
     }
 
     @Override
     public void periodic() {
-        m_loop.poll();
         SmartDashboard.putNumber("Pivot Angle", getPivotAngle());
-
-        if (!DriverStation.isTest()) {
-            updatePivotLoop();
-        }
     }
 
-    public void PivotIt(double power) {
-        // adds soft limits to avoid the pivot killing itself
-        if (power > 0 && getPivotAngle() > 70) {
-            pivotMotor.set(0);
-            return;
-        }
-        if (power < 0 && getPivotAngle() < 20) {
-            pivotMotor.set(0);
-            return;
-        }
-
-        pivotMotor.set(power);
+    public void setBrakeIdle() {
+        pivotConfig.idleMode(IdleMode.kBrake);
+        pivotMotor.configure(pivotConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    public void updatePivotLoop() {
+    public void setCoastIdle() {
+        pivotConfig.idleMode(IdleMode.kCoast);
+        pivotMotor.configure(pivotConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    }
 
-        if (DriverStation.isTest()) {
-            return;
-        }
+    public Command holdPosition() {
+        return run(this::runPID);
+    }
 
+    public Command movetoPosition(PivotLocations location) {
+        return moveToPosition(location.getCommandedAngle());
+    }
 
-        double voltage = pivotVoltagePID.calculate(getPivotAngle()) + pivotFeedforward.calculate(pivotVoltagePID.getSetpoint().position, pivotVoltagePID.getSetpoint().velocity);
+    public Command moveToPosition(double angle) {
+        return run(() -> {
+            setTargetPivotAngle(angle);
+            runPID();
+        }).until(() -> pivotVoltagePID.atGoal());
+    }
+
+    public Command aimAtTarget(Vision vision) {
+        return run(() -> {
+            setTargetPivotAngle(angleLUT.getAngleFromDistance(Meters.of(vision.getDistanceFromAprilTag(7).orElse(100.0))));
+            runPID();
+        });
+    }
+
+    public Command setVoltage(Voltage voltage) {
+        return run(() -> applyVoltage(voltage));
+    }
+
+    private void runPID() {
+        double voltage = pivotVoltagePID.calculate(getPivotAngle()) + pivotFeedforward
+                .calculate(pivotVoltagePID.getSetpoint().position, pivotVoltagePID.getSetpoint().velocity);
         voltage = Math.max(-7, Math.min(7, voltage));
-
-        // // Disable power when close enough
-        // if (!isPivotBraked && Math.abs(getPivotAngle() - targetPivotAngle) < 5) {
-        //     isPivotBraked = true;
-        // } else if (isPivotBraked && Math.abs(getPivotAngle() - targetPivotAngle) > 8) {
-        //     isPivotBraked = false;
-        // }
-
-        // if (isPivotBraked) {
-        //     voltage = 0;
-        // }
 
         if (Math.abs(voltage) < 0.2) {
             voltage = 0;
         }
 
-        setVoltage(Volts.of(voltage));
-
-        SmartDashboard.putNumber("Pivot Voltage", voltage);
+        applyVoltage(Volts.of(voltage));
     }
 
-    public void setTargetPivotAngle(PivotLocations location) {
-        setTargetPivotAngle(location.getCommandedAngle());
-    }
-
-    public void setTargetPivotAngle(double angle) {
+    private void setTargetPivotAngle(double angle) {
         pivotVoltagePID.setGoal(angle);
     }
 
-    public double getPivotAngle() {
+    private double getPivotAngle() {
         double rawvalue = pivotEncoder.get();
         if (rawvalue > 0.5) { // bc the absolute encoder is messed up :(
             rawvalue = rawvalue - 1;
@@ -159,59 +143,17 @@ public class PivotSubsystem extends SubsystemBase {
         return -rawvalue * 360 + 34.86; // some weird ahh math, I know
     }
 
-    public boolean isPivotAtSetpoint() {
-        return Math.abs(getPivotAngle() - targetPivotAngle) < 3;
-    }
-
-    // SYS ID Stuff Below
-
-    public Command sysIdPivotMotor(int index) {
-        Velocity<VoltageUnit> rampVelocity = Volts.of(0.5).div(Seconds.of(1.0));
-        
-        SysIdRoutine routine = new SysIdRoutine(
-            new SysIdRoutine.Config(rampVelocity, Volts.of(7), Seconds.of(10)),
-            new SysIdRoutine.Mechanism(this::setVoltage, this::logMotor, this)
-        );
-
-        BooleanEvent atTop = new BooleanEvent(m_loop, this::isTopEndStop);
-        BooleanEvent atBottom = new BooleanEvent(m_loop, this::isBottomEndStop);
-
-        switch (index) {
-            case 0: return routine.quasistatic(SysIdRoutine.Direction.kForward).until(atTop).withTimeout(5.0);
-            case 1: return routine.quasistatic(SysIdRoutine.Direction.kReverse).until(atBottom).withTimeout(5.0);
-            case 2: return routine.dynamic(SysIdRoutine.Direction.kForward).until(atTop).withTimeout(5.0);
-            case 3: return routine.dynamic(SysIdRoutine.Direction.kReverse).until(atBottom).withTimeout(5.0);
-        }
-        return routine.quasistatic(SysIdRoutine.Direction.kForward).until(atTop).withTimeout(5.0);
-    }
-
-    public void setVoltage(Voltage volts) {
+    private void applyVoltage(Voltage volts) {
         if (volts.magnitude() < 0 && getPivotAngle() < 25) {
-            pivotMotor.setVoltage(0);
-        } else if (volts.magnitude() > 0 && getPivotAngle() > 70) {
-            pivotMotor.setVoltage(0);
-        } else {
-            pivotMotor.setVoltage(volts);
+            volts = Volts.of(0);
         }
-    }
 
-    public boolean isTopEndStop() {
-        return getPivotAngle() > 70;
-    }
+        if (volts.magnitude() > 0 && getPivotAngle() > 70) {
+            volts = Volts.of(0);
+        }
 
-    public boolean isBottomEndStop() {
-        return getPivotAngle() < 25;
-    }
+        pivotMotor.setVoltage(volts);
 
-    // Mutable holder for unit-safe values, persisted to avoid reallocation.
-    private final MutVoltage m_appliedVoltage = Volts.mutable(0);
-    private final MutAngle m_angle = Degrees.mutable(0);
-    private final MutAngularVelocity m_velocity = DegreesPerSecond.mutable(0);
-
-    public void logMotor(SysIdRoutineLog log) {
-        log.motor("pivot")
-                .voltage(m_appliedVoltage.mut_replace(pivotMotor.getAppliedOutput() * pivotMotor.getBusVoltage(), Volts))
-                .angularPosition(m_angle.mut_replace(getPivotAngle(), Degrees))
-                .angularVelocity(m_velocity.mut_replace(pivotRelativeEncoder.getVelocity() * 6.0, DegreesPerSecond));
+        SmartDashboard.putNumber("Pivot Voltage", volts.in(Volts));
     }
 }

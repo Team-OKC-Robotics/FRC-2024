@@ -19,6 +19,7 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -34,6 +35,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.subsystems.Vision;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -53,9 +56,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
-
   private final boolean visionDriveTest = true;
-  private Vision vision;
 
   public SwerveSubsystem(File directory) {
     if (Constants.COMPETITION_MODE) {
@@ -63,6 +64,7 @@ public class SwerveSubsystem extends SubsystemBase {
     } else {
       SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     }
+
 
     Pose2d startingPose = new Pose2d(
         new Translation2d(
@@ -77,25 +79,12 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     if (visionDriveTest) {
-      setupPhotonVision();
       // Stop the odometry thread if we are using vision that way we can synchronize
       // updates better.
       swerveDrive.stopOdometryThread();
     }
 
     setupPathPlanner();
-  }
-
-  /**
-   * Setup the photon vision class.
-   */
-  public void setupPhotonVision() {
-    vision = new Vision(swerveDrive::getPose, swerveDrive.field);
-  }
-
-
-  public Vision getVision() {
-    return vision;
   }
 
   /**
@@ -117,7 +106,6 @@ public class SwerveSubsystem extends SubsystemBase {
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest) {
       swerveDrive.updateOdometry();
-      vision.updatePoseEstimation(swerveDrive);
     }
   }
 
@@ -190,6 +178,14 @@ public class SwerveSubsystem extends SubsystemBase {
     // Preload PathPlanner Path finding
     // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
     PathfindingCommand.warmupCommand().schedule();
+  }
+
+  public Command aimAtTarget(Vision vision) {
+    return run(() -> {
+      drive(Translation2d.kZero,
+        MathUtil.clamp(vision.getYawFromAprilTag(7).orElse(0.0) * 0.1, -1, 1),
+        true);
+    });
   }
 
   /**

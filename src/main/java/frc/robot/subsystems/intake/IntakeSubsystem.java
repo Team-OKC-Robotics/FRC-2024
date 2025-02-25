@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -20,8 +21,10 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DigitalInput IntakeLimitSwitch;
     private final SparkMax indexerMotor;
 
+    public final Trigger hasNote = new Trigger(this::hasNote);
+
     private enum INTAKE_STATE {
-        INTAKE, OUTTAKE, HOLD
+        INTAKE, OUTTAKE, HOLD, SHOOT
     };
 
     private INTAKE_STATE intakeState = INTAKE_STATE.HOLD;
@@ -42,64 +45,28 @@ public class IntakeSubsystem extends SubsystemBase {
         IntakeLimitSwitch = new DigitalInput(Constants.IntakeConstants.intakeLimitSwitchChannel);
     }
 
-    // sets intake speed
-    public void setSpeed(double power) {
-        intakemotor.set(power);
-    }
-
-    // stops intake
-    public void stopIntake() {
-        intakemotor.set(0);
-    }
-
-    // for backwards intake
-    public void setbackSpeed(double power) {
-        intakemotor.set(-power);
-    }
-
-    // for backwards index
-    public void setIndexerback(double power) {
-        indexerMotor.set(-power);
-    }
-
-    // sets indexer motor speed
-    public void indexerSpeed(double power) {
-        indexerMotor.set(power);
-    }
-
-    // stops indexer
-    public void stopIndexer() {
-        indexerMotor.set(0);
-    }
-
-    public double getSpeed() {
-        return intakemotor.get();
-    }
-
-    public Command runIntake(double Speed) {
-        return run(() -> {
-            setSpeed(Speed);
-        });
-    }
-
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Intake Limit Switch", IntakeLimitSwitch.get());
     }
 
-    public void setStateIntake() {
-        intakeState = INTAKE_STATE.INTAKE;
+    public Command shoot() {
+        return run(() -> {intakeState = INTAKE_STATE.SHOOT; setMotors();}).until(hasNote.negate());
     }
 
-    public void setStateOuttake() {
-        intakeState = INTAKE_STATE.OUTTAKE;
+    public Command intake() {
+        return run(() -> {intakeState = INTAKE_STATE.INTAKE; setMotors();}).until(hasNote);
     }
 
-    public void setStateHold() {
-        intakeState = INTAKE_STATE.HOLD;
+    public Command outake() {
+        return run(() -> {intakeState = INTAKE_STATE.OUTTAKE; setMotors();});
     }
 
-    public void stopIntakePeriodic() {
+    public Command hold() {
+        return run(() -> {intakeState = INTAKE_STATE.HOLD; setMotors();});
+    }
+
+    private void setMotors() {
         if (hasNote() && intakeState == INTAKE_STATE.INTAKE) {
             intakeState = INTAKE_STATE.HOLD;
             intakemotor.set(0);
@@ -107,7 +74,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         switch (intakeState) {
-            case INTAKE:
+            case INTAKE, SHOOT:
                 intakemotor.set(0.7);
                 indexerMotor.set(0.7);
                 break;
@@ -122,13 +89,6 @@ public class IntakeSubsystem extends SubsystemBase {
         }
     }
 
-    // sets intake in commmand
-    public void setIntake(double speed) {
-        intakemotor.set(speed);
-        indexerMotor.set(speed);
-    }
-
-    // testing if the limit switch sees the note or not
     public boolean hasNote() {
         return !IntakeLimitSwitch.get();
     }

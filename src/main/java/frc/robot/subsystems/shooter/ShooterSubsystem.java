@@ -1,5 +1,8 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Volts;
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -13,12 +16,20 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
-  /** Creates a new ShooterSubsystem. */
+
+  private final double leftMotorShootSetpoint = 5500;
+  private final double rightMotorShootSetpoint = 5000;
+  private final double velocityTolerance = 100;
 
   private final SparkMax leftShooterMotor;
   private final SparkMax rightShooterMotor;
@@ -26,6 +37,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SparkClosedLoopController LeftPIDController;
   private final RelativeEncoder leftEncoder;
   private final RelativeEncoder rightEncoder;
+
+  public final Trigger atSpeed = new Trigger(this::atSpeed);
 
   public ShooterSubsystem() {
 
@@ -39,15 +52,12 @@ public class ShooterSubsystem extends SubsystemBase {
     SparkMaxConfig rightconfig = new SparkMaxConfig();
 
     leftconfig.inverted(true).idleMode(IdleMode.kCoast).closedLoopRampRate(1.0).openLoopRampRate(1.0);
-    rightconfig.inverted(false).idleMode(IdleMode.kCoast).closedLoopRampRate(1.0).openLoopRampRate(1.0);
-
     leftconfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .outputRange(0.0, 1.0)
         .pidf(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE, PIDF.FEEDFORWARD);
 
-    rightconfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .outputRange(0.0, 1.0)
-        .pidf(PIDF.PORPORTION, PIDF.INTEGRAL, PIDF.DERIVATIVE, PIDF.FEEDFORWARD);
+    rightconfig.apply(leftconfig);
+    rightconfig.inverted(false);
 
     leftShooterMotor.configure(leftconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightShooterMotor.configure(rightconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -67,55 +77,40 @@ public class ShooterSubsystem extends SubsystemBase {
     public static final double DERIVATIVE = 0.0;
   }
 
-  public void setRightMotorRPM(double rpm) {
-    RightPIDController.setReference(rpm, SparkMax.ControlType.kVelocity);
-
+  public Command runContinously() {
+    return run(() -> setVelocityReference(RPM.of(5500), RPM.of(5000)));
   }
 
-  public void setLeftMotorRPM(double rpm) {
-    LeftPIDController.setReference(rpm, SparkMax.ControlType.kVelocity);
+  public Command spinUp() {
+    return run(() -> setVelocityReference(RPM.of(5500), RPM.of(5000))).until(atSpeed);
   }
 
-  public void setRPM(double rpm) {
-    setLeftMotorRPM(rpm);
-    setRightMotorRPM(rpm);
+  public Command stop() {
+    return run(() -> setVelocityReference(RPM.of(0), RPM.of(0)));
   }
 
-  public void stopShooter() {
-    RightPIDController.setReference(0, SparkMax.ControlType.kVelocity);
-    LeftPIDController.setReference(0, SparkMax.ControlType.kVelocity);
+  public Command setVoltage(double voltage) {
+    return run(() -> setVoltageReference(Volts.of(voltage)));
   }
 
-  public double getSpeed() {
-    return rightShooterMotor.get();
-
+  private boolean atSpeed() {
+    return MathUtil.isNear(leftEncoder.getVelocity(), leftMotorShootSetpoint, velocityTolerance)
+        && MathUtil.isNear(rightEncoder.getVelocity(), rightMotorShootSetpoint, velocityTolerance);
   }
 
-  public double getPower() {
-    return rightShooterMotor.get();
+  private void setVelocityReference(AngularVelocity left_velocity, AngularVelocity right_velocity) {
+    RightPIDController.setReference(left_velocity.in(RPM), SparkMax.ControlType.kVelocity);
+    LeftPIDController.setReference(right_velocity.in(RPM), SparkMax.ControlType.kVelocity);
+  }
 
+  private void setVoltageReference(Voltage voltage) {
+    RightPIDController.setReference(voltage.in(Volts), SparkMax.ControlType.kVoltage);
+    LeftPIDController.setReference(voltage.in(Volts), SparkMax.ControlType.kVoltage);
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Shooter Right Encoder Velocity", rightEncoder.getVelocity());
     SmartDashboard.putNumber("Shooter Left Encoder Velocity", leftEncoder.getVelocity());
-  }
-
-  public void RightShootIt(double speed) {
-    RightPIDController.setReference(speed, SparkMax.ControlType.kVelocity);
-  }
-
-  public void LeftShootIt(double speed) {
-    LeftPIDController.setReference(speed, SparkMax.ControlType.kVelocity);
-  }
-
-  public void ShootIt(double speed) {
-    RightPIDController.setReference(speed, SparkMax.ControlType.kVelocity);
-    LeftPIDController.setReference(speed, SparkMax.ControlType.kVelocity);
-  }
-
-  public double getMinVelocity() {
-    return Math.min(leftEncoder.getVelocity(), rightEncoder.getVelocity());
   }
 }

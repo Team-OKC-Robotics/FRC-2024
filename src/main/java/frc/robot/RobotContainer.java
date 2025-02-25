@@ -8,12 +8,6 @@ import java.io.File;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import au.grapplerobotics.ConfigurationFailedException;
-import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -22,16 +16,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
-
-import frc.robot.commands.pivot.*;
-import frc.robot.commands.shooter.*;
-import frc.robot.commands.intake.*;
-import frc.robot.commands.vision.*;
-
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.intake.*;
 import frc.robot.subsystems.leds.*;
 import frc.robot.subsystems.leds.LEDSubsystem.LEDState;
 import frc.robot.subsystems.pivot.*;
+import frc.robot.subsystems.pivot.PivotSubsystem.PivotLocations;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.swervedrive.*;
 import swervelib.SwerveInputStream;
@@ -49,23 +39,17 @@ public class RobotContainer {
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve/swerve"));
 
-  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final PivotSubsystem m_pivot = new PivotSubsystem();
-  // private final ClimberSubsystem m_climber = new ClimberSubsystem();
-  private final LEDSubsystem m_leds = new LEDSubsystem();
-
-  private final LaserCan lidar = new LaserCan(30);
+  private final ShooterSubsystem shooter = new ShooterSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
+  private final PivotSubsystem pivot = new PivotSubsystem();
+  private final LEDSubsystem LEDs = new LEDSubsystem();
+  private final Vision vision = new Vision(drivebase::getPose, drivebase.getSwerveDrive().field);
 
   // controllers
   CommandXboxController driverXbox = new CommandXboxController(0);
   CommandXboxController operatorXbox = new CommandXboxController(1);
 
   // drive commands
-  /**
-   * Converts driver input into a field-relative ChassisSpeeds that is controlled
-   * by angular velocity.
-   */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> driverXbox.getLeftY() * -1,
       () -> driverXbox.getLeftX() * -1)
@@ -74,45 +58,22 @@ public class RobotContainer {
       .allianceRelativeControl(true)
       .scaleTranslation(0.8);
 
-  /**
-   * Clone's the angular velocity input stream and converts it to a fieldRelative
-   * input stream.
-   */
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
       .withControllerHeadingAxis(() -> -driverXbox.getRightX(),
           () -> -driverXbox.getRightY())
       .headingWhile(true);
-      
-  // shooter commands
-  private final ShooterCommand runShooter = new ShooterCommand(m_shooter);
-  private final ShootWait waitshoot = new ShootWait(m_shooter, m_intake);
-
-  // intake commands
-  private final SetIntakeCommand runIntake = new SetIntakeCommand(m_intake, 0.7);
-  private final BackwardIntake backwardIntake = new BackwardIntake(m_intake);
-  private final PivotToAngle pivotToDeg60 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_60);
-  private final PivotToAngle pivotToDeg45 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_45);
-  private final PivotToAngle pivotToDeg30 = new PivotToAngle(m_pivot, PivotSubsystem.PivotLocations.DEG_30);
-
-  // private final ClimberCommand setClimberUpSpeed = new ClimberCommand(m_climber, 1);
-  // private final ClimberCommand setClimberDownSpeed = new ClimberCommand(m_climber, -1);
-
-  private final AutoAim autoaim = new AutoAim(drivebase, drivebase.getVision(), m_pivot, m_leds, driveAngularVelocity);
 
   // makes the auto chooser
   private SendableChooser<String> autoChooser = new SendableChooser<String>();
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
   public RobotContainer() {
     // commands for the autos
-    NamedCommands.registerCommand("Pivot to 60", new PivotToAngle(m_pivot, 58));
-    NamedCommands.registerCommand("Pivot to 45", new PivotToAngle(m_pivot, 41));
-    NamedCommands.registerCommand("Shoot", new ShootWaitAuto(m_shooter, m_intake));
-    NamedCommands.registerCommand("Intake", new SetIntakeCommandAuto(m_intake, 0.65));
-    NamedCommands.registerCommand("Auto Aim", new AutoAimInAuto(drivebase.getVision(), m_pivot));
-    NamedCommands.registerCommand("Spin Up", new SpinUpAuto(m_shooter));
+    NamedCommands.registerCommand("Pivot to 60", pivot.movetoPosition(PivotLocations.DEG_60));
+    NamedCommands.registerCommand("Pivot to 45", pivot.movetoPosition(PivotLocations.DEG_45));
+    NamedCommands.registerCommand("Shoot", intake.shoot());
+    NamedCommands.registerCommand("Intake", intake.intake());
+    NamedCommands.registerCommand("Spin Up", shooter.runContinously());
+    NamedCommands.registerCommand("Auto Aim", pivot.aimAtTarget(vision).alongWith(drivebase.aimAtTarget(vision)));
 
     // add auto chooser options
     autoChooser.setDefaultOption("4 Piece Middle First Then Amp", "4 Piece Middle First Then Amp");
@@ -138,68 +99,43 @@ public class RobotContainer {
     autoChooser.addOption("Offset Amp Side 4 Piece", "Offset Amp Side 4 Piece");
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
-    SmartDashboard.putData("Pivot to 45", pivotToDeg45);
-    SmartDashboard.putData("Shooter Subsystem", m_shooter);
-
-    try {
-      lidar.setRangingMode(LaserCan.RangingMode.SHORT);
-      lidar.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-      lidar.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
-    } catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
-    }
   }
 
   public void configureBindings() {
 
     // Set LEDs to be the team/note color by default
-    m_leds.setDefaultCommand(Commands.run(() -> {
-      if (m_intake.hasNote()) {
-        m_leds.setLEDState(LEDState.HAS_NOTE);
+    LEDs.setDefaultCommand(Commands.run(() -> {
+      if (intake.hasNote()) {
+        LEDs.setLEDState(LEDState.HAS_NOTE);
       } else {
-        m_leds.setLEDState(LEDState.TEAM);
+        LEDs.setLEDState(LEDState.TEAM);
       }
-    }, m_leds));
+    }, LEDs));
 
-    // Pivot to 60 when the robot is doing nothing else
-    m_pivot.setDefaultCommand(pivotToDeg60);
+    drivebase.removeDefaultCommand();
+
+    intake.setDefaultCommand(intake.hold());
+    shooter.setDefaultCommand(shooter.stop());
+    pivot.setDefaultCommand(pivot.holdPosition());
 
     if (!DriverStation.isTest()) {
       drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveDirectAngle));
 
       // driver commands
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().whileTrue(pivotToDeg60);
-      driverXbox.y().whileTrue(pivotToDeg30);
-      driverXbox.povCenter().whileTrue(runShooter);
-      // driverXbox.back().whileTrue(setClimberDownSpeed);
-      // driverXbox.start().whileTrue(setClimberUpSpeed);
-      driverXbox.leftBumper().whileTrue(runIntake);
-      driverXbox.rightBumper().whileTrue(backwardIntake);
-      driverXbox.leftTrigger().whileTrue(waitshoot);
-      driverXbox.rightTrigger().whileTrue(autoaim);
-      driverXbox.start().whileTrue(
-          drivebase.driveToPose(
-              new Pose2d(new Translation2d(13.9 + 0.9, 4.026), Rotation2d.fromDegrees(180)))
-                              );
+      driverXbox.x().whileTrue(pivot.movetoPosition(PivotLocations.DEG_60));
+      driverXbox.y().whileTrue(pivot.movetoPosition(PivotLocations.DEG_30));
+      driverXbox.povCenter().whileTrue(shooter.runContinously());
 
-      // // operator commands
-      // operatorXbox.y().whileTrue(pivotToDeg60);
-      // operatorXbox.b().whileTrue(autoaim);
-      // operatorXbox.x().whileTrue(pivotToDeg45);
-      // operatorXbox.leftBumper().whileTrue(waitshoot);
-      // operatorXbox.rightBumper().whileTrue(runIntake);
-      // operatorXbox.povCenter().whileTrue(runShooter);
-      // operatorXbox.leftTrigger().whileTrue(waitshoot);
-      // operatorXbox.rightTrigger().whileTrue(backwardIntake);
+      driverXbox.rightBumper().whileTrue(intake.intake());
+      driverXbox.leftBumper().whileTrue(intake.outake());
+
+      driverXbox.rightTrigger().whileTrue(shooter.spinUp()
+          .andThen(shooter.runContinously())
+          .alongWith(intake.shoot())
+          .andThen(intake.hold()));
+      driverXbox.leftTrigger().whileTrue(pivot.aimAtTarget(vision).alongWith(drivebase.aimAtTarget(vision)));
     } else {
-      drivebase.removeDefaultCommand();
-
-      driverXbox.a().whileTrue(m_pivot.sysIdPivotMotor(0));
-      driverXbox.b().whileTrue(m_pivot.sysIdPivotMotor(1));
-      driverXbox.y().whileTrue(m_pivot.sysIdPivotMotor(2));
-      driverXbox.x().whileTrue(m_pivot.sysIdPivotMotor(3));
-
       driverXbox.start().whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox.back().whileTrue(drivebase.sysIdAngleMotorCommand());
     }
@@ -214,24 +150,16 @@ public class RobotContainer {
   }
 
   public void setPivotBrake(boolean brake) {
-    m_pivot.setBrake(brake);
+    pivot.setBrakeIdle();
+  }
+
+  public void updateOdometry() {
+    vision.updatePoseEstimation(drivebase.getSwerveDrive());
   }
 
   public void resetRobot() {
-    m_shooter.stopShooter();
-    m_intake.stopIntake();
-    m_intake.stopIndexer();
-  }
-
-  public void periodic() {
-    Measurement lidar_measurement = lidar.getMeasurement();
-
-    if (lidar_measurement != null) {
-      SmartDashboard.putNumber("LIDAR mm", lidar_measurement.distance_mm);
-    }
-  }
-
-  public void periodic5ms() {
-    m_intake.stopIntakePeriodic();
+    shooter.getCurrentCommand().cancel();
+    intake.getCurrentCommand().cancel();
+    intake.getCurrentCommand().cancel();
   }
 }

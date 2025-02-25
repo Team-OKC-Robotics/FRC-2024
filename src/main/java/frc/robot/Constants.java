@@ -52,6 +52,7 @@ public final class Constants
   }
   public static final class PivotConstants {
     public static final int pivotMotorID = 11;
+    public static final double angleTolerance = 1;
   }
 
   public static final class LEDS {
